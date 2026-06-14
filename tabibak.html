@@ -1,0 +1,2645 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tabibak — AI Medical Triage Assistant</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Outfit:wght@400;500;600;700;800&display=swap" />
+
+  <style>
+    /* ============================================================
+       DESIGN TOKENS — light & dark themes
+       ============================================================ */
+    :root {
+      --font-heading : 'Outfit', sans-serif;
+      --font-body    : 'Inter',  sans-serif;
+      --radius       : 20px;
+      --speed        : 0.3s;
+
+      /* Palette — Light */
+      --bg-page      : #f1f5f4;
+      --bg-surface   : rgba(255,255,255,0.88);
+      --border       : rgba(13,148,136,0.08);
+
+      --primary      : #0d9488;
+      --primary-glow : rgba(13,148,136,0.06);
+      --secondary    : #0ea5e9;
+      --secondary-glow: rgba(14,165,233,0.06);
+      --btn-text     : #ffffff;
+
+      --text-1       : #1e293b;
+      --text-2       : #475569;
+      --text-muted   : #8b96a5;
+
+      --input-bg     : rgba(255,255,255,0.7);
+      --input-focus  : #ffffff;
+
+      --bubble-bot   : rgba(241,245,249,0.95);
+      --bubble-user  : rgba(14,165,233,0.06);
+      --bubble-user-b: rgba(14,165,233,0.16);
+
+      --shadow       : 0 10px 30px rgba(13,148,136,0.04), 0 1px 3px rgba(0,0,0,0.02);
+
+      /* Urgency — Light */
+      --red          : #e11d48;
+      --red-bg       : #fff1f2;
+      --red-border   : rgba(225,29,72,0.15);
+      --orange       : #d97706;
+      --orange-bg    : #fef3c7;
+      --orange-border: rgba(217,119,6,0.15);
+      --green        : #0d9488;
+      --green-bg     : #f0fdfa;
+      --green-border : rgba(13,148,136,0.15);
+    }
+
+    body.dark {
+      --bg-page      : #0a0e1a;
+      --bg-surface   : rgba(17,28,52,0.75);
+      --border       : rgba(255,255,255,0.06);
+
+      --primary      : #2dd4bf;
+      --primary-glow : rgba(45,212,191,0.08);
+      --secondary    : #38bdf8;
+      --secondary-glow: rgba(56,189,248,0.08);
+      --btn-text     : #0a0e1a;
+
+      --text-1       : #f8fafc;
+      --text-2       : #94a3b8;
+      --text-muted   : #64748b;
+
+      --input-bg     : rgba(255,255,255,0.03);
+      --input-focus  : rgba(255,255,255,0.06);
+
+      --bubble-bot   : rgba(255,255,255,0.04);
+      --bubble-user  : rgba(45,212,191,0.08);
+      --bubble-user-b: rgba(45,212,191,0.2);
+
+      --shadow       : 0 12px 40px rgba(0,0,0,0.35), 0 1px 3px rgba(0,0,0,0.2);
+
+      --red          : #fb7185;
+      --red-bg       : rgba(225,29,72,0.15);
+      --red-border   : rgba(225,29,72,0.25);
+      --orange       : #fbbf24;
+      --orange-bg    : rgba(217,119,6,0.12);
+      --orange-border: rgba(217,119,6,0.25);
+      --green        : #34d399;
+      --green-bg     : rgba(52,211,153,0.1);
+      --green-border : rgba(52,211,153,0.2);
+    }
+
+    /* ============================================================
+       RESET & BASE
+       ============================================================ */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background-color: var(--bg-page);
+      background-image:
+        radial-gradient(circle at 10% 20%, var(--primary-glow) 0%, transparent 45%),
+        radial-gradient(circle at 90% 80%, var(--secondary-glow) 0%, transparent 45%);
+      background-attachment: fixed;
+      color: var(--text-1);
+      font-family: var(--font-body);
+      line-height: 1.6;
+      min-height: 100vh;
+      overflow-x: hidden;
+      transition: background-color var(--speed), color var(--speed);
+    }
+
+    h1, h2, h3, h4 {
+      font-family: var(--font-heading);
+      font-weight: 600;
+      letter-spacing: -0.02em;
+    }
+
+    a { color: inherit; }
+
+    /* ============================================================
+       LAYOUT
+       ============================================================ */
+    .app {
+      max-width: 900px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 2rem 1rem 3rem;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    /* ============================================================
+       HEADER
+       ============================================================ */
+    .app-header {
+      text-align: center;
+      margin-bottom: 2rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+      position: relative;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-size: 2.5rem;
+      font-weight: 800;
+      font-family: var(--font-heading);
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .logo-icon { font-size: 2.75rem; -webkit-text-fill-color: initial; }
+
+    .app-subtitle { color: var(--text-2); font-size: 1.1rem; }
+
+    /* Theme toggle */
+    .theme-btn {
+      position: absolute; top: 0; right: 0;
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      width: 44px; height: 44px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; font-size: 1.25rem;
+      transition: all var(--speed);
+      box-shadow: var(--shadow);
+    }
+    .theme-btn:hover { transform: scale(1.08) rotate(15deg); border-color: var(--primary); }
+
+    /* ============================================================
+       NAVIGATION
+       ============================================================ */
+    .app-nav {
+      display: flex;
+      justify-content: center;
+      gap: 0.5rem;
+      margin-bottom: 2rem;
+      background: var(--bg-surface);
+      padding: 0.45rem;
+      border-radius: 50px;
+      border: 1px solid var(--border);
+      backdrop-filter: blur(8px);
+      box-shadow: var(--shadow);
+    }
+
+    /* Nav button — icon + label layout */
+    .nav-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-2);
+      padding: 0.6rem 1.1rem;
+      font-family: var(--font-heading);
+      font-weight: 600;
+      font-size: 0.9rem;
+      border-radius: 50px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+      transition: all var(--speed);
+      white-space: nowrap;
+    }
+
+    .nav-btn svg { width: 18px; height: 18px; flex-shrink: 0; }
+
+    .nav-btn:hover { color: var(--primary); background: var(--primary-glow); }
+
+    .nav-btn.active {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: var(--btn-text);
+      box-shadow: 0 4px 12px var(--primary-glow);
+    }
+
+    /* ============================================================
+       SCREENS
+       ============================================================ */
+    .screen { display: none; animation: fadeIn 0.4s ease-out forwards; }
+    .screen.active { display: flex; flex-direction: column; gap: 1.5rem; }
+
+    /* ============================================================
+       GLASS PANEL
+       ============================================================ */
+    .glass {
+      background: var(--bg-surface);
+      backdrop-filter: blur(16px);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 2.5rem;
+      transition: background var(--speed), border-color var(--speed);
+    }
+
+    /* ============================================================
+       FORMS
+       ============================================================ */
+    .form-group { display: flex; flex-direction: column; gap: 0.65rem; }
+
+    .form-group label {
+      font-family: var(--font-heading);
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--text-1);
+    }
+
+    input[type="text"],
+    input[type="password"],
+    input[type="number"],
+    textarea,
+    select {
+      width: 100%;
+      padding: 0.9rem 1.35rem;
+      background: var(--input-bg);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      color: var(--text-1);
+      font-family: var(--font-body);
+      font-size: 1rem;
+      transition: all var(--speed);
+    }
+
+    input:focus, textarea:focus, select:focus {
+      outline: none;
+      border-color: var(--primary);
+      background: var(--input-focus);
+      box-shadow: 0 0 12px var(--primary-glow);
+    }
+
+    textarea { resize: none; height: 130px; }
+
+    select {
+      appearance: none;
+      cursor: pointer;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%230d9488' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 1.25rem center;
+      background-size: 1.2rem;
+      padding-right: 2.75rem;
+    }
+
+    body.dark select {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%232dd4bf' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+    }
+
+    /* ============================================================
+       BUTTONS
+       ============================================================ */
+    .btn {
+      display: inline-flex; justify-content: center; align-items: center; gap: 0.5rem;
+      padding: 0.9rem 1.85rem;
+      border-radius: 14px;
+      font-family: var(--font-heading);
+      font-size: 1rem; font-weight: 600;
+      cursor: pointer;
+      transition: all var(--speed);
+      border: none;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: var(--btn-text);
+      box-shadow: 0 4px 15px var(--primary-glow);
+    }
+    .btn-primary:hover { transform: translateY(-2px); filter: brightness(1.05); }
+    .btn-primary:active { transform: translateY(0); }
+
+    .btn-secondary {
+      background: var(--input-bg);
+      color: var(--text-1);
+      border: 1px solid var(--border);
+    }
+    .btn-secondary:hover { background: var(--input-focus); border-color: var(--text-2); }
+
+    /* ============================================================
+       LANDING SCREEN
+       ============================================================ */
+    #landing-screen { max-width: 650px; margin: 1.5rem auto; width: 100%; }
+
+    .disclaimer {
+      background: var(--red-bg);
+      border: 1px solid var(--red-border);
+      border-radius: 14px;
+      padding: 1.25rem;
+      display: flex;
+      gap: 1rem;
+      align-items: flex-start;
+    }
+
+    .disclaimer-icon { font-size: 1.5rem; color: var(--red); }
+
+    .disclaimer p {
+      font-size: 0.875rem;
+      color: var(--text-2);
+      line-height: 1.55;
+    }
+
+    .disclaimer strong { color: var(--text-1); }
+
+    .divider-line {
+      display: flex; align-items: center; gap: 1rem;
+      color: var(--text-muted); font-size: 0.85rem;
+    }
+    .divider-line::before,
+    .divider-line::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+    .btn-breathing {
+      width: 100%;
+      padding: 0.875rem 1.5rem;
+      border-radius: var(--radius);
+      border: 1.5px solid rgba(14,165,233,0.3);
+      background: linear-gradient(135deg, rgba(14,165,233,0.08), rgba(13,148,136,0.08));
+      color: var(--secondary);
+      font-family: var(--font-body);
+      font-size: 0.95rem; font-weight: 500;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center; gap: 0.6rem;
+      transition: all 0.25s ease;
+    }
+    .btn-breathing:hover {
+      background: linear-gradient(135deg, rgba(14,165,233,0.18), rgba(13,148,136,0.18));
+      border-color: rgba(14,165,233,0.6);
+      transform: translateY(-2px);
+    }
+
+    /* ============================================================
+       CHAT SCREEN
+       ============================================================ */
+    .progress-bar-row {
+      display: flex; align-items: center; justify-content: space-between;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .progress-label { font-family: var(--font-heading); font-weight: 600; color: var(--text-2); font-size: 0.9rem; }
+
+    .progress-track {
+      flex-grow: 1; height: 8px;
+      background: var(--border); border-radius: 4px;
+      margin: 0 1.25rem; overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%; width: 0%;
+      background: linear-gradient(90deg, var(--primary), var(--secondary));
+      border-radius: 4px;
+      transition: width var(--speed) cubic-bezier(0.4,0,0.2,1);
+    }
+
+    .category-badge {
+      background: var(--input-bg);
+      border: 1px solid var(--border);
+      padding: 0.25rem 0.75rem;
+      border-radius: 20px;
+      font-size: 0.75rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.05em;
+      color: var(--primary);
+    }
+
+    .red-flag-banner {
+      display: none;
+      background: var(--red-bg);
+      border: 1px solid var(--red-border);
+      border-radius: 14px;
+      padding: 1rem 1.25rem;
+      align-items: center;
+      gap: 1rem;
+    }
+    .red-flag-banner.visible { display: flex; animation: slideDown 0.3s ease-out; }
+
+    .chat-log {
+      flex-grow: 1;
+      min-height: 300px; max-height: 420px;
+      overflow-y: auto;
+      display: flex; flex-direction: column; gap: 1rem;
+      padding-right: 0.5rem;
+      margin: 1rem 0;
+    }
+
+    .chat-log::-webkit-scrollbar { width: 6px; }
+    .chat-log::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+    .msg {
+      max-width: 80%;
+      padding: 0.9rem 1.35rem;
+      border-radius: 18px;
+      font-size: 0.975rem;
+      line-height: 1.55;
+      animation: msgPop 0.3s cubic-bezier(0.18,0.89,0.32,1.28) forwards;
+    }
+
+    .msg-bot {
+      align-self: flex-start;
+      background: var(--bubble-bot);
+      border: 1px solid var(--border);
+      border-bottom-left-radius: 4px;
+      transform-origin: left bottom;
+    }
+
+    .msg-user {
+      align-self: flex-end;
+      background: var(--bubble-user);
+      border: 1px solid var(--bubble-user-b);
+      border-bottom-right-radius: 4px;
+      transform-origin: right bottom;
+    }
+
+    .typing-dots {
+      align-self: flex-start;
+      background: var(--bubble-bot);
+      border: 1px solid var(--border);
+      padding: 0.8rem 1.35rem;
+      border-radius: 18px;
+      border-bottom-left-radius: 4px;
+      display: flex; align-items: center; gap: 5px;
+    }
+
+    .dot {
+      width: 7px; height: 7px;
+      background: var(--text-muted); border-radius: 50%;
+      animation: bounce 1.4s infinite ease-in-out both;
+    }
+    .dot:nth-child(1) { animation-delay: -0.32s; }
+    .dot:nth-child(2) { animation-delay: -0.16s; }
+
+    .chat-input-row { display: flex; gap: 0.75rem; }
+    .chat-input-row input { flex-grow: 1; }
+
+    /* ============================================================
+       BREATHING TEST SCREEN
+       ============================================================ */
+    .breathing-container {
+      display: flex; flex-direction: column; align-items: center;
+      gap: 2rem; padding: 1rem 0.5rem;
+    }
+
+    .breathing-header { text-align: center; }
+    .breathing-header h2 { font-size: 1.6rem; margin-bottom: 0.4rem; }
+
+    .cycle-badge {
+      display: inline-block;
+      background: var(--primary-glow);
+      border: 1px solid rgba(13,148,136,0.2);
+      padding: 0.3rem 1rem; border-radius: 20px;
+      font-size: 0.85rem; font-weight: 500; color: var(--primary);
+      margin-top: 0.75rem;
+    }
+
+    .circle-wrapper {
+      position: relative;
+      width: 220px; height: 220px;
+      display: flex; align-items: center; justify-content: center;
+    }
+
+    .breath-circle {
+      width: 180px; height: 180px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(13,148,136,0.12), rgba(14,165,233,0.06));
+      border: 2.5px solid var(--primary);
+      display: flex; align-items: center; justify-content: center;
+      transition: transform 4s ease-in-out, border-color 0.5s, box-shadow 0.5s;
+      box-shadow: 0 0 30px rgba(13,148,136,0.15);
+      position: relative; z-index: 2;
+    }
+
+    .breath-circle.inhale  { transform: scale(1.35); border-color: var(--secondary); box-shadow: 0 0 50px rgba(14,165,233,0.35); }
+    .breath-circle.hold    { transform: scale(1.35); border-color: var(--primary);   box-shadow: 0 0 40px rgba(13,148,136,0.3); }
+    .breath-circle.exhale  { transform: scale(1.0);  border-color: var(--primary);   box-shadow: 0 0 20px rgba(13,148,136,0.1); }
+
+    .breath-inner { display: flex; flex-direction: column; align-items: center; gap: 0.2rem; }
+    .phase-label  { font-family: var(--font-heading); font-size: 0.9rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-1); }
+    .phase-timer  { font-family: var(--font-heading); font-size: 2.2rem; font-weight: 700; color: var(--primary); line-height: 1; }
+
+    .ring-pulse {
+      position: absolute; width: 210px; height: 210px;
+      border-radius: 50%; border: 1.5px solid rgba(13,148,136,0.2);
+      animation: ringPulse 3s ease-in-out infinite; z-index: 1;
+    }
+
+    .difficulty-panel { width: 100%; text-align: center; animation: fadeSlideUp 0.4s ease; }
+    .difficulty-panel h3 { font-size: 1.1rem; margin-bottom: 1rem; }
+
+    .diff-grid { display: flex; gap: 0.75rem; justify-content: center; flex-wrap: wrap; }
+
+    .diff-btn {
+      display: flex; flex-direction: column; align-items: center; gap: 0.3rem;
+      padding: 1rem 1.25rem; border-radius: 16px;
+      border: 1.5px solid var(--border); background: var(--bg-surface);
+      cursor: pointer; transition: all 0.2s; min-width: 110px;
+      font-family: var(--font-body);
+    }
+    .diff-btn:hover { transform: translateY(-3px); }
+    .diff-btn.easy:hover     { border-color: var(--green);  background: var(--green-bg);  }
+    .diff-btn.moderate:hover { border-color: var(--orange); background: var(--orange-bg); }
+    .diff-btn.hard:hover     { border-color: var(--red);    background: var(--red-bg);    }
+    .diff-icon  { font-size: 1.5rem; }
+    .diff-label { font-size: 0.85rem; font-weight: 600; color: var(--text-1); }
+    .diff-desc  { font-size: 0.72rem; color: var(--text-muted); }
+
+    .breath-results { width: 100%; display: flex; flex-direction: column; align-items: center; gap: 1.5rem; animation: fadeSlideUp 0.5s ease; }
+
+    .result-card {
+      width: 100%; border-radius: var(--radius);
+      padding: 2rem; text-align: center;
+      border: 1.5px solid var(--border); background: var(--bg-surface);
+      display: flex; flex-direction: column; align-items: center; gap: 0.75rem;
+    }
+    .result-card.green  { border-color: var(--green-border);  background: var(--green-bg);  }
+    .result-card.orange { border-color: var(--orange-border); background: var(--orange-bg); }
+    .result-card.red    { border-color: var(--red-border);    background: var(--red-bg);    }
+
+    .score-circle {
+      width: 90px; height: 90px;
+      border-radius: 50%; background: var(--bg-surface);
+      border: 3px solid var(--primary);
+      display: flex; align-items: center; justify-content: center; gap: 2px;
+      box-shadow: 0 4px 20px rgba(13,148,136,0.2);
+    }
+    .score-circle.green  { border-color: var(--green);  }
+    .score-circle.orange { border-color: var(--orange); }
+    .score-circle.red    { border-color: var(--red);    }
+
+    .score-num   { font-family: var(--font-heading); font-size: 2rem; font-weight: 700; color: var(--primary); line-height: 1; }
+    .score-denom { font-size: 0.85rem; color: var(--text-muted); align-self: flex-end; padding-bottom: 0.3rem; }
+
+    .result-title { font-size: 1.2rem; }
+    .result-desc  { font-size: 0.9rem; color: var(--text-2); max-width: 380px; }
+
+    .result-urgency {
+      display: inline-block; padding: 0.3rem 1rem;
+      border-radius: 20px; font-size: 0.8rem; font-weight: 600; color: #fff;
+    }
+
+    .result-actions { display: flex; flex-direction: column; gap: 0.75rem; width: 100%; }
+    .result-actions .btn { width: 100%; }
+
+    /* ============================================================
+       RESULTS SCREEN
+       ============================================================ */
+    .results-header {
+      text-align: center; padding: 2.5rem;
+      border-radius: var(--radius);
+      position: relative; overflow: hidden;
+      border: 1px solid var(--border); background: var(--bg-surface);
+    }
+    .results-header::before {
+      content: ''; position: absolute; inset: 0;
+      opacity: 0.1; pointer-events: none;
+    }
+
+    .results-header.red    { background: var(--red-bg);    border-color: var(--red-border);    box-shadow: 0 0 35px var(--red-border); }
+    .results-header.orange { background: var(--orange-bg); border-color: var(--orange-border); box-shadow: 0 0 35px var(--orange-border); }
+    .results-header.green  { background: var(--green-bg);  border-color: var(--green-border);  box-shadow: 0 0 35px var(--green-border); }
+
+    .urgency-badge {
+      display: inline-block; padding: 0.45rem 1.25rem;
+      border-radius: 30px;
+      font-family: var(--font-heading); font-weight: 700;
+      font-size: 0.85rem; letter-spacing: 0.08em; text-transform: uppercase;
+      margin-bottom: 1rem; position: relative; z-index: 1;
+    }
+    .results-header.red    .urgency-badge { background: var(--red);    color: #fff; }
+    .results-header.orange .urgency-badge { background: var(--orange); color: #fff; }
+    .results-header.green  .urgency-badge { background: var(--green);  color: #fff; }
+
+    .condition-title {
+      font-size: 1.85rem; font-weight: 700; margin-bottom: 0.5rem;
+      position: relative; z-index: 1;
+    }
+    .results-header.red    .condition-title { color: var(--red); }
+    .results-header.orange .condition-title { color: var(--orange); }
+    .results-header.green  .condition-title { color: var(--green); }
+
+    .results-desc { color: var(--text-2); max-width: 600px; margin: 0 auto; position: relative; z-index: 1; }
+
+    .rec-list { list-style: none; display: flex; flex-direction: column; gap: 1rem; }
+    .rec-list li { display: flex; gap: 0.875rem; font-size: 0.975rem; color: var(--text-2); }
+    .rec-list li::before { content: "✦"; color: var(--primary); font-weight: bold; }
+
+    .results-actions { display: flex; gap: 1rem; justify-content: center; }
+
+    /* ============================================================
+       NUTRITION (FOOD) SCREEN — custom SVG icon in nav
+       ============================================================ */
+    .food-header h2 { font-size: 1.6rem; margin-bottom: 0.25rem; }
+    .food-header p  { color: var(--text-muted); font-size: 0.95rem; }
+
+    .mood-section-label { font-size: 0.85rem; font-weight: 600; color: var(--text-2); text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 0.75rem; }
+
+    .mood-chips { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+
+    .chip {
+      background: var(--input-bg);
+      border: 1px solid var(--border);
+      border-radius: 30px;
+      padding: 0.45rem 1rem;
+      font-size: 0.875rem; font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+      color: var(--text-2);
+      display: flex; align-items: center; gap: 0.35rem;
+    }
+    .chip:hover { border-color: var(--primary); color: var(--primary); background: var(--primary-glow); }
+    .chip.selected { background: var(--primary-glow); border-color: var(--primary); color: var(--primary); }
+
+    .food-input-row { display: flex; gap: 0.75rem; }
+    .food-input-row input { flex: 1; }
+
+    .food-loading { text-align: center; padding: 2rem; }
+    .pulse-ring-wrap { position: relative; width: 80px; height: 80px; margin: 0 auto 1rem; display: flex; align-items: center; justify-content: center; }
+    .pulse-ring { position: absolute; width: 80px; height: 80px; border-radius: 50%; border: 2px solid var(--primary); animation: ringPulse 1.5s ease-in-out infinite; }
+    .pulse-emoji { font-size: 2.5rem; }
+
+    .food-error { text-align: center; padding: 1.5rem; color: var(--red); }
+
+    .food-results-header { display: flex; align-items: center; gap: 1rem; margin-bottom: 1.25rem; }
+    .food-condition-badge {
+      background: var(--primary-glow);
+      border: 1px solid rgba(13,148,136,0.2);
+      padding: 0.3rem 0.9rem; border-radius: 20px;
+      font-size: 0.8rem; font-weight: 600; color: var(--primary);
+    }
+
+    .food-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; }
+
+    .food-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: 16px; padding: 1.25rem;
+      display: flex; flex-direction: column; gap: 0.5rem;
+      transition: all var(--speed);
+    }
+    .food-card:hover { border-color: var(--primary); transform: translateY(-2px); box-shadow: var(--shadow); }
+    .food-card-icon  { font-size: 2rem; }
+    .food-card-title { font-family: var(--font-heading); font-size: 1rem; font-weight: 700; color: var(--primary); }
+    .food-card-items { list-style: none; display: flex; flex-direction: column; gap: 0.3rem; }
+    .food-card-items li { font-size: 0.875rem; color: var(--text-2); display: flex; align-items: center; gap: 0.4rem; }
+    .food-card-items li::before { content: "•"; color: var(--primary); }
+
+    /* API key panel */
+    .api-toggle-btn {
+      width: 100%; background: var(--input-bg);
+      border: 1px solid var(--border); border-radius: 14px;
+      padding: 0.85rem 1.25rem;
+      display: flex; align-items: center; gap: 0.75rem;
+      cursor: pointer; color: var(--text-2);
+      font-family: var(--font-body); font-size: 0.9rem;
+      transition: all var(--speed);
+    }
+    .api-toggle-btn:hover { border-color: var(--primary); color: var(--primary); }
+    .api-arrow { margin-left: auto; transition: transform var(--speed); }
+    .api-toggle-btn[aria-expanded="true"] .api-arrow { transform: rotate(180deg); }
+
+    .api-panel { padding: 1rem 0 0; }
+    .api-panel p { font-size: 0.875rem; color: var(--text-2); margin-bottom: 0.75rem; }
+    .api-panel a { color: var(--primary); text-decoration: underline; }
+    .api-status { font-size: 0.82rem; margin-top: 0.5rem; color: var(--green); }
+
+    /* ============================================================
+       BMI SCREEN — custom SVG icon in nav
+       ============================================================ */
+    .bmi-header { display: flex; align-items: center; gap: 1rem; }
+    .bmi-header-icon { font-size: 2rem; }
+
+    .bmi-form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.25rem; margin: 1.5rem 0;
+    }
+
+    .bmi-unit-badge {
+      display: inline-block;
+      background: var(--primary-glow); border: 1px solid rgba(13,148,136,0.2);
+      padding: 0.1rem 0.5rem; border-radius: 8px;
+      font-size: 0.72rem; font-weight: 700; color: var(--primary);
+      margin-left: 0.4rem; vertical-align: middle;
+    }
+
+    .bmi-result-card { margin-top: 1.5rem; }
+
+    .bmi-hero {
+      display: flex; align-items: center; gap: 1.5rem; margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+    }
+
+    .bmi-circle {
+      width: 110px; height: 110px; flex-shrink: 0;
+      border-radius: 50%; border: 4px solid var(--primary);
+      background: var(--bg-surface);
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      box-shadow: 0 4px 20px var(--primary-glow);
+      transition: all 0.6s ease;
+    }
+    .bmi-circle.underweight { border-color: var(--secondary); }
+    .bmi-circle.normal      { border-color: var(--green); }
+    .bmi-circle.overweight  { border-color: var(--orange); }
+    .bmi-circle.obese       { border-color: var(--red); }
+
+    .bmi-value  { font-family: var(--font-heading); font-size: 2rem; font-weight: 800; color: var(--primary); line-height: 1; }
+    .bmi-sublabel { font-size: 0.75rem; color: var(--text-muted); font-weight: 600; }
+
+    .bmi-cat-info { flex: 1; min-width: 160px; }
+
+    .bmi-cat-badge {
+      display: inline-block; padding: 0.35rem 1rem;
+      border-radius: 20px; font-weight: 700; font-size: 0.85rem;
+      letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 0.5rem;
+    }
+    .bmi-cat-badge.underweight { background: rgba(14,165,233,0.15); color: var(--secondary); }
+    .bmi-cat-badge.normal      { background: var(--green-bg);       color: var(--green); }
+    .bmi-cat-badge.overweight  { background: var(--orange-bg);      color: var(--orange); }
+    .bmi-cat-badge.obese       { background: var(--red-bg);         color: var(--red); }
+
+    .bmi-cat-desc { font-size: 0.9rem; color: var(--text-2); }
+
+    /* Gauge */
+    .bmi-gauge { margin: 1.5rem 0; }
+
+    .gauge-track {
+      position: relative; height: 14px;
+      background: linear-gradient(90deg, var(--secondary) 0%, var(--green) 30%, var(--orange) 65%, var(--red) 100%);
+      border-radius: 7px; overflow: visible; margin-bottom: 0.5rem;
+    }
+
+    .gauge-pointer {
+      position: absolute; top: -5px;
+      width: 24px; height: 24px;
+      border-radius: 50%;
+      background: var(--bg-page); border: 3px solid var(--text-1);
+      transform: translateX(-50%);
+      transition: left 0.8s cubic-bezier(0.4,0,0.2,1);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    }
+
+    .gauge-labels { display: flex; justify-content: space-between; font-size: 0.72rem; color: var(--text-muted); padding: 0 2px; }
+
+    /* Tips */
+    .tips-section { margin-top: 1.25rem; }
+    .tips-title { font-size: 1rem; font-weight: 700; color: var(--primary); margin-bottom: 0.75rem; }
+    .tips-list { list-style: none; display: flex; flex-direction: column; gap: 0.65rem; }
+    .tips-list li { display: flex; gap: 0.75rem; font-size: 0.9rem; color: var(--text-2); }
+    .tips-list li::before { content: "✦"; color: var(--primary); flex-shrink: 0; }
+
+    .bmi-disclaimer {
+      margin-top: 1.25rem; padding: 1rem;
+      background: var(--input-bg); border-radius: 12px;
+      font-size: 0.8rem; color: var(--text-muted); line-height: 1.55;
+      display: flex; gap: 0.5rem;
+    }
+
+    /* ============================================================
+       PROFILE / AUTH SCREENS
+       ============================================================ */
+    .auth-tabs { display: flex; border-bottom: 2px solid var(--border); margin-bottom: 1.5rem; }
+
+    .auth-tab {
+      flex: 1; background: transparent; border: none;
+      color: var(--text-muted); padding: 0.75rem;
+      font-family: var(--font-heading); font-weight: 600; font-size: 1.05rem;
+      cursor: pointer; border-bottom: 2px solid transparent;
+      margin-bottom: -2px; transition: all var(--speed);
+    }
+    .auth-tab:hover   { color: var(--primary); }
+    .auth-tab.active  { color: var(--primary); border-bottom-color: var(--primary); }
+
+    .auth-form { display: none; flex-direction: column; gap: 1.25rem; }
+    .auth-form.active { display: flex; animation: fadeIn 0.4s ease-out; }
+
+    .form-row { display: flex; gap: 1rem; }
+    .form-row .form-group { flex: 1; }
+
+    .auth-subtitle { font-size: 0.9rem; color: var(--text-2); }
+
+    /* Profile logged-in view */
+    .profile-header { display: flex; align-items: center; gap: 1.25rem; margin-bottom: 1.75rem; }
+
+    .avatar {
+      font-size: 2.25rem; width: 64px; height: 64px;
+      border-radius: 50%; border: 2px solid var(--primary);
+      background: var(--primary-glow);
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 0 15px var(--primary-glow);
+    }
+
+    .detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem; }
+
+    .detail-card {
+      background: var(--input-bg); border: 1px solid var(--border);
+      padding: 1rem 1.25rem; border-radius: 14px;
+      display: flex; flex-direction: column; gap: 0.25rem;
+      transition: all var(--speed);
+    }
+    .detail-card:hover { border-color: var(--primary); }
+    .detail-label { font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; font-weight: 700; }
+    .detail-value { font-family: var(--font-heading); font-size: 1.25rem; font-weight: 700; color: var(--primary); }
+
+    .med-history-box {
+      background: var(--input-bg); border: 1px solid var(--border);
+      border-radius: 14px; padding: 1.25rem;
+      font-size: 0.95rem; color: var(--text-2); line-height: 1.6;
+    }
+
+    .profile-actions { display: flex; gap: 1rem; margin-top: 2rem; }
+
+    /* ============================================================
+       HISTORY SCREEN
+       ============================================================ */
+    .text-center-panel {
+      text-align: center; padding: 3.5rem 2.5rem;
+      display: flex; flex-direction: column; align-items: center; gap: 1rem;
+    }
+    .panel-icon { font-size: 3rem; }
+
+    .history-list { display: flex; flex-direction: column; gap: 1rem; width: 100%; }
+
+    .history-card {
+      background: var(--bg-surface); border: 1px solid var(--border);
+      border-left: 6px solid var(--primary);
+      border-radius: 14px; padding: 1.15rem 1.4rem;
+      display: flex; justify-content: space-between; align-items: center;
+      cursor: pointer; transition: all var(--speed); gap: 1.25rem;
+    }
+    .history-card:hover { transform: translateY(-2px); box-shadow: var(--shadow); }
+    .history-card.red    { border-left-color: var(--red); }
+    .history-card.orange { border-left-color: var(--orange); }
+    .history-card.green  { border-left-color: var(--green); }
+
+    .hc-info { display: flex; flex-direction: column; gap: 0.35rem; flex-grow: 1; overflow: hidden; }
+    .hc-title { font-family: var(--font-heading); font-size: 1.1rem; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .hc-meta  { font-size: 0.8rem; color: var(--text-muted); }
+    .hc-symptom { font-size: 0.85rem; color: var(--text-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+    .hc-actions { display: flex; gap: 0.5rem; flex-shrink: 0; }
+
+    .icon-btn {
+      background: var(--input-bg); border: 1px solid var(--border);
+      border-radius: 10px; width: 38px; height: 38px;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; font-size: 1rem; color: var(--text-2);
+      transition: all var(--speed);
+    }
+    .icon-btn:hover { background: var(--input-focus); color: var(--red); border-color: rgba(225,29,72,0.25); }
+
+    /* ============================================================
+       MODAL
+       ============================================================ */
+    .modal-overlay {
+      position: fixed; inset: 0;
+      background: rgba(10,14,26,0.55);
+      backdrop-filter: blur(10px);
+      display: none; align-items: center; justify-content: center;
+      z-index: 9999; padding: 1.5rem;
+    }
+    .modal-overlay.open { display: flex; animation: fadeIn 0.3s ease; }
+
+    .modal-card {
+      background: var(--bg-page);
+      width: 100%; max-width: 680px; max-height: 85vh;
+      border-radius: var(--radius); border: 1px solid var(--border);
+      display: flex; flex-direction: column; overflow: hidden;
+      position: relative; padding: 2.25rem 1.75rem 1.75rem;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+      animation: slideUp 0.4s cubic-bezier(0.18,0.89,0.32,1.15);
+    }
+
+    .modal-close {
+      position: absolute; top: 0.75rem; right: 0.75rem;
+      background: transparent; border: none;
+      font-size: 2.25rem; color: var(--text-muted);
+      cursor: pointer; width: 38px; height: 38px;
+      display: flex; align-items: center; justify-content: center;
+      border-radius: 50%; transition: all var(--speed);
+    }
+    .modal-close:hover { color: var(--red); transform: rotate(90deg); }
+
+    .modal-scroll { overflow-y: auto; flex-grow: 1; display: flex; flex-direction: column; gap: 1.25rem; margin-bottom: 1.5rem; padding-right: 0.5rem; }
+
+    .modal-scroll::-webkit-scrollbar { width: 5px; }
+    .modal-scroll::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+    .modal-section {
+      background: var(--bg-surface); border: 1px solid var(--border);
+      border-radius: 14px; padding: 1.25rem;
+      display: flex; flex-direction: column; gap: 0.65rem;
+    }
+    .modal-section h4 { font-family: var(--font-heading); color: var(--primary); font-size: 1.05rem; }
+
+    .modal-transcript {
+      background: var(--input-bg); border: 1px solid var(--border);
+      border-radius: 12px; padding: 1rem;
+      max-height: 250px; overflow-y: auto;
+      display: flex; flex-direction: column; gap: 0.85rem;
+    }
+
+    .modal-actions {
+      display: flex; gap: 1rem; justify-content: flex-end;
+      border-top: 1px solid var(--border); padding-top: 1.25rem;
+    }
+
+    /* ============================================================
+       FOOTER
+       ============================================================ */
+    .app-footer {
+      margin-top: auto; padding: 2.5rem 1rem 1.5rem;
+      text-align: center; border-top: 1px solid var(--border);
+    }
+
+    .emergency-row { display: flex; justify-content: center; gap: 2rem; flex-wrap: wrap; margin-bottom: 1rem; }
+
+    .emergency-item { display: flex; align-items: center; gap: 0.5rem; font-family: var(--font-heading); font-weight: 600; color: var(--red); }
+    .emergency-item a { color: inherit; text-decoration: underline; }
+
+    .footer-note { font-size: 0.785rem; color: var(--text-muted); max-width: 700px; margin: 0 auto; line-height: 1.5; }
+
+    /* ============================================================
+       KEYFRAMES
+       ============================================================ */
+    @keyframes fadeIn      { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
+    @keyframes msgPop      { from { opacity:0; transform:scale(0.9); }       to { opacity:1; transform:scale(1); } }
+    @keyframes slideDown   { from { opacity:0; transform:translateY(-15px); } to { opacity:1; transform:translateY(0); } }
+    @keyframes slideUp     { from { opacity:0; transform:translateY(20px); }  to { opacity:1; transform:translateY(0); } }
+    @keyframes fadeSlideUp { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:translateY(0); } }
+    @keyframes ringPulse   { 0%,100%{transform:scale(1);opacity:0.6;} 50%{transform:scale(1.12);opacity:0.1;} }
+    @keyframes bounce      { 0%,80%,100%{transform:scale(0);} 40%{transform:scale(1.0);} }
+    @keyframes pulse       { 0%{transform:scale(1);opacity:1;} 50%{transform:scale(1.08);opacity:0.8;} 100%{transform:scale(1);opacity:1;} }
+
+    /* ============================================================
+       RESPONSIVE
+       ============================================================ */
+    @media (max-width: 768px) {
+      .app { padding: 1rem 1rem 2rem; }
+      .glass { padding: 1.75rem; }
+      .logo { font-size: 2rem; }
+      .app-nav { gap: 0.25rem; padding: 0.35rem; }
+      .nav-btn { padding: 0.5rem 0.7rem; font-size: 0.8rem; flex: 1; justify-content: center; }
+      .nav-btn .nav-label { display: none; }
+      .bmi-form-grid { grid-template-columns: 1fr; }
+      .results-actions { flex-direction: column; }
+      .btn { width: 100%; }
+      .form-row { flex-direction: column; }
+      .modal-card { padding: 1.75rem 1.25rem 1.25rem; max-height: 90vh; }
+      .modal-actions { flex-direction: column; }
+      .diff-grid { flex-direction: column; align-items: stretch; }
+      .diff-btn { flex-direction: row; justify-content: flex-start; min-width: unset; }
+      .detail-grid { grid-template-columns: 1fr; }
+      .history-card { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ================================================================
+     SVG ICON DEFINITIONS — referenced throughout as <use href="#...">
+     ================================================================ -->
+<svg xmlns="http://www.w3.org/2000/svg" style="display:none">
+
+  <!-- Stethoscope icon for Triage tab -->
+  <symbol id="icon-triage" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M4.8 2.3A.3.3 0 1 0 5 2H4a2 2 0 0 0-2 2v5a6 6 0 0 0 6 6 6 6 0 0 0 6-6V4a2 2 0 0 0-2-2h-1a.3.3 0 1 0 .3.3"/>
+    <path d="M8 15v1a6 6 0 0 0 6 6v0a6 6 0 0 0 6-6v-4"/>
+    <circle cx="20" cy="10" r="2"/>
+  </symbol>
+
+  <!-- Clipboard / History icon -->
+  <symbol id="icon-history" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="5" y="3" width="14" height="18" rx="2"/>
+    <path d="M9 3v2h6V3"/>
+    <path d="M9 12h6M9 16h4"/>
+  </symbol>
+
+  <!-- 
+    NUTRITION ICON — custom bowl with fresh food design
+    A bowl shape with a leaf, drop, and grain to represent wholesome food
+  -->
+  <symbol id="icon-food" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+    <!-- Bowl base -->
+    <path d="M4 10 C4 16 20 16 20 10"/>
+    <!-- Bowl rim -->
+    <line x1="3" y1="10" x2="21" y2="10"/>
+    <!-- Steam / aroma -->
+    <path d="M8 7 C8 5.5 9 5 9 3.5" stroke-dasharray="0"/>
+    <path d="M12 6 C12 4.5 13 4 13 2.5"/>
+    <path d="M16 7 C16 5.5 17 5 17 3.5"/>
+    <!-- Stand / bottom line -->
+    <line x1="8" y1="16" x2="16" y2="16"/>
+    <line x1="9" y1="16" x2="9" y2="18"/>
+    <line x1="15" y1="16" x2="15" y2="18"/>
+    <line x1="7" y1="18" x2="17" y2="18"/>
+  </symbol>
+
+  <!-- 
+    BMI / SCALE ICON — custom balance scale
+    Two pans on a fulcrum with a person silhouette, representing body measurement
+  -->
+  <symbol id="icon-bmi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+    <!-- Person silhouette head -->
+    <circle cx="12" cy="4" r="2"/>
+    <!-- Person body -->
+    <path d="M12 6 L12 13"/>
+    <!-- Arms out as scale beam -->
+    <path d="M6 9 L18 9"/>
+    <!-- Left pan hanging -->
+    <path d="M6 9 L5 13"/>
+    <path d="M4 13 C4 15 8 15 8 13"/>
+    <!-- Right pan hanging (lower = heavier) -->
+    <path d="M18 9 L19 14"/>
+    <path d="M17 14 C17 16 21 16 21 14"/>
+    <!-- Legs -->
+    <path d="M10 13 L9 18M14 13 L15 18"/>
+    <!-- Fulcrum base -->
+    <line x1="10" y1="22" x2="14" y2="22"/>
+    <line x1="12" y1="13" x2="12" y2="22"/>
+  </symbol>
+
+  <!-- User / Profile icon -->
+  <symbol id="icon-profile" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="12" cy="8" r="4"/>
+    <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
+  </symbol>
+
+  <!-- Trash icon for delete -->
+  <symbol id="icon-trash" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+    <polyline points="3 6 5 6 21 6"/>
+    <path d="M19 6l-1 14H6L5 6"/>
+    <path d="M10 11v6M14 11v6"/>
+    <path d="M9 6V4h6v2"/>
+  </symbol>
+
+  <!-- Eye icon for view -->
+  <symbol id="icon-eye" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+    <circle cx="12" cy="12" r="3"/>
+  </symbol>
+
+</svg>
+
+<!-- ================================================================
+     APP ROOT
+     ================================================================ -->
+<div class="app">
+
+  <!-- Header -->
+  <header class="app-header">
+    <button class="theme-btn" id="themeBtn" aria-label="Toggle dark/light mode">☀️</button>
+    <div class="logo">
+      <span class="logo-icon">🩺</span>
+      <span>Tabibak</span>
+    </div>
+    <p class="app-subtitle">Intelligent Virtual Medical Triage Assistant</p>
+  </header>
+
+  <!-- Navigation — uses custom SVG icons for Food & BMI -->
+  <nav class="app-nav">
+    <button class="nav-btn active" data-tab="landing">
+      <svg><use href="#icon-triage"/></svg>
+      <span class="nav-label">Triage</span>
+    </button>
+    <button class="nav-btn" data-tab="history">
+      <svg><use href="#icon-history"/></svg>
+      <span class="nav-label">History</span>
+    </button>
+    <button class="nav-btn" data-tab="food">
+      <!-- Custom nutrition bowl SVG icon -->
+      <svg><use href="#icon-food"/></svg>
+      <span class="nav-label">Nutrition</span>
+    </button>
+    <button class="nav-btn" data-tab="bmi">
+      <!-- Custom balance scale SVG icon -->
+      <svg><use href="#icon-bmi"/></svg>
+      <span class="nav-label">BMI</span>
+    </button>
+    <button class="nav-btn" data-tab="profile">
+      <svg><use href="#icon-profile"/></svg>
+      <span class="nav-label">Account</span>
+    </button>
+  </nav>
+
+  <!-- ============================================================
+       SCREEN 1 — LANDING / SYMPTOM INPUT
+       ============================================================ -->
+  <main id="screen-landing" class="screen glass active">
+
+    <div class="disclaimer">
+      <span class="disclaimer-icon">⚠️</span>
+      <div>
+        <p><strong>Important Medical Disclaimer:</strong> Tabibak is an AI-driven triage screening tool for informational purposes only. It does <strong>not</strong> provide official medical diagnoses, treatments, or prescriptions. In a life-threatening crisis, call emergency services immediately.</p>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="symptomInput">Describe Your Symptoms</label>
+      <textarea id="symptomInput" placeholder="Example: I've had moderate stomach pain since this morning and feel slightly nauseated when eating..."></textarea>
+    </div>
+
+    <button class="btn btn-primary" id="startTriageBtn">Start Triage Session ➔</button>
+
+    <div style="display:flex;flex-direction:column;gap:0.5rem;margin-top:0.5rem;">
+      <div class="divider-line"><span>or</span></div>
+      <button class="btn-breathing" id="startBreathingBtn">🫁 Take Breathing Assessment Test</button>
+      <p style="font-size:0.78rem;color:var(--text-muted);text-align:center;">A guided breathing exercise to evaluate respiratory difficulty</p>
+    </div>
+
+  </main>
+
+  <!-- ============================================================
+       SCREEN 2 — TRIAGE CHAT
+       ============================================================ -->
+  <main id="screen-chat" class="screen glass">
+
+    <!-- Progress bar -->
+    <div class="progress-bar-row">
+      <span class="progress-label" id="progressLabel">Question 0/5</span>
+      <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+      <span class="category-badge" id="categoryBadge">General</span>
+    </div>
+
+    <!-- Emergency red-flag banner (hidden by default) -->
+    <div class="red-flag-banner" id="redFlagBanner">
+      <span style="font-size:1.6rem;animation:pulse 1.5s infinite;">🚨</span>
+      <div style="flex-grow:1;">
+        <h4 style="color:var(--red);margin-bottom:0.15rem;">Critical Symptom Warning</h4>
+        <p style="font-size:0.85rem;color:var(--text-2);">You have reported symptoms linked to high-risk emergencies. Call emergency services if you feel in danger.</p>
+      </div>
+      <button class="btn btn-secondary" style="color:var(--red);border-color:var(--red-border);padding:0.5rem 1rem;font-size:0.85rem;">Emergency Guide</button>
+    </div>
+
+    <!-- Chat messages -->
+    <div class="chat-log" id="chatLog"></div>
+
+    <!-- Input bar -->
+    <div class="chat-input-row">
+      <input type="text" id="chatInput" placeholder="Type your response..." autocomplete="off"/>
+      <button class="btn btn-primary" id="sendBtn" style="padding:0.875rem 1.25rem;">Send</button>
+    </div>
+
+  </main>
+
+  <!-- ============================================================
+       SCREEN 2B — BREATHING TEST
+       ============================================================ -->
+  <main id="screen-breathing" class="screen glass">
+    <div class="breathing-container">
+
+      <div class="breathing-header">
+        <h2>🫁 Breathing Assessment</h2>
+        <p style="color:var(--text-muted);">Follow the animated guide. Breathe at the pace of the circle.</p>
+        <div class="cycle-badge" id="cycleBadge">Cycle 1 of 3</div>
+      </div>
+
+      <div class="circle-wrapper">
+        <div class="breath-circle" id="breathCircle">
+          <div class="breath-inner">
+            <span class="phase-label" id="phaseLabel">Get Ready</span>
+            <span class="phase-timer" id="phaseTimer">4</span>
+          </div>
+        </div>
+        <div class="ring-pulse"></div>
+      </div>
+
+      <div class="difficulty-panel" id="difficultyPanel" style="display:none;">
+        <h3>How did that cycle feel?</h3>
+        <div class="diff-grid">
+          <button class="diff-btn easy" data-diff="easy">
+            <span class="diff-icon">✅</span>
+            <span class="diff-label">Comfortable</span>
+            <span class="diff-desc">I breathed normally</span>
+          </button>
+          <button class="diff-btn moderate" data-diff="moderate">
+            <span class="diff-icon">⚠️</span>
+            <span class="diff-label">Slightly Difficult</span>
+            <span class="diff-desc">I felt some strain</span>
+          </button>
+          <button class="diff-btn hard" data-diff="hard">
+            <span class="diff-icon">🚨</span>
+            <span class="diff-label">Very Difficult</span>
+            <span class="diff-desc">I couldn't complete it</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="breath-results" id="breathResults" style="display:none;">
+        <div class="result-card" id="breathResultCard">
+          <div class="score-circle" id="breathScoreCircle">
+            <span class="score-num" id="breathScoreNum">0</span>
+            <span class="score-denom">/10</span>
+          </div>
+          <h3 class="result-title" id="breathResultTitle">Breathing Assessment Complete</h3>
+          <p class="result-desc" id="breathResultDesc"></p>
+          <span class="result-urgency" id="breathUrgency"></span>
+        </div>
+        <div class="result-actions">
+          <button class="btn btn-primary" id="breathToTriageBtn">Start Triage with These Results</button>
+          <button class="btn btn-secondary" id="breathRestartBtn">Retake Test</button>
+          <button class="btn btn-secondary" id="breathBackBtn">Back to Home</button>
+        </div>
+      </div>
+
+      <div id="breathCancelWrap">
+        <button class="btn btn-secondary" id="breathCancelBtn">Cancel Test</button>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- ============================================================
+       SCREEN 3 — TRIAGE RESULTS
+       ============================================================ -->
+  <main id="screen-results" class="screen">
+
+    <div class="results-header glass" id="resultsHeader">
+      <span class="urgency-badge" id="urgencyBadge">Urgency</span>
+      <h2 class="condition-title" id="conditionTitle">Suspected Condition</h2>
+      <p class="results-desc" id="resultsDesc"></p>
+    </div>
+
+    <div class="glass" style="margin-top:0;">
+      <h3 style="color:var(--primary);margin-bottom:1.25rem;font-size:1.35rem;">✦ Next Steps & Recommendations</h3>
+      <ul class="rec-list" id="recList"></ul>
+    </div>
+
+    <div class="results-actions">
+      <button class="btn btn-secondary" id="restartBtn">Start New Triage</button>
+      <button class="btn btn-primary"   id="copyReportBtn">Copy Medical Report</button>
+    </div>
+
+    <!-- Hidden textarea for clipboard -->
+    <textarea id="reportText" style="position:absolute;left:-9999px;" aria-hidden="true"></textarea>
+
+  </main>
+
+  <!-- ============================================================
+       SCREEN 4 — NUTRITION ADVISOR
+       Uses the custom bowl SVG icon shown in nav
+       ============================================================ -->
+  <main id="screen-food" class="screen glass">
+
+    <div class="food-header">
+      <h2>🥗 Nutritional Guidance</h2>
+      <p>Select how you feel or describe your condition — we'll suggest the best foods, drinks, and habits for recovery.</p>
+    </div>
+
+    <!-- Quick-select mood chips -->
+    <div>
+      <p class="mood-section-label">How are you feeling right now?</p>
+      <div class="mood-chips" id="moodChips">
+        <button class="chip" data-mood="nausea and upset stomach">🤢 Nauseous</button>
+        <button class="chip" data-mood="fever and high body temperature">🤒 Fever</button>
+        <button class="chip" data-mood="stomach pain and cramps">😣 Stomach Pain</button>
+        <button class="chip" data-mood="fatigue and low energy">😴 Fatigue</button>
+        <button class="chip" data-mood="sore throat and difficulty swallowing">🤧 Sore Throat</button>
+        <button class="chip" data-mood="headache and migraine">🤕 Headache</button>
+        <button class="chip" data-mood="diarrhea and loose stools">😰 Diarrhea</button>
+        <button class="chip" data-mood="cold and flu symptoms">🥶 Cold &amp; Flu</button>
+        <button class="chip" data-mood="anxiety and stress">😟 Anxiety</button>
+        <button class="chip" data-mood="constipation">😖 Constipation</button>
+        <button class="chip" data-mood="muscle pain and soreness">💪 Muscle Pain</button>
+        <button class="chip" data-mood="poor sleep and insomnia">😵 Poor Sleep</button>
+      </div>
+    </div>
+
+    <!-- Free-text input -->
+    <div>
+      <p class="mood-section-label">Or describe it in your own words</p>
+      <div class="food-input-row">
+        <input type="text" id="foodCustomInput" placeholder="e.g. I have a stomach ache and feel bloated after eating..." autocomplete="off"/>
+        <button class="btn btn-primary" id="foodGetBtn">Get Suggestions</button>
+      </div>
+    </div>
+
+    <!-- API key panel -->
+    <div>
+      <button class="api-toggle-btn" id="apiToggle" aria-expanded="false">
+        <span>🔑</span>
+        <span id="apiLabel">AI Key Required — Click to Set</span>
+        <span class="api-arrow">▾</span>
+      </button>
+      <div id="apiPanel" class="api-panel" style="display:none;">
+        <p>This feature uses the Claude API. Get a key at <a href="https://console.anthropic.com" target="_blank" rel="noopener">console.anthropic.com</a>. Stored only in this browser session.</p>
+        <div class="food-input-row">
+          <input type="password" id="apiKeyInput" placeholder="sk-ant-..." autocomplete="off" spellcheck="false"/>
+          <button class="btn btn-secondary" id="apiSaveBtn">Save</button>
+        </div>
+        <p class="api-status" id="apiStatus"></p>
+      </div>
+    </div>
+
+    <!-- Loading state -->
+    <div id="foodLoading" style="display:none;" class="food-loading">
+      <div class="pulse-ring-wrap">
+        <div class="pulse-ring"></div>
+        <span class="pulse-emoji">🥗</span>
+      </div>
+      <p style="color:var(--text-2);">Analyzing your condition and preparing recommendations...</p>
+    </div>
+
+    <!-- Results -->
+    <div id="foodResults" style="display:none;">
+      <div class="food-results-header">
+        <span class="food-condition-badge" id="foodConditionBadge"></span>
+        <h3>Nutritional Recommendations</h3>
+      </div>
+      <div class="food-cards" id="foodCards"></div>
+      <button class="btn btn-secondary" id="foodResetBtn" style="margin-top:1rem;width:100%;">↩ Get New Recommendations</button>
+    </div>
+
+    <!-- Error -->
+    <div id="foodError" style="display:none;" class="food-error">
+      <span>⚠️</span>
+      <p id="foodErrorMsg">Something went wrong. Please check your API key and try again.</p>
+    </div>
+
+  </main>
+
+  <!-- ============================================================
+       SCREEN 5 — BMI CALCULATOR
+       Uses the custom balance-scale SVG icon shown in nav
+       ============================================================ -->
+  <main id="screen-bmi" class="screen">
+
+    <div class="glass">
+      <div class="bmi-header">
+        <span class="bmi-header-icon">⚖️</span>
+        <div>
+          <h2>BMI Calculator</h2>
+          <p style="color:var(--text-muted);">Body Mass Index &amp; Health Assessment</p>
+        </div>
+      </div>
+
+      <div class="bmi-form-grid">
+        <div class="form-group">
+          <label for="bmiHeight">Height <span class="bmi-unit-badge">cm</span></label>
+          <input type="number" id="bmiHeight" placeholder="175" min="100" max="250" inputmode="numeric"/>
+        </div>
+        <div class="form-group">
+          <label for="bmiWeight">Weight <span class="bmi-unit-badge">kg</span></label>
+          <input type="number" id="bmiWeight" placeholder="70" min="20" max="300" inputmode="numeric"/>
+        </div>
+        <div class="form-group">
+          <label for="bmiAge">Age <span class="bmi-unit-badge">yrs</span></label>
+          <input type="number" id="bmiAge" placeholder="25" min="5" max="110" inputmode="numeric"/>
+        </div>
+        <div class="form-group">
+          <label for="bmiGender">Gender</label>
+          <select id="bmiGender">
+            <option value="male">Male</option>
+            <option value="female">Female</option>
+          </select>
+        </div>
+      </div>
+
+      <button class="btn btn-primary" id="bmiCalcBtn" style="width:100%;">Calculate BMI</button>
+    </div>
+
+    <div class="glass bmi-result-card" id="bmiResultCard" style="display:none;">
+
+      <div class="bmi-hero">
+        <div class="bmi-circle" id="bmiCircle">
+          <span class="bmi-value" id="bmiValue">0.0</span>
+          <span class="bmi-sublabel">BMI</span>
+        </div>
+        <div class="bmi-cat-info">
+          <span class="bmi-cat-badge" id="bmiCatBadge">—</span>
+          <p class="bmi-cat-desc" id="bmiCatDesc"></p>
+        </div>
+      </div>
+
+      <!-- Colour gradient gauge -->
+      <div class="bmi-gauge">
+        <div class="gauge-track">
+          <div class="gauge-pointer" id="gaugePointer"></div>
+        </div>
+        <div class="gauge-labels">
+          <span>Underweight</span>
+          <span>Normal</span>
+          <span>Overweight</span>
+          <span>Obese</span>
+        </div>
+      </div>
+
+      <div class="tips-section">
+        <h4 class="tips-title">💡 Personalised Recommendations</h4>
+        <ul class="tips-list" id="tipsList"></ul>
+      </div>
+
+      <div class="bmi-disclaimer">
+        <span>ℹ️</span>
+        <span>BMI is a screening tool, not a diagnostic measure. Muscle mass, bone density, and ethnicity affect health risk independently of BMI. Consult a physician for a full assessment.</span>
+      </div>
+
+      <button class="btn btn-secondary" id="bmiResetBtn" style="width:100%;margin-top:0.5rem;">↩ Recalculate</button>
+    </div>
+
+  </main>
+
+  <!-- ============================================================
+       SCREEN 6 — ACCOUNT / PROFILE
+       ============================================================ -->
+  <main id="screen-profile" class="screen glass">
+
+    <!-- Auth forms (logged out) -->
+    <div id="authContainer" style="max-width:520px;margin:0 auto;width:100%;">
+      <div class="auth-tabs">
+        <button class="auth-tab active" data-form="loginForm">Sign In</button>
+        <button class="auth-tab" data-form="registerForm">Register</button>
+      </div>
+
+      <form class="auth-form active" id="loginForm">
+        <h3>Welcome Back</h3>
+        <p class="auth-subtitle">Sign in to access your personal triage history.</p>
+        <div class="form-group">
+          <label for="loginUser">Username</label>
+          <input type="text" id="loginUser" placeholder="Enter username..." autocomplete="username"/>
+        </div>
+        <div class="form-group">
+          <label for="loginPass">Password</label>
+          <input type="password" id="loginPass" placeholder="Enter password..." autocomplete="current-password"/>
+        </div>
+        <button type="submit" class="btn btn-primary">Sign In</button>
+      </form>
+
+      <form class="auth-form" id="registerForm">
+        <h3>Create Patient Account</h3>
+        <p class="auth-subtitle">Register to save histories and customise triage analysis.</p>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="regUser">Username *</label>
+            <input type="text" id="regUser" placeholder="Username..." autocomplete="username"/>
+          </div>
+          <div class="form-group">
+            <label for="regPass">Password *</label>
+            <input type="password" id="regPass" placeholder="Password..." autocomplete="new-password"/>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="regName">Full Name *</label>
+          <input type="text" id="regName" placeholder="Your full name..." autocomplete="name"/>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="regAge">Age *</label>
+            <input type="number" id="regAge" placeholder="Age..." min="0" max="120"/>
+          </div>
+          <div class="form-group">
+            <label for="regGender">Gender *</label>
+            <select id="regGender">
+              <option value="" disabled selected>Select...</option>
+              <option value="Male">Male</option>
+              <option value="Female">Female</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="regHistory">Medical History (Optional)</label>
+          <textarea id="regHistory" placeholder="E.g. High blood pressure, asthma, penicillin allergy..." style="height:80px;"></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">Create Account</button>
+      </form>
+    </div>
+
+    <!-- Profile dashboard (logged in) -->
+    <div id="profileContainer" style="display:none;width:100%;">
+      <div class="profile-header">
+        <div class="avatar">👤</div>
+        <div>
+          <h2 id="profileName">Patient Name</h2>
+          <p id="profileUsername" style="color:var(--text-muted);">@username</p>
+        </div>
+      </div>
+
+      <div class="detail-grid">
+        <div class="detail-card"><span class="detail-label">Age</span><span class="detail-value" id="profileAge">-</span></div>
+        <div class="detail-card"><span class="detail-label">Gender</span><span class="detail-value" id="profileGender">-</span></div>
+      </div>
+
+      <div class="form-group" style="margin-top:1.5rem;">
+        <label>Medical Background</label>
+        <div class="med-history-box" id="profileHistory">No medical background declared.</div>
+      </div>
+
+      <div class="profile-actions">
+        <button class="btn btn-secondary" id="editProfileBtn">Edit Profile</button>
+        <button class="btn btn-secondary" id="logoutBtn" style="color:var(--red);border-color:var(--red-border);">Log Out</button>
+      </div>
+
+      <form id="editProfileForm" style="display:none;margin-top:2rem;border-top:1px solid var(--border);padding-top:1.5rem;">
+        <h3>Edit Profile Details</h3>
+        <div style="margin-top:1rem;display:flex;flex-direction:column;gap:1.25rem;">
+          <div class="form-group"><label for="editName">Full Name</label><input type="text" id="editName" autocomplete="name"/></div>
+          <div class="form-row">
+            <div class="form-group"><label for="editAge">Age</label><input type="number" id="editAge" min="0" max="120"/></div>
+            <div class="form-group">
+              <label for="editGender">Gender</label>
+              <select id="editGender">
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group"><label for="editHistory">Medical History Notes</label><textarea id="editHistory" style="height:80px;"></textarea></div>
+          <div style="display:flex;gap:1rem;">
+            <button type="submit" class="btn btn-primary">Save Changes</button>
+            <button type="button" class="btn btn-secondary" id="cancelEditBtn">Cancel</button>
+          </div>
+        </div>
+      </form>
+    </div>
+
+  </main>
+
+  <!-- ============================================================
+       SCREEN 7 — HISTORY
+       ============================================================ -->
+  <main id="screen-history" class="screen">
+
+    <!-- Logged-out state -->
+    <div id="historyLoggedOut" class="glass text-center-panel">
+      <span class="panel-icon">🔐</span>
+      <h3>Secure Medical History</h3>
+      <p>Sign in or register to view and save your triage assessments.</p>
+      <button class="btn btn-primary" id="historyAuthBtn" style="margin-top:1rem;">Go to Account Login</button>
+    </div>
+
+    <!-- Logged-in state -->
+    <div id="historyLoggedIn" style="display:none;width:100%;">
+      <div style="margin-bottom:1.75rem;">
+        <h2 style="font-size:1.75rem;">Your Saved Assessments</h2>
+        <p style="color:var(--text-muted);">Click any session to view the full report and chat transcript.</p>
+      </div>
+      <div class="history-list" id="historyList"></div>
+      <div id="historyEmpty" class="glass text-center-panel" style="display:none;">
+        <span class="panel-icon">📋</span>
+        <h3>No Saved Sessions</h3>
+        <p>Complete a triage assessment to see it saved here.</p>
+        <button class="btn btn-primary" id="historyStartBtn" style="margin-top:1rem;">Start Triage Session</button>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- ============================================================
+       FOOTER
+       ============================================================ -->
+  <footer class="app-footer">
+    <div class="emergency-row">
+      <div class="emergency-item"><span>Emergency:</span><a href="tel:123">123</a></div>
+      <div class="emergency-item" style="color:var(--text-muted);"><span>Helpline:</span><a href="tel:16000" style="color:var(--text-muted);">16000</a></div>
+    </div>
+    <p class="footer-note">Tabibak is a screening support system. It cannot replace professional clinical decisions, physical assessments, or physician consults. In any medical emergency, contact paramedics directly.</p>
+  </footer>
+
+</div><!-- /app -->
+
+<!-- ============================================================
+     HISTORY DETAIL MODAL
+     ============================================================ -->
+<div class="modal-overlay" id="historyModal">
+  <div class="modal-card glass">
+    <button class="modal-close" id="closeModal">×</button>
+
+    <div class="modal-scroll">
+      <div style="border-bottom:1px solid var(--border);padding-bottom:1rem;margin-bottom:0.5rem;">
+        <span class="urgency-badge" id="modalUrgency">Urgency</span>
+        <h2 style="font-size:1.65rem;margin-top:0.5rem;" id="modalTitle"></h2>
+        <p style="color:var(--text-muted);font-size:0.875rem;" id="modalMeta"></p>
+      </div>
+
+      <div class="modal-section">
+        <h4>🩺 Symptom Description</h4>
+        <p id="modalSymptom"></p>
+      </div>
+
+      <div class="modal-section">
+        <h4>💬 Chat Transcript</h4>
+        <div class="modal-transcript" id="modalTranscript"></div>
+      </div>
+
+      <div class="modal-section">
+        <h4>📋 Triage Diagnosis & Clinical Analysis</h4>
+        <p id="modalDesc"></p>
+      </div>
+
+      <div class="modal-section">
+        <h4>✦ Next Steps & Recommendations</h4>
+        <ul class="rec-list" id="modalRecs"></ul>
+      </div>
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn btn-primary"   id="modalCopyBtn">Copy Report</button>
+      <button class="btn btn-secondary" id="modalDeleteBtn" style="color:var(--red);border-color:var(--red-border);">Delete Session</button>
+    </div>
+  </div>
+</div>
+
+<!-- ================================================================
+     JAVASCRIPT — broken into clear, labelled modules
+     ================================================================ -->
+<script>
+/* ================================================================
+   MODULE: STATE
+   Central app state. Everything lives here.
+   ================================================================ */
+const STATE = {
+  currentTab   : 'landing',
+  theme        : 'light',       // 'light' | 'dark'
+  currentUser  : null,          // { username, name, age, gender, history, password }
+  users        : {},            // keyed by username
+  sessions     : [],            // saved triage sessions (all users)
+  triageSession: {
+    symptom    : '',
+    chatLog    : [],            // { role:'bot'|'user', text }
+    step       : 0,
+    totalSteps : 5,
+    category   : 'General',
+    redFlagFired: false,
+    result     : null,          // { level:'red'|'orange'|'green', condition, desc, recs }
+  },
+  breathing: {
+    cycle       : 0,            // current cycle index (0-based)
+    totalCycles : 3,
+    scores      : [],           // 'easy'|'moderate'|'hard' per cycle
+    timerHandle : null,
+    phase       : 'get-ready',  // 'get-ready'|'inhale'|'hold'|'exhale'
+    phaseTime   : 0,
+    breathResult: null,
+  },
+  food: {
+    apiKey      : '',
+    selectedMood: '',
+  },
+  modalSessionIndex: -1,        // which history session the open modal refers to
+};
+
+// Persist users/sessions across page refresh
+function saveStorage() {
+  try {
+    localStorage.setItem('tabibak_users',    JSON.stringify(STATE.users));
+    localStorage.setItem('tabibak_sessions', JSON.stringify(STATE.sessions));
+    if (STATE.currentUser)
+      localStorage.setItem('tabibak_loggedIn', STATE.currentUser.username);
+  } catch(e) {}
+}
+
+function loadStorage() {
+  try {
+    const u = localStorage.getItem('tabibak_users');
+    const s = localStorage.getItem('tabibak_sessions');
+    const li = localStorage.getItem('tabibak_loggedIn');
+    if (u) STATE.users    = JSON.parse(u);
+    if (s) STATE.sessions = JSON.parse(s);
+    if (li && STATE.users[li]) STATE.currentUser = STATE.users[li];
+  } catch(e) {}
+}
+
+/* ================================================================
+   MODULE: NAVIGATION
+   Switches visible screen and marks the active nav button.
+   ================================================================ */
+function showTab(tabId) {
+  // Hide all screens
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+
+  // Determine which screen element to show
+  const screenMap = {
+    landing   : 'screen-landing',
+    chat      : 'screen-chat',
+    breathing : 'screen-breathing',
+    results   : 'screen-results',
+    food      : 'screen-food',
+    bmi       : 'screen-bmi',
+    profile   : 'screen-profile',
+    history   : 'screen-history',
+  };
+
+  const el = document.getElementById(screenMap[tabId]);
+  if (el) el.classList.add('active');
+
+  // Update nav buttons (only the five nav tabs have data-tab)
+  const navTabIds = ['landing','history','food','bmi','profile'];
+  document.querySelectorAll('.nav-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.tab === tabId || 
+      (btn.dataset.tab === 'landing' && ['chat','breathing','results'].includes(tabId)));
+  });
+
+  STATE.currentTab = tabId;
+
+  // Side effects on tab entry
+  if (tabId === 'history') refreshHistoryScreen();
+  if (tabId === 'profile') refreshProfileScreen();
+}
+
+// Wire nav buttons
+document.querySelectorAll('.nav-btn').forEach(btn => {
+  btn.addEventListener('click', () => showTab(btn.dataset.tab));
+});
+
+/* ================================================================
+   MODULE: THEME TOGGLE
+   ================================================================ */
+const themeBtn = document.getElementById('themeBtn');
+
+themeBtn.addEventListener('click', () => {
+  STATE.theme = STATE.theme === 'light' ? 'dark' : 'light';
+  document.body.classList.toggle('dark', STATE.theme === 'dark');
+  themeBtn.textContent = STATE.theme === 'dark' ? '🌙' : '☀️';
+});
+
+/* ================================================================
+   MODULE: TRIAGE CHAT ENGINE
+   Simulates a structured medical triage interview with 5 steps.
+   In a production app you would replace askTriageQuestion() with
+   a real AI API call.
+   ================================================================ */
+
+// Red-flag keywords that trigger the emergency banner
+const RED_FLAG_TERMS = [
+  'chest pain','crushing pain','heart attack','can\'t breathe','can not breathe',
+  'difficulty breathing','severe chest','numbness left arm','left arm',
+  'stroke','facial droop','speech problem','worst headache','thunderclap',
+  'unconscious','fainted','severe bleeding','coughing blood','vomiting blood',
+  'suicidal','suicide','overdose',
+];
+
+// The 5 triage questions asked in sequence
+const TRIAGE_QUESTIONS = [
+  { q: 'How long have you been experiencing these symptoms?', category: 'Duration' },
+  { q: 'On a scale of 1–10, how would you rate the severity of your discomfort?', category: 'Severity' },
+  { q: 'Do you have any pre-existing medical conditions or current medications?', category: 'Medical History' },
+  { q: 'Have these symptoms occurred before? If so, what happened?', category: 'History' },
+  { q: 'Do you have any allergies, especially to medications?', category: 'Allergies' },
+];
+
+function appendMessage(role, text) {
+  const log = document.getElementById('chatLog');
+  const div = document.createElement('div');
+  div.className = `msg msg-${role}`;
+  div.textContent = text;
+  log.appendChild(div);
+  log.scrollTop = log.scrollHeight;
+  STATE.triageSession.chatLog.push({ role, text });
+}
+
+function showTypingThenAppend(text, delay = 900) {
+  const log  = document.getElementById('chatLog');
+  const dots = document.createElement('div');
+  dots.className = 'typing-dots';
+  dots.innerHTML = '<div class="dot"></div><div class="dot"></div><div class="dot"></div>';
+  log.appendChild(dots);
+  log.scrollTop = log.scrollHeight;
+
+  return new Promise(resolve => {
+    setTimeout(() => {
+      dots.remove();
+      appendMessage('bot', text);
+      resolve();
+    }, delay);
+  });
+}
+
+function updateProgress(step, total) {
+  document.getElementById('progressLabel').textContent = `Question ${step}/${total}`;
+  document.getElementById('progressFill').style.width  = `${(step / total) * 100}%`;
+}
+
+function checkRedFlags(text) {
+  const lower = text.toLowerCase();
+  const hit   = RED_FLAG_TERMS.some(term => lower.includes(term));
+  if (hit && !STATE.triageSession.redFlagFired) {
+    STATE.triageSession.redFlagFired = true;
+    document.getElementById('redFlagBanner').classList.add('visible');
+  }
+}
+
+function askNextQuestion() {
+  const step = STATE.triageSession.step;
+
+  if (step >= TRIAGE_QUESTIONS.length) {
+    // All questions answered — generate result
+    finishTriage();
+    return;
+  }
+
+  const q = TRIAGE_QUESTIONS[step];
+  document.getElementById('categoryBadge').textContent = q.category;
+  updateProgress(step, TRIAGE_QUESTIONS.length);
+  showTypingThenAppend(q.q);
+}
+
+function startTriage(initialSymptom, breathingContext = '') {
+  STATE.triageSession = {
+    symptom    : initialSymptom,
+    chatLog    : [],
+    step       : 0,
+    totalSteps : TRIAGE_QUESTIONS.length,
+    category   : 'General',
+    redFlagFired: false,
+    result     : null,
+  };
+
+  showTab('chat');
+  document.getElementById('chatLog').innerHTML = '';
+  document.getElementById('redFlagBanner').classList.remove('visible');
+  updateProgress(0, TRIAGE_QUESTIONS.length);
+
+  const intro = breathingContext
+    ? `Hi! I'm Tabibak. Based on your breathing assessment (${breathingContext}), and your reported symptom "${initialSymptom}" — let me ask a few questions to better understand your condition.`
+    : `Hi! I'm Tabibak. I've noted your symptom: "${initialSymptom}". I'll ask ${TRIAGE_QUESTIONS.length} quick questions to understand your condition better.`;
+
+  appendMessage('bot', intro);
+  checkRedFlags(initialSymptom);
+  setTimeout(askNextQuestion, 600);
+}
+
+function handleUserChatInput() {
+  const input = document.getElementById('chatInput');
+  const text  = input.value.trim();
+  if (!text) return;
+
+  input.value = '';
+  appendMessage('user', text);
+  checkRedFlags(text);
+
+  STATE.triageSession.step++;
+  updateProgress(STATE.triageSession.step, TRIAGE_QUESTIONS.length);
+
+  if (STATE.triageSession.step < TRIAGE_QUESTIONS.length) {
+    setTimeout(askNextQuestion, 400);
+  } else {
+    setTimeout(finishTriage, 600);
+  }
+}
+
+function finishTriage() {
+  // Deterministic result engine based on collected chat data
+  const fullText = STATE.triageSession.chatLog.map(m => m.text).join(' ').toLowerCase();
+  const result   = generateTriageResult(fullText, STATE.triageSession.symptom);
+  STATE.triageSession.result = result;
+
+  showTypingThenAppend('Thank you for answering those questions. Let me now compile your personalised triage assessment…', 1200)
+    .then(() => {
+      displayResults(result);
+      saveSession();
+    });
+}
+
+/* Simple rule-based result engine. Replace with AI API in production. */
+function generateTriageResult(fullText, symptom) {
+  const sym = (symptom + ' ' + fullText).toLowerCase();
+
+  const isRed = RED_FLAG_TERMS.some(t => sym.includes(t))
+    || sym.includes('severe') && sym.includes('pain')
+    || sym.includes('10') && sym.includes('scale');
+
+  const isOrange = !isRed && (
+    sym.includes('fever') || sym.includes('vomit')
+    || sym.includes('diarrhea') || sym.includes('moderate')
+    || sym.includes('dizziness') || sym.includes('infection')
+  );
+
+  if (isRed) return {
+    level: 'red',
+    condition: 'High-Risk Emergency Symptoms',
+    desc: 'Your reported symptoms match patterns associated with potentially serious or life-threatening medical conditions. Immediate professional evaluation is strongly advised.',
+    recs: [
+      'Call emergency services (123) or go to your nearest emergency department immediately.',
+      'Do not drive yourself — ask someone to take you or call an ambulance.',
+      'Keep a list of your symptoms and current medications ready for the medical team.',
+      'If you have prescribed emergency medication (e.g. nitroglycerin, EpiPen), use it as directed.',
+    ],
+  };
+
+  if (isOrange) return {
+    level: 'orange',
+    condition: 'Moderate Concern — Prompt Care Advised',
+    desc: 'Your symptoms suggest a moderate health concern that warrants professional attention within the next few hours to avoid potential complications.',
+    recs: [
+      'Visit an urgent care clinic or contact your primary care physician today.',
+      'Monitor your temperature every 4 hours and note any changes.',
+      'Stay well-hydrated — drink clear fluids steadily throughout the day.',
+      'Avoid strenuous activity until you have been evaluated.',
+      'If symptoms worsen significantly, go to the emergency department.',
+    ],
+  };
+
+  return {
+    level: 'green',
+    condition: 'Mild / Self-Manageable Condition',
+    desc: 'Based on your responses, your symptoms appear mild and are likely manageable with appropriate home care and rest. No immediate emergency intervention is indicated.',
+    recs: [
+      'Rest adequately and monitor your symptoms over the next 24–48 hours.',
+      'Stay hydrated and maintain a light, easy-to-digest diet.',
+      'Use over-the-counter remedies appropriate for your symptom (as directed).',
+      'If symptoms persist beyond 48 hours or worsen, consult a physician.',
+      'Follow up with your family doctor at your next routine appointment.',
+    ],
+  };
+}
+
+function displayResults(result) {
+  const header = document.getElementById('resultsHeader');
+  header.className = `results-header glass ${result.level}`;
+  document.getElementById('urgencyBadge').textContent = result.level === 'red' ? '🚨 Emergency' : result.level === 'orange' ? '⚠️ Moderate' : '✅ Mild';
+  document.getElementById('conditionTitle').textContent = result.condition;
+  document.getElementById('resultsDesc').textContent = result.desc;
+
+  const recList = document.getElementById('recList');
+  recList.innerHTML = '';
+  result.recs.forEach(r => {
+    const li = document.createElement('li');
+    li.textContent = r;
+    recList.appendChild(li);
+  });
+
+  // Populate clipboard textarea
+  document.getElementById('reportText').value =
+    `=== TABIBAK TRIAGE REPORT ===\n\nSymptom: ${STATE.triageSession.symptom}\nUrgency: ${result.level.toUpperCase()}\nCondition: ${result.condition}\n\nAssessment:\n${result.desc}\n\nRecommendations:\n${result.recs.map((r,i) => `${i+1}. ${r}`).join('\n')}\n\nGenerated: ${new Date().toLocaleString()}\n\n⚠️ This report is AI-generated and not a clinical diagnosis.`;
+
+  showTab('results');
+}
+
+function saveSession() {
+  if (!STATE.currentUser) return;
+  const r = STATE.triageSession.result;
+  STATE.sessions.unshift({
+    username  : STATE.currentUser.username,
+    date      : new Date().toISOString(),
+    symptom   : STATE.triageSession.symptom,
+    chatLog   : STATE.triageSession.chatLog,
+    level     : r.level,
+    condition : r.condition,
+    desc      : r.desc,
+    recs      : r.recs,
+  });
+  saveStorage();
+}
+
+// Landing screen buttons
+document.getElementById('startTriageBtn').addEventListener('click', () => {
+  const sym = document.getElementById('symptomInput').value.trim();
+  if (!sym) { alert('Please describe your symptoms before starting.'); return; }
+  startTriage(sym);
+});
+
+document.getElementById('sendBtn').addEventListener('click', handleUserChatInput);
+document.getElementById('chatInput').addEventListener('keydown', e => {
+  if (e.key === 'Enter') handleUserChatInput();
+});
+
+// Results screen buttons
+document.getElementById('restartBtn').addEventListener('click', () => {
+  document.getElementById('symptomInput').value = '';
+  showTab('landing');
+});
+
+document.getElementById('copyReportBtn').addEventListener('click', () => {
+  const ta = document.getElementById('reportText');
+  ta.select();
+  navigator.clipboard.writeText(ta.value).catch(() => document.execCommand('copy'));
+  document.getElementById('copyReportBtn').textContent = '✓ Copied!';
+  setTimeout(() => document.getElementById('copyReportBtn').textContent = 'Copy Medical Report', 2000);
+});
+
+/* ================================================================
+   MODULE: BREATHING TEST
+   3-cycle guided breathing exercise. Each cycle: inhale 4s,
+   hold 4s, exhale 6s. After each cycle user rates difficulty.
+   ================================================================ */
+const BREATHING_PHASES = [
+  { name: 'Inhale', dur: 4, cls: 'inhale' },
+  { name: 'Hold',   dur: 4, cls: 'hold'   },
+  { name: 'Exhale', dur: 6, cls: 'exhale' },
+];
+
+document.getElementById('startBreathingBtn').addEventListener('click', () => {
+  STATE.breathing = { cycle:0, totalCycles:3, scores:[], timerHandle:null, phase:'ready', breathResult:null };
+  showTab('breathing');
+  document.getElementById('difficultyPanel').style.display = 'none';
+  document.getElementById('breathResults').style.display   = 'none';
+  document.getElementById('breathCancelWrap').style.display = '';
+  runBreathingCycle();
+});
+
+function runBreathingCycle() {
+  const badge = document.getElementById('cycleBadge');
+  badge.textContent = `Cycle ${STATE.breathing.cycle + 1} of ${STATE.breathing.totalCycles}`;
+
+  let phaseIdx = 0;
+
+  function runPhase() {
+    if (phaseIdx >= BREATHING_PHASES.length) {
+      // Cycle complete — show difficulty panel
+      document.getElementById('breathCircle').className = 'breath-circle';
+      document.getElementById('phaseLabel').textContent = 'Done';
+      document.getElementById('phaseTimer').textContent = '';
+      document.getElementById('difficultyPanel').style.display = '';
+      return;
+    }
+
+    const phase = BREATHING_PHASES[phaseIdx];
+    const circle = document.getElementById('breathCircle');
+    circle.className = `breath-circle ${phase.cls}`;
+    document.getElementById('phaseLabel').textContent = phase.name;
+
+    let t = phase.dur;
+    document.getElementById('phaseTimer').textContent = t;
+
+    const tick = setInterval(() => {
+      t--;
+      document.getElementById('phaseTimer').textContent = t > 0 ? t : '';
+      if (t <= 0) {
+        clearInterval(tick);
+        phaseIdx++;
+        runPhase();
+      }
+    }, 1000);
+    STATE.breathing.timerHandle = tick;
+  }
+
+  runPhase();
+}
+
+// Difficulty buttons
+document.querySelectorAll('.diff-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const diff = btn.dataset.diff;
+    STATE.breathing.scores.push(diff);
+    STATE.breathing.cycle++;
+    document.getElementById('difficultyPanel').style.display = 'none';
+
+    if (STATE.breathing.cycle < STATE.breathing.totalCycles) {
+      runBreathingCycle();
+    } else {
+      showBreathingResults();
+    }
+  });
+});
+
+function showBreathingResults() {
+  document.getElementById('breathCancelWrap').style.display = 'none';
+
+  const scores  = STATE.breathing.scores;
+  const hardCt  = scores.filter(s => s === 'hard').length;
+  const modCt   = scores.filter(s => s === 'moderate').length;
+
+  let level, title, desc, color, bgColor;
+  const rawScore = Math.round(10 - hardCt * 3.5 - modCt * 1.5);
+  const score    = Math.max(0, Math.min(10, rawScore));
+
+  if (hardCt >= 2 || (hardCt === 1 && modCt >= 1)) {
+    level = 'red'; title = 'Significant Breathing Difficulty';
+    desc  = 'You reported substantial difficulty breathing during the assessment. This may indicate a respiratory condition requiring medical attention.';
+    bgColor = 'var(--red)';
+  } else if (modCt >= 2 || hardCt === 1) {
+    level = 'orange'; title = 'Moderate Breathing Strain';
+    desc  = 'You experienced some difficulty during the breathing cycles. Consider speaking with a healthcare provider to evaluate your respiratory health.';
+    bgColor = 'var(--orange)';
+  } else {
+    level = 'green'; title = 'Normal Breathing Pattern';
+    desc  = 'You completed all three breathing cycles comfortably. Your respiratory function appears normal based on this self-assessment.';
+    bgColor = 'var(--green)';
+  }
+
+  STATE.breathing.breathResult = { level, title, desc, score };
+
+  const card   = document.getElementById('breathResultCard');
+  const circle = document.getElementById('breathScoreCircle');
+  card.className   = `result-card ${level}`;
+  circle.className = `score-circle ${level}`;
+
+  document.getElementById('breathScoreNum').textContent  = score;
+  document.getElementById('breathResultTitle').textContent = title;
+  document.getElementById('breathResultDesc').textContent  = desc;
+
+  const urgEl = document.getElementById('breathUrgency');
+  urgEl.textContent   = level === 'red' ? '⚠️ Seek Medical Attention' : level === 'orange' ? '🔶 Monitor Symptoms' : '✅ Normal Range';
+  urgEl.style.background = bgColor;
+
+  document.getElementById('breathResults').style.display = '';
+}
+
+document.getElementById('breathToTriageBtn').addEventListener('click', () => {
+  const r = STATE.breathing.breathResult;
+  const sym = document.getElementById('symptomInput').value.trim() || 'breathing difficulty';
+  startTriage(sym, `${r.title} (score ${r.score}/10)`);
+});
+
+document.getElementById('breathRestartBtn').addEventListener('click', () => {
+  STATE.breathing = { cycle:0, totalCycles:3, scores:[], timerHandle:null, phase:'ready', breathResult:null };
+  document.getElementById('difficultyPanel').style.display = 'none';
+  document.getElementById('breathResults').style.display   = 'none';
+  document.getElementById('breathCancelWrap').style.display = '';
+  runBreathingCycle();
+});
+
+document.getElementById('breathBackBtn').addEventListener('click', () => {
+  clearInterval(STATE.breathing.timerHandle);
+  showTab('landing');
+});
+
+document.getElementById('breathCancelBtn').addEventListener('click', () => {
+  clearInterval(STATE.breathing.timerHandle);
+  showTab('landing');
+});
+
+/* ================================================================
+   MODULE: BMI CALCULATOR
+   Pure JS calculation — no external API needed.
+   ================================================================ */
+document.getElementById('bmiCalcBtn').addEventListener('click', () => {
+  const height = parseFloat(document.getElementById('bmiHeight').value);
+  const weight = parseFloat(document.getElementById('bmiWeight').value);
+  const age    = parseInt(document.getElementById('bmiAge').value, 10);
+  const gender = document.getElementById('bmiGender').value;
+
+  if (!height || !weight || !age) {
+    alert('Please fill in all fields to calculate your BMI.');
+    return;
+  }
+
+  const bmi = weight / ((height / 100) ** 2);
+  displayBMIResult(bmi, age, gender);
+});
+
+function displayBMIResult(bmi, age, gender) {
+  const card = document.getElementById('bmiResultCard');
+  card.style.display = '';
+
+  // Animated counter
+  let current = 0;
+  const target = parseFloat(bmi.toFixed(1));
+  const step   = target / 30;
+  const valueEl = document.getElementById('bmiValue');
+  const timer = setInterval(() => {
+    current = Math.min(current + step, target);
+    valueEl.textContent = current.toFixed(1);
+    if (current >= target) clearInterval(timer);
+  }, 20);
+
+  // Category
+  let cat, catClass, catDesc;
+  if (bmi < 18.5) {
+    cat = 'Underweight'; catClass = 'underweight';
+    catDesc = 'Your BMI is below the healthy range. Increasing caloric intake with nutrient-rich foods is recommended.';
+  } else if (bmi < 25) {
+    cat = 'Normal Weight'; catClass = 'normal';
+    catDesc = 'Your BMI falls in the healthy range. Maintain your current lifestyle with balanced nutrition and regular exercise.';
+  } else if (bmi < 30) {
+    cat = 'Overweight'; catClass = 'overweight';
+    catDesc = 'Your BMI is slightly above the healthy range. A combination of dietary adjustments and increased physical activity is advised.';
+  } else {
+    cat = 'Obese'; catClass = 'obese';
+    catDesc = 'Your BMI indicates obesity. Consultation with a healthcare provider for a structured weight management plan is recommended.';
+  }
+
+  document.getElementById('bmiCircle').className  = `bmi-circle ${catClass}`;
+  document.getElementById('bmiCatBadge').className = `bmi-cat-badge ${catClass}`;
+  document.getElementById('bmiCatBadge').textContent = cat;
+  document.getElementById('bmiCatDesc').textContent  = catDesc;
+
+  // Gauge pointer (BMI 10–40 maps to 0–100%)
+  const pct = Math.max(0, Math.min(100, ((bmi - 10) / 30) * 100));
+  setTimeout(() => { document.getElementById('gaugePointer').style.left = `${pct}%`; }, 100);
+
+  // Personalised tips
+  const tips = buildBMITips(bmi, age, gender);
+  const tipsList = document.getElementById('tipsList');
+  tipsList.innerHTML = tips.map(t => `<li>${t}</li>`).join('');
+
+  // Scroll to result
+  card.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function buildBMITips(bmi, age, gender) {
+  const tips = [];
+
+  if (bmi < 18.5) {
+    tips.push('Aim for 5–6 smaller meals throughout the day rather than 3 large ones.');
+    tips.push('Include calorie-dense but nutritious foods: nuts, avocados, whole grains, legumes.');
+    tips.push('Incorporate light resistance training to build healthy muscle mass.');
+    if (age > 50) tips.push('Talk to your doctor about bone density, as low BMI can affect skeletal health.');
+  } else if (bmi < 25) {
+    tips.push('Continue balanced meals with a mix of protein, complex carbs, and healthy fats.');
+    tips.push('Aim for at least 150 minutes of moderate aerobic activity per week.');
+    tips.push('Prioritise quality sleep (7–9 hours) to maintain metabolic health.');
+    if (gender === 'female') tips.push('Ensure adequate calcium and iron intake, particularly important for women.');
+  } else if (bmi < 30) {
+    tips.push('Reduce refined sugars and processed foods; opt for whole-food alternatives.');
+    tips.push('Aim for a daily calorie deficit of 300–500 kcal combined with exercise.');
+    tips.push('Walking 10,000 steps per day is an effective low-impact starting point.');
+    if (age > 40) tips.push('Consider cardiovascular screening, as excess weight increases heart disease risk.');
+  } else {
+    tips.push('Consult your physician before starting any weight-loss programme.');
+    tips.push('Start with low-impact activities (swimming, cycling) to protect joints.');
+    tips.push('A Mediterranean-style diet has strong evidence for sustainable weight loss.');
+    tips.push('Set realistic, incremental targets — losing 0.5–1 kg per week is healthy and maintainable.');
+    if (gender === 'male' && age > 45) tips.push('Request a blood panel to check cholesterol, blood sugar, and blood pressure.');
+  }
+
+  return tips;
+}
+
+document.getElementById('bmiResetBtn').addEventListener('click', () => {
+  document.getElementById('bmiResultCard').style.display = 'none';
+  ['bmiHeight','bmiWeight','bmiAge'].forEach(id => document.getElementById(id).value = '');
+});
+
+/* ================================================================
+   MODULE: NUTRITION ADVISOR
+   Uses the Anthropic Claude API if a key is set; falls back to
+   a built-in lookup table so the screen always works.
+   ================================================================ */
+const FOOD_FALLBACK = {
+  'nausea and upset stomach': {
+    badge: 'Nausea / Upset Stomach',
+    cards: [
+      { icon:'🍚', title:'Eat', items:['Plain white rice', 'Saltine crackers', 'Bananas (BRAT diet)', 'Boiled chicken breast', 'Plain toast'] },
+      { icon:'💧', title:'Drink', items:['Ginger tea (anti-nausea)', 'Clear broth', 'Electrolyte water', 'Peppermint tea', 'Small sips of water'] },
+      { icon:'🚫', title:'Avoid', items:['Spicy foods', 'Fried or fatty meals', 'Dairy products', 'Caffeine', 'Alcohol'] },
+      { icon:'💡', title:'Tips', items:['Eat small amounts every 2 hrs', 'Sit upright after eating', 'Keep a ginger chew handy', 'Avoid strong smells'] },
+    ],
+  },
+  'fever and high body temperature': {
+    badge: 'Fever',
+    cards: [
+      { icon:'🍜', title:'Eat', items:['Warm chicken broth', 'Soft-boiled eggs', 'Cooked oatmeal', 'Yoghurt (probiotics)', 'Mild vegetables'] },
+      { icon:'💧', title:'Drink', items:['Water (2–3 L/day)', 'Coconut water', 'Herbal teas', 'Warm lemon-honey water', 'Oral rehydration salts'] },
+      { icon:'🚫', title:'Avoid', items:['Alcohol', 'Caffeine (dehydrating)', 'Heavy proteins', 'Sugary drinks', 'Cold foods'] },
+      { icon:'💡', title:'Tips', items:['Rest and keep cool', 'Monitor temp every 4 hrs', 'Dress in lightweight layers', 'Take paracetamol if >38.5°C'] },
+    ],
+  },
+  'headache and migraine': {
+    badge: 'Headache / Migraine',
+    cards: [
+      { icon:'🥑', title:'Eat', items:['Magnesium-rich almonds', 'Dark chocolate (small amount)', 'Salmon (omega-3)', 'Leafy greens', 'Whole grains'] },
+      { icon:'💧', title:'Drink', items:['Plenty of water', 'Ginger tea', 'Peppermint tea', 'Caffeine (small amount, may help)', 'Electrolyte drinks'] },
+      { icon:'🚫', title:'Avoid', items:['Alcohol (especially red wine)', 'Aged cheeses', 'Processed meats (nitrates)', 'MSG-containing foods', 'Skipping meals'] },
+      { icon:'💡', title:'Tips', items:['Rest in a dark, quiet room', 'Apply cold/warm compress', 'Practice deep breathing', 'Keep a headache diary'] },
+    ],
+  },
+  'fatigue and low energy': {
+    badge: 'Fatigue / Low Energy',
+    cards: [
+      { icon:'🥩', title:'Eat', items:['Iron-rich lean meats', 'Lentils and legumes', 'Quinoa', 'Dark chocolate', 'Pumpkin seeds'] },
+      { icon:'☕', title:'Drink', items:['Green tea (L-theanine)', 'Water (8 glasses)', 'Iron-fortified juice', 'Matcha', 'Smoothies with spinach'] },
+      { icon:'🚫', title:'Avoid', items:['Sugar spikes (candy, soda)', 'Skipping breakfast', 'Excess alcohol', 'Processed fast food', 'Heavy lunches'] },
+      { icon:'💡', title:'Tips', items:['Sleep 7–9 hrs per night', 'Take short 10-min walks', 'Check iron / vitamin D levels', 'Eat every 3–4 hours'] },
+    ],
+  },
+  default: {
+    badge: 'General Wellness',
+    cards: [
+      { icon:'🥗', title:'Balanced Meals', items:['Half plate vegetables', 'Quarter plate lean protein', 'Quarter plate whole grains', 'A serving of healthy fat', 'Colourful variety'] },
+      { icon:'💧', title:'Hydration', items:['8 glasses of water daily', 'Herbal teas', 'Fruit-infused water', 'Low-fat milk', 'Coconut water'] },
+      { icon:'🚫', title:'Limit These', items:['Ultra-processed foods', 'Excess refined sugar', 'Trans fats (fried items)', 'Excess sodium', 'Alcohol and sugary sodas'] },
+      { icon:'💡', title:'Daily Habits', items:['Eat at regular times', '30 min movement daily', 'Mindful eating (no screens)', 'Prep meals in advance', 'Read nutrition labels'] },
+    ],
+  },
+};
+
+function getFoodRecsFromFallback(mood) {
+  return FOOD_FALLBACK[mood] || FOOD_FALLBACK['default'];
+}
+
+async function getFoodRecsFromAI(mood, apiKey) {
+  const prompt = `You are a clinical nutritionist. A patient reports: "${mood}". 
+Provide nutritional guidance in this EXACT JSON format (no markdown, no extra text):
+{
+  "badge": "short condition label",
+  "cards": [
+    { "icon": "emoji", "title": "Eat", "items": ["item1","item2","item3","item4","item5"] },
+    { "icon": "emoji", "title": "Drink", "items": ["item1","item2","item3","item4"] },
+    { "icon": "emoji", "title": "Avoid", "items": ["item1","item2","item3","item4"] },
+    { "icon": "emoji", "title": "Tips", "items": ["tip1","tip2","tip3","tip4"] }
+  ]
+}`;
+
+  const res = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'x-api-key': apiKey, 'anthropic-version': '2023-06-01' },
+    body: JSON.stringify({
+      model: 'claude-sonnet-4-6',
+      max_tokens: 800,
+      messages: [{ role: 'user', content: prompt }],
+    }),
+  });
+
+  if (!res.ok) throw new Error(`API ${res.status}`);
+  const data = await res.json();
+  const raw  = data.content[0].text.replace(/```json|```/g,'').trim();
+  return JSON.parse(raw);
+}
+
+function renderFoodCards(data) {
+  document.getElementById('foodConditionBadge').textContent = data.badge;
+  const grid = document.getElementById('foodCards');
+  grid.innerHTML = data.cards.map(card => `
+    <div class="food-card">
+      <span class="food-card-icon">${card.icon}</span>
+      <span class="food-card-title">${card.title}</span>
+      <ul class="food-card-items">${card.items.map(i => `<li>${i}</li>`).join('')}</ul>
+    </div>
+  `).join('');
+  document.getElementById('foodResults').style.display = '';
+}
+
+async function fetchFoodRecommendations(mood) {
+  document.getElementById('foodLoading').style.display = '';
+  document.getElementById('foodResults').style.display = 'none';
+  document.getElementById('foodError').style.display   = 'none';
+
+  try {
+    let data;
+    if (STATE.food.apiKey) {
+      data = await getFoodRecsFromAI(mood, STATE.food.apiKey);
+    } else {
+      // Simulate a short delay for realism
+      await new Promise(r => setTimeout(r, 700));
+      data = getFoodRecsFromFallback(mood);
+    }
+    renderFoodCards(data);
+  } catch(e) {
+    document.getElementById('foodErrorMsg').textContent = `Error: ${e.message}. Showing built-in recommendations instead.`;
+    document.getElementById('foodError').style.display = '';
+    // Graceful fallback
+    await new Promise(r => setTimeout(r, 300));
+    renderFoodCards(getFoodRecsFromFallback(mood));
+  } finally {
+    document.getElementById('foodLoading').style.display = 'none';
+  }
+}
+
+// Mood chip selection
+document.querySelectorAll('.chip').forEach(chip => {
+  chip.addEventListener('click', () => {
+    document.querySelectorAll('.chip').forEach(c => c.classList.remove('selected'));
+    chip.classList.add('selected');
+    STATE.food.selectedMood = chip.dataset.mood;
+    document.getElementById('foodCustomInput').value = '';
+  });
+});
+
+document.getElementById('foodGetBtn').addEventListener('click', () => {
+  const custom = document.getElementById('foodCustomInput').value.trim();
+  const mood   = custom || STATE.food.selectedMood;
+  if (!mood) { alert('Please select a mood chip or describe your condition.'); return; }
+  fetchFoodRecommendations(mood);
+});
+
+document.getElementById('foodResetBtn').addEventListener('click', () => {
+  document.getElementById('foodResults').style.display = 'none';
+  document.getElementById('foodError').style.display   = 'none';
+  document.querySelectorAll('.chip').forEach(c => c.classList.remove('selected'));
+  document.getElementById('foodCustomInput').value = '';
+  STATE.food.selectedMood = '';
+});
+
+// API key panel toggle
+document.getElementById('apiToggle').addEventListener('click', () => {
+  const panel  = document.getElementById('apiPanel');
+  const toggle = document.getElementById('apiToggle');
+  const open   = toggle.getAttribute('aria-expanded') === 'true';
+  toggle.setAttribute('aria-expanded', !open);
+  panel.style.display = open ? 'none' : '';
+});
+
+document.getElementById('apiSaveBtn').addEventListener('click', () => {
+  const key = document.getElementById('apiKeyInput').value.trim();
+  if (!key) return;
+  STATE.food.apiKey = key;
+  document.getElementById('apiStatus').textContent = '✓ Key saved for this session';
+  document.getElementById('apiLabel').textContent  = '🔑 AI Key Set — Click to Change';
+});
+
+/* ================================================================
+   MODULE: AUTH — users stored in localStorage
+   ================================================================ */
+// Tab switching within profile screen
+document.querySelectorAll('.auth-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.auth-form').forEach(f => f.classList.remove('active'));
+    tab.classList.add('active');
+    document.getElementById(tab.dataset.form).classList.add('active');
+  });
+});
+
+document.getElementById('loginForm').addEventListener('submit', e => {
+  e.preventDefault();
+  const u = document.getElementById('loginUser').value.trim();
+  const p = document.getElementById('loginPass').value;
+  const user = STATE.users[u];
+  if (!user || user.password !== p) { alert('Invalid username or password.'); return; }
+  STATE.currentUser = user;
+  saveStorage();
+  refreshProfileScreen();
+  showTab('profile');
+});
+
+document.getElementById('registerForm').addEventListener('submit', e => {
+  e.preventDefault();
+  const u = document.getElementById('regUser').value.trim();
+  const p = document.getElementById('regPass').value;
+  const n = document.getElementById('regName').value.trim();
+  const a = document.getElementById('regAge').value;
+  const g = document.getElementById('regGender').value;
+  const h = document.getElementById('regHistory').value.trim();
+
+  if (!u || !p || !n || !a || !g) { alert('Please fill in all required fields.'); return; }
+  if (STATE.users[u]) { alert('Username already taken. Please choose another.'); return; }
+
+  const user = { username:u, password:p, name:n, age:a, gender:g, history:h };
+  STATE.users[u]   = user;
+  STATE.currentUser = user;
+  saveStorage();
+  refreshProfileScreen();
+  showTab('profile');
+});
+
+document.getElementById('logoutBtn').addEventListener('click', () => {
+  STATE.currentUser = null;
+  localStorage.removeItem('tabibak_loggedIn');
+  refreshProfileScreen();
+  refreshHistoryScreen();
+});
+
+document.getElementById('editProfileBtn').addEventListener('click', () => {
+  const u = STATE.currentUser;
+  document.getElementById('editName').value    = u.name;
+  document.getElementById('editAge').value     = u.age;
+  document.getElementById('editGender').value  = u.gender;
+  document.getElementById('editHistory').value = u.history || '';
+  document.getElementById('editProfileForm').style.display = '';
+});
+
+document.getElementById('cancelEditBtn').addEventListener('click', () => {
+  document.getElementById('editProfileForm').style.display = 'none';
+});
+
+document.getElementById('editProfileForm').addEventListener('submit', e => {
+  e.preventDefault();
+  const u = STATE.currentUser;
+  u.name    = document.getElementById('editName').value.trim();
+  u.age     = document.getElementById('editAge').value;
+  u.gender  = document.getElementById('editGender').value;
+  u.history = document.getElementById('editHistory').value.trim();
+  STATE.users[u.username] = u;
+  saveStorage();
+  document.getElementById('editProfileForm').style.display = 'none';
+  refreshProfileScreen();
+});
+
+function refreshProfileScreen() {
+  const loggedIn = !!STATE.currentUser;
+  document.getElementById('authContainer').style.display     = loggedIn ? 'none' : '';
+  document.getElementById('profileContainer').style.display  = loggedIn ? ''     : 'none';
+
+  if (loggedIn) {
+    const u = STATE.currentUser;
+    document.getElementById('profileName').textContent     = u.name;
+    document.getElementById('profileUsername').textContent = `@${u.username}`;
+    document.getElementById('profileAge').textContent      = u.age;
+    document.getElementById('profileGender').textContent   = u.gender;
+    document.getElementById('profileHistory').textContent  = u.history || 'No medical background declared.';
+  }
+}
+
+/* ================================================================
+   MODULE: HISTORY
+   ================================================================ */
+document.getElementById('historyAuthBtn').addEventListener('click', () => showTab('profile'));
+document.getElementById('historyStartBtn').addEventListener('click', () => showTab('landing'));
+
+function refreshHistoryScreen() {
+  const loggedIn = !!STATE.currentUser;
+  document.getElementById('historyLoggedOut').style.display = loggedIn ? 'none' : '';
+  document.getElementById('historyLoggedIn').style.display  = loggedIn ? ''     : 'none';
+
+  if (!loggedIn) return;
+
+  const mySessions = STATE.sessions.filter(s => s.username === STATE.currentUser.username);
+  const list  = document.getElementById('historyList');
+  const empty = document.getElementById('historyEmpty');
+
+  if (mySessions.length === 0) {
+    list.innerHTML = '';
+    empty.style.display = '';
+    return;
+  }
+
+  empty.style.display = 'none';
+  list.innerHTML = mySessions.map((s, i) => {
+    const date = new Date(s.date).toLocaleDateString('en-GB', { day:'2-digit', month:'short', year:'numeric' });
+    return `
+      <div class="history-card ${s.level}" data-index="${i}">
+        <div class="hc-info">
+          <span class="hc-title">${s.condition}</span>
+          <span class="hc-meta">${date} · <span style="text-transform:capitalize;">${s.level}</span> urgency</span>
+          <span class="hc-symptom">${s.symptom}</span>
+        </div>
+        <div class="hc-actions">
+          <button class="icon-btn view-btn" data-index="${i}" title="View session">
+            <svg style="width:16px;height:16px;"><use href="#icon-eye"/></svg>
+          </button>
+          <button class="icon-btn del-btn" data-index="${i}" title="Delete session">
+            <svg style="width:16px;height:16px;"><use href="#icon-trash"/></svg>
+          </button>
+        </div>
+      </div>`;
+  }).join('');
+
+  // Wire view/delete buttons
+  list.querySelectorAll('.view-btn').forEach(btn => {
+    btn.addEventListener('click', e => { e.stopPropagation(); openHistoryModal(parseInt(btn.dataset.index)); });
+  });
+
+  list.querySelectorAll('.del-btn').forEach(btn => {
+    btn.addEventListener('click', e => {
+      e.stopPropagation();
+      if (confirm('Delete this session?')) {
+        deleteSession(parseInt(btn.dataset.index));
+      }
+    });
+  });
+
+  list.querySelectorAll('.history-card').forEach(card => {
+    card.addEventListener('click', () => openHistoryModal(parseInt(card.dataset.index)));
+  });
+}
+
+function deleteSession(localIdx) {
+  const mySessions = STATE.sessions.filter(s => s.username === STATE.currentUser.username);
+  const globalSession = mySessions[localIdx];
+  const globalIdx  = STATE.sessions.indexOf(globalSession);
+  if (globalIdx >= 0) { STATE.sessions.splice(globalIdx, 1); saveStorage(); }
+  refreshHistoryScreen();
+}
+
+function openHistoryModal(localIdx) {
+  const mySessions = STATE.sessions.filter(s => s.username === STATE.currentUser.username);
+  const s = mySessions[localIdx];
+  STATE.modalSessionIndex = localIdx;
+
+  const date = new Date(s.date).toLocaleDateString('en-GB', { day:'2-digit', month:'long', year:'numeric' });
+
+  const badge = document.getElementById('modalUrgency');
+  badge.textContent = s.level === 'red' ? '🚨 Emergency' : s.level === 'orange' ? '⚠️ Moderate' : '✅ Mild';
+  badge.className   = `urgency-badge`;
+  badge.style.background = s.level === 'red' ? 'var(--red)' : s.level === 'orange' ? 'var(--orange)' : 'var(--green)';
+  badge.style.color = '#fff';
+
+  document.getElementById('modalTitle').textContent   = s.condition;
+  document.getElementById('modalMeta').textContent    = `Saved on ${date}`;
+  document.getElementById('modalSymptom').textContent = s.symptom;
+  document.getElementById('modalDesc').textContent    = s.desc;
+
+  const transcript = document.getElementById('modalTranscript');
+  transcript.innerHTML = s.chatLog.map(m => `
+    <div class="msg ${m.role === 'bot' ? 'msg-bot' : 'msg-user'}">${m.text}</div>
+  `).join('');
+
+  const recList = document.getElementById('modalRecs');
+  recList.innerHTML = s.recs.map(r => `<li>${r}</li>`).join('');
+
+  document.getElementById('historyModal').classList.add('open');
+}
+
+document.getElementById('closeModal').addEventListener('click', () => {
+  document.getElementById('historyModal').classList.remove('open');
+});
+
+document.getElementById('historyModal').addEventListener('click', e => {
+  if (e.target === document.getElementById('historyModal'))
+    document.getElementById('historyModal').classList.remove('open');
+});
+
+document.getElementById('modalDeleteBtn').addEventListener('click', () => {
+  if (confirm('Delete this session?')) {
+    deleteSession(STATE.modalSessionIndex);
+    document.getElementById('historyModal').classList.remove('open');
+  }
+});
+
+document.getElementById('modalCopyBtn').addEventListener('click', () => {
+  const mySessions = STATE.sessions.filter(s => s.username === STATE.currentUser?.username);
+  const s = mySessions[STATE.modalSessionIndex];
+  if (!s) return;
+  const text = `=== TABIBAK TRIAGE REPORT ===\n\nSymptom: ${s.symptom}\nUrgency: ${s.level.toUpperCase()}\nCondition: ${s.condition}\n\nAssessment:\n${s.desc}\n\nRecommendations:\n${s.recs.map((r,i) => `${i+1}. ${r}`).join('\n')}\n\nGenerated: ${new Date(s.date).toLocaleString()}\n\n⚠️ AI-generated — not a clinical diagnosis.`;
+  navigator.clipboard.writeText(text).catch(() => {});
+  document.getElementById('modalCopyBtn').textContent = '✓ Copied!';
+  setTimeout(() => document.getElementById('modalCopyBtn').textContent = 'Copy Report', 2000);
+});
+
+/* ================================================================
+   MODULE: INIT
+   ================================================================ */
+loadStorage();
+refreshProfileScreen();
+refreshHistoryScreen();
+</script>
+</body>
+</html>
