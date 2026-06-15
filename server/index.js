@@ -56,7 +56,7 @@ app.use('/api/medications', authenticateToken, medicationRoutes);
 app.use('/api/sessions', authenticateToken, sessionRoutes);
 
 // Serve static frontend files
-app.use(express.static(path.join(__dirname, '..')));
+app.use(express.static(__dirname));
 
 server.listen(PORT, () => {
   console.log(`Tabibak server running on http://localhost:${PORT}`);
