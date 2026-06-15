@@ -216,6 +216,8 @@
 
       <div class="chat-log" id="chatLog"></div>
 
+      <div class="quick-replies" id="quickReplies"></div>
+
       <div class="chat-input-row">
         <input type="text" id="chatInput" placeholder="Type your response..." autocomplete="off" />
         <button class="btn btn-primary" id="sendBtn" style="padding:0.875rem 1.25rem;">Send</button>
@@ -1587,11 +1589,11 @@
     ];
 
     const TRIAGE_QUESTIONS = [
-      { q: 'How long have you been experiencing these symptoms?', category: 'Duration' },
-      { q: 'On a scale of 1–10, how would you rate the severity of your discomfort?', category: 'Severity' },
-      { q: 'Do you have any pre-existing medical conditions or current medications?', category: 'Medical History' },
-      { q: 'Have these symptoms occurred before? If so, what happened?', category: 'History' },
-      { q: 'Do you have any allergies, especially to medications?', category: 'Allergies' },
+      { q: 'How long have you been experiencing these symptoms?', category: 'Duration', choices: ['1–2 days', '3–7 days', '1–2 weeks', 'Over 2 weeks', 'Just started today'] },
+      { q: 'On a scale of 1–10, how would you rate the severity of your discomfort?', category: 'Severity', choices: ['1–3 (Mild)', '4–6 (Moderate)', '7–8 (Severe)', '9–10 (Very Severe)'] },
+      { q: 'Do you have any pre-existing medical conditions or current medications?', category: 'Medical History', choices: ['None', 'Yes — high blood pressure', 'Yes — diabetes', 'Yes — asthma', 'Yes — other condition'] },
+      { q: 'Have these symptoms occurred before? If so, what happened?', category: 'History', choices: ['First time', 'Yes — it went away on its own', 'Yes — needed treatment', 'Yes — happens regularly'] },
+      { q: 'Do you have any allergies, especially to medications?', category: 'Allergies', choices: ['No known allergies', 'Yes — penicillin', 'Yes — other antibiotics', 'Yes — NSAIDs', 'Yes — food/environmental'] },
     ];
 
     function appendMessage(role, text) {
@@ -1635,13 +1637,32 @@
       }
     }
 
-    function askNextQuestion(prefix) {
+    function clearQuickReplies() {
+      document.getElementById('quickReplies').innerHTML = '';
+    }
+
+    function renderQuickReplies(choices) {
+      const container = document.getElementById('quickReplies');
+      container.innerHTML = '';
+      choices.forEach(c => {
+        const btn = document.createElement('button');
+        btn.className = 'qr-btn';
+        btn.textContent = c;
+        container.appendChild(btn);
+      });
+    }
+
+    async function askNextQuestion(prefix) {
       const step = STATE.triageSession.step;
       if (step >= TRIAGE_QUESTIONS.length) { finishTriage(); return; }
       const q = TRIAGE_QUESTIONS[step];
       document.getElementById('categoryBadge').textContent = q.category;
       updateProgress(step, TRIAGE_QUESTIONS.length);
-      showTypingThenAppend(prefix ? `${prefix} ${q.q}` : q.q);
+      clearQuickReplies();
+      await showTypingThenAppend(prefix ? `${prefix} ${q.q}` : q.q);
+      if (q.choices && STATE.triageSession.step < TRIAGE_QUESTIONS.length) {
+        renderQuickReplies(q.choices);
+      }
     }
 
     function getAcknowledgment(text, category) {
@@ -1670,6 +1691,7 @@
       showTab('chat');
       document.getElementById('chatLog').innerHTML = '';
       document.getElementById('redFlagBanner').classList.remove('visible');
+      clearQuickReplies();
       updateProgress(0, TRIAGE_QUESTIONS.length);
 
       const intro = breathingContext
@@ -1740,6 +1762,30 @@
           break;
       }
       return null;
+    }
+
+    function handleQuickReply(text) {
+      document.getElementById('chatInput').value = '';
+      clearQuickReplies();
+      appendMessage('user', text);
+      checkRedFlags(text);
+      const feedback = validateResponse(text, STATE.triageSession.step);
+      if (feedback) {
+        setTimeout(() => showTypingThenAppend(feedback).then(() => {
+          const q = TRIAGE_QUESTIONS[STATE.triageSession.step];
+          if (q && q.choices) renderQuickReplies(q.choices);
+        }), 600);
+        return;
+      }
+      const prevStep = STATE.triageSession.step;
+      STATE.triageSession.step++;
+      updateProgress(STATE.triageSession.step, TRIAGE_QUESTIONS.length);
+      const ack = getAcknowledgment(text, TRIAGE_QUESTIONS[prevStep]?.category);
+      if (STATE.triageSession.step < TRIAGE_QUESTIONS.length) {
+        setTimeout(() => askNextQuestion(ack), 400);
+      } else {
+        setTimeout(finishTriage, 600);
+      }
     }
 
     function handleUserChatInput() {
@@ -1876,6 +1922,12 @@
     document.getElementById('sendBtn').addEventListener('click', handleUserChatInput);
     document.getElementById('chatInput').addEventListener('keydown', e => {
       if (e.key === 'Enter') { e.preventDefault(); handleUserChatInput(); }
+    });
+    document.getElementById('chatInput').addEventListener('focus', clearQuickReplies);
+    document.getElementById('chatInput').addEventListener('input', clearQuickReplies);
+    document.getElementById('quickReplies').addEventListener('click', e => {
+      const btn = e.target.closest('.qr-btn');
+      if (btn) handleQuickReply(btn.textContent);
     });
 
     document.getElementById('restartBtn').addEventListener('click', () => {

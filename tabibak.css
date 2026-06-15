@@ -563,6 +563,10 @@ body.dark select {
 .dot:nth-child(1) { animation-delay: -0.32s; }
 .dot:nth-child(2) { animation-delay: -0.16s; }
 
+.quick-replies { display: flex; flex-wrap: wrap; gap: 0.5rem; padding: 0.5rem 0.75rem; }
+.quick-replies .qr-btn { padding: 0.45rem 1rem; border-radius: 999px; border: 1.5px solid var(--border); background: var(--surface); color: var(--text); font-size: 0.8rem; cursor: pointer; transition: all 0.2s; white-space: nowrap; }
+.quick-replies .qr-btn:hover { border-color: var(--primary); color: var(--primary); background: var(--primary-bg, rgba(13,148,136,0.08)); }
+.quick-replies .qr-btn:active { transform: scale(0.96); }
 .chat-input-row { display: flex; gap: 0.65rem; }
 .chat-input-row input { flex: 1; }
 
