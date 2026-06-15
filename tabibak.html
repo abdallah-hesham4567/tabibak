@@ -23,7 +23,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>طبيبك — مساعد الفحص الطبي بالذكاء الاصطناعي</title>
-  <meta name="description" content="طبيبك هو مساعد فحص طبي افتراضي يعتمد على الذكاء الاصطناعي. احصل على تقييم الأعراض، واختبارات التنفس، وتذكيرات الأدوية، وحساب مؤشر كتلة الجسم، والتوجيه الغذائي." />
+  <meta name="description"
+    content="طبيبك هو مساعد فحص طبي افتراضي يعتمد على الذكاء الاصطناعي. احصل على تقييم الأعراض، واختبارات التنفس، وتذكيرات الأدوية، وحساب مؤشر كتلة الجسم، والتوجيه الغذائي." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="stylesheet"
     href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600&family=Outfit:wght@400;500;600;700;800&display=swap" />
@@ -159,7 +160,9 @@
       letter-spacing: -0.02em;
     }
 
-    a { color: inherit; }
+    a {
+      color: inherit;
+    }
 
     /* ============================================================
        LAYOUT
@@ -266,9 +269,22 @@
       white-space: nowrap;
     }
 
-    .nav-btn svg { width: 18px; height: 18px; flex-shrink: 0; }
-    .nav-btn i { font-size: 18px; line-height: 1; }
-    .nav-btn:hover { color: var(--primary); background: var(--primary-glow); }
+    .nav-btn svg {
+      width: 18px;
+      height: 18px;
+      flex-shrink: 0;
+    }
+
+    .nav-btn i {
+      font-size: 18px;
+      line-height: 1;
+    }
+
+    .nav-btn:hover {
+      color: var(--primary);
+      background: var(--primary-glow);
+    }
+
     .nav-btn.active {
       background: linear-gradient(135deg, var(--primary), var(--secondary));
       color: var(--btn-text);
@@ -278,8 +294,16 @@
     /* ============================================================
        SCREENS
        ============================================================ */
-    .screen { display: none; animation: fadeIn 0.4s ease-out forwards; }
-    .screen.active { display: flex; flex-direction: column; gap: 1.5rem; }
+    .screen {
+      display: none;
+      animation: fadeIn 0.4s ease-out forwards;
+    }
+
+    .screen.active {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
 
     /* ============================================================
        GLASS PANEL
@@ -297,7 +321,12 @@
     /* ============================================================
        FORMS
        ============================================================ */
-    .form-group { display: flex; flex-direction: column; gap: 0.65rem; }
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.65rem;
+    }
+
     .form-group label {
       font-family: var(--font-heading);
       font-size: 1rem;
@@ -332,7 +361,10 @@
       box-shadow: 0 0 12px var(--primary-glow);
     }
 
-    textarea { resize: none; height: 130px; }
+    textarea {
+      resize: none;
+      height: 130px;
+    }
 
     select {
       appearance: none;
@@ -372,8 +404,14 @@
       box-shadow: 0 4px 15px var(--primary-glow);
     }
 
-    .btn-primary:hover { transform: translateY(-2px); filter: brightness(1.05); }
-    .btn-primary:active { transform: translateY(0); }
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      filter: brightness(1.05);
+    }
+
+    .btn-primary:active {
+      transform: translateY(0);
+    }
 
     .btn-secondary {
       background: var(--input-bg);
@@ -381,12 +419,19 @@
       border: 1px solid var(--border);
     }
 
-    .btn-secondary:hover { background: var(--input-focus); border-color: var(--text-2); }
+    .btn-secondary:hover {
+      background: var(--input-focus);
+      border-color: var(--text-2);
+    }
 
     /* ============================================================
        LANDING SCREEN
        ============================================================ */
-    #landing-screen { max-width: 650px; margin: 1.5rem auto; width: 100%; }
+    #landing-screen {
+      max-width: 650px;
+      margin: 1.5rem auto;
+      width: 100%;
+    }
 
     .disclaimer {
       background: var(--red-bg);
@@ -398,9 +443,20 @@
       align-items: flex-start;
     }
 
-    .disclaimer-icon { font-size: 1.5rem; color: var(--red); }
-    .disclaimer p { font-size: 0.875rem; color: var(--text-2); line-height: 1.55; }
-    .disclaimer strong { color: var(--text-1); }
+    .disclaimer-icon {
+      font-size: 1.5rem;
+      color: var(--red);
+    }
+
+    .disclaimer p {
+      font-size: 0.875rem;
+      color: var(--text-2);
+      line-height: 1.55;
+    }
+
+    .disclaimer strong {
+      color: var(--text-1);
+    }
 
     .divider-line {
       display: flex;
@@ -411,7 +467,12 @@
     }
 
     .divider-line::before,
-    .divider-line::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+    .divider-line::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
 
     .btn-breathing {
       width: 100%;
@@ -448,9 +509,21 @@
       border-bottom: 1px solid var(--border);
     }
 
-    .progress-label { font-family: var(--font-heading); font-weight: 600; color: var(--text-2); font-size: 0.9rem; }
+    .progress-label {
+      font-family: var(--font-heading);
+      font-weight: 600;
+      color: var(--text-2);
+      font-size: 0.9rem;
+    }
 
-    .progress-track { flex-grow: 1; height: 8px; background: var(--border); border-radius: 4px; margin: 0 1.25rem; overflow: hidden; }
+    .progress-track {
+      flex-grow: 1;
+      height: 8px;
+      background: var(--border);
+      border-radius: 4px;
+      margin: 0 1.25rem;
+      overflow: hidden;
+    }
 
     .progress-fill {
       height: 100%;
@@ -482,7 +555,10 @@
       gap: 1rem;
     }
 
-    .red-flag-banner.visible { display: flex; animation: slideDown 0.3s ease-out; }
+    .red-flag-banner.visible {
+      display: flex;
+      animation: slideDown 0.3s ease-out;
+    }
 
     .chat-log {
       flex-grow: 1;
@@ -496,8 +572,14 @@
       margin: 1rem 0;
     }
 
-    .chat-log::-webkit-scrollbar { width: 6px; }
-    .chat-log::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+    .chat-log::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .chat-log::-webkit-scrollbar-thumb {
+      background: var(--border);
+      border-radius: 3px;
+    }
 
     .msg {
       max-width: 80%;
@@ -508,8 +590,21 @@
       animation: msgPop 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28) forwards;
     }
 
-    .msg-bot { align-self: flex-start; background: var(--bubble-bot); border: 1px solid var(--border); border-bottom-left-radius: 4px; transform-origin: left bottom; }
-    .msg-user { align-self: flex-end; background: var(--bubble-user); border: 1px solid var(--bubble-user-b); border-bottom-right-radius: 4px; transform-origin: right bottom; }
+    .msg-bot {
+      align-self: flex-start;
+      background: var(--bubble-bot);
+      border: 1px solid var(--border);
+      border-bottom-left-radius: 4px;
+      transform-origin: left bottom;
+    }
+
+    .msg-user {
+      align-self: flex-end;
+      background: var(--bubble-user);
+      border: 1px solid var(--bubble-user-b);
+      border-bottom-right-radius: 4px;
+      transform-origin: right bottom;
+    }
 
     .typing-dots {
       align-self: flex-start;
@@ -523,12 +618,30 @@
       gap: 5px;
     }
 
-    .dot { width: 7px; height: 7px; background: var(--text-muted); border-radius: 50%; animation: bounce 1.4s infinite ease-in-out both; }
-    .dot:nth-child(1) { animation-delay: -0.32s; }
-    .dot:nth-child(2) { animation-delay: -0.16s; }
+    .dot {
+      width: 7px;
+      height: 7px;
+      background: var(--text-muted);
+      border-radius: 50%;
+      animation: bounce 1.4s infinite ease-in-out both;
+    }
 
-    .chat-input-row { display: flex; gap: 0.75rem; }
-    .chat-input-row input { flex-grow: 1; }
+    .dot:nth-child(1) {
+      animation-delay: -0.32s;
+    }
+
+    .dot:nth-child(2) {
+      animation-delay: -0.16s;
+    }
+
+    .chat-input-row {
+      display: flex;
+      gap: 0.75rem;
+    }
+
+    .chat-input-row input {
+      flex-grow: 1;
+    }
 
     /* ============================================================
        BREATHING TEST SCREEN
@@ -542,10 +655,15 @@
       position: relative;
     }
 
-    .breathing-header { text-align: center; }
-    .breathing-header h2 { font-size: 1.6rem; margin-bottom: 0.4rem; }
+    .breathing-header {
+      text-align: center;
+    }
 
-    /* Mute toggle button */
+    .breathing-header h2 {
+      font-size: 1.6rem;
+      margin-bottom: 0.4rem;
+    }
+
     .breath-mute-btn {
       position: absolute;
       top: 0;
@@ -565,7 +683,10 @@
       z-index: 10;
     }
 
-    .breath-mute-btn:hover { border-color: var(--primary); transform: scale(1.08); }
+    .breath-mute-btn:hover {
+      border-color: var(--primary);
+      transform: scale(1.08);
+    }
 
     .cycle-badge {
       display: inline-block;
@@ -603,11 +724,30 @@
       z-index: 2;
     }
 
-    .breath-circle.inhale { transform: scale(1.35); border-color: var(--secondary); box-shadow: 0 0 50px rgba(14, 165, 233, 0.35); }
-    .breath-circle.hold { transform: scale(1.35); border-color: var(--primary); box-shadow: 0 0 40px rgba(13, 148, 136, 0.3); }
-    .breath-circle.exhale { transform: scale(1.0); border-color: var(--primary); box-shadow: 0 0 20px rgba(13, 148, 136, 0.1); }
+    .breath-circle.inhale {
+      transform: scale(1.35);
+      border-color: var(--secondary);
+      box-shadow: 0 0 50px rgba(14, 165, 233, 0.35);
+    }
 
-    .breath-inner { display: flex; flex-direction: column; align-items: center; gap: 0.2rem; }
+    .breath-circle.hold {
+      transform: scale(1.35);
+      border-color: var(--primary);
+      box-shadow: 0 0 40px rgba(13, 148, 136, 0.3);
+    }
+
+    .breath-circle.exhale {
+      transform: scale(1.0);
+      border-color: var(--primary);
+      box-shadow: 0 0 20px rgba(13, 148, 136, 0.1);
+    }
+
+    .breath-inner {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.2rem;
+    }
 
     .phase-label {
       font-family: var(--font-heading);
@@ -618,7 +758,13 @@
       color: var(--text-1);
     }
 
-    .phase-timer { font-family: var(--font-heading); font-size: 2.2rem; font-weight: 700; color: var(--primary); line-height: 1; }
+    .phase-timer {
+      font-family: var(--font-heading);
+      font-size: 2.2rem;
+      font-weight: 700;
+      color: var(--primary);
+      line-height: 1;
+    }
 
     .ring-pulse {
       position: absolute;
@@ -630,10 +776,23 @@
       z-index: 1;
     }
 
-    .difficulty-panel { width: 100%; text-align: center; animation: fadeSlideUp 0.4s ease; }
-    .difficulty-panel h3 { font-size: 1.1rem; margin-bottom: 1rem; }
+    .difficulty-panel {
+      width: 100%;
+      text-align: center;
+      animation: fadeSlideUp 0.4s ease;
+    }
 
-    .diff-grid { display: flex; gap: 0.75rem; justify-content: center; flex-wrap: wrap; }
+    .difficulty-panel h3 {
+      font-size: 1.1rem;
+      margin-bottom: 1rem;
+    }
+
+    .diff-grid {
+      display: flex;
+      gap: 0.75rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
 
     .diff-btn {
       display: flex;
@@ -650,16 +809,48 @@
       font-family: var(--font-body);
     }
 
-    .diff-btn:hover { transform: translateY(-3px); }
-    .diff-btn.easy:hover { border-color: var(--green); background: var(--green-bg); }
-    .diff-btn.moderate:hover { border-color: var(--orange); background: var(--orange-bg); }
-    .diff-btn.hard:hover { border-color: var(--red); background: var(--red-bg); }
+    .diff-btn:hover {
+      transform: translateY(-3px);
+    }
 
-    .diff-icon { font-size: 1.5rem; }
-    .diff-label { font-size: 0.85rem; font-weight: 600; color: var(--text-1); }
-    .diff-desc { font-size: 0.72rem; color: var(--text-muted); }
+    .diff-btn.easy:hover {
+      border-color: var(--green);
+      background: var(--green-bg);
+    }
 
-    .breath-results { width: 100%; display: flex; flex-direction: column; align-items: center; gap: 1.5rem; animation: fadeSlideUp 0.5s ease; }
+    .diff-btn.moderate:hover {
+      border-color: var(--orange);
+      background: var(--orange-bg);
+    }
+
+    .diff-btn.hard:hover {
+      border-color: var(--red);
+      background: var(--red-bg);
+    }
+
+    .diff-icon {
+      font-size: 1.5rem;
+    }
+
+    .diff-label {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-1);
+    }
+
+    .diff-desc {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+    }
+
+    .breath-results {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1.5rem;
+      animation: fadeSlideUp 0.5s ease;
+    }
 
     .result-card {
       width: 100%;
@@ -674,12 +865,24 @@
       gap: 0.75rem;
     }
 
-    .result-card.green { border-color: var(--green-border); background: var(--green-bg); }
-    .result-card.orange { border-color: var(--orange-border); background: var(--orange-bg); }
-    .result-card.red { border-color: var(--red-border); background: var(--red-bg); }
+    .result-card.green {
+      border-color: var(--green-border);
+      background: var(--green-bg);
+    }
+
+    .result-card.orange {
+      border-color: var(--orange-border);
+      background: var(--orange-bg);
+    }
+
+    .result-card.red {
+      border-color: var(--red-border);
+      background: var(--red-bg);
+    }
 
     .score-circle {
-      width: 90px; height: 90px;
+      width: 90px;
+      height: 90px;
       border-radius: 50%;
       background: var(--bg-surface);
       border: 3px solid var(--primary);
@@ -690,19 +893,62 @@
       box-shadow: 0 4px 20px rgba(13, 148, 136, 0.2);
     }
 
-    .score-circle.green { border-color: var(--green); }
-    .score-circle.orange { border-color: var(--orange); }
-    .score-circle.red { border-color: var(--red); }
+    .score-circle.green {
+      border-color: var(--green);
+    }
 
-    .score-num { font-family: var(--font-heading); font-size: 2rem; font-weight: 700; color: var(--primary); line-height: 1; }
-    .score-denom { font-size: 0.85rem; color: var(--text-muted); align-self: flex-end; padding-bottom: 0.3rem; }
+    .score-circle.orange {
+      border-color: var(--orange);
+    }
 
-    .result-title { font-size: 1.2rem; }
-    .result-desc { font-size: 0.9rem; color: var(--text-2); max-width: 380px; }
-    .result-urgency { display: inline-block; padding: 0.3rem 1rem; border-radius: 20px; font-size: 0.8rem; font-weight: 600; color: #fff; }
+    .score-circle.red {
+      border-color: var(--red);
+    }
 
-    .result-actions { display: flex; flex-direction: column; gap: 0.75rem; width: 100%; }
-    .result-actions .btn { width: 100%; }
+    .score-num {
+      font-family: var(--font-heading);
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--primary);
+      line-height: 1;
+    }
+
+    .score-denom {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      align-self: flex-end;
+      padding-bottom: 0.3rem;
+    }
+
+    .result-title {
+      font-size: 1.2rem;
+    }
+
+    .result-desc {
+      font-size: 0.9rem;
+      color: var(--text-2);
+      max-width: 380px;
+    }
+
+    .result-urgency {
+      display: inline-block;
+      padding: 0.3rem 1rem;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: #fff;
+    }
+
+    .result-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      width: 100%;
+    }
+
+    .result-actions .btn {
+      width: 100%;
+    }
 
     /* ============================================================
        RESULTS SCREEN
@@ -717,9 +963,23 @@
       background: var(--bg-surface);
     }
 
-    .results-header.red { background: var(--red-bg); border-color: var(--red-border); box-shadow: 0 0 35px var(--red-border); }
-    .results-header.orange { background: var(--orange-bg); border-color: var(--orange-border); box-shadow: 0 0 35px var(--orange-border); }
-    .results-header.green { background: var(--green-bg); border-color: var(--green-border); box-shadow: 0 0 35px var(--green-border); }
+    .results-header.red {
+      background: var(--red-bg);
+      border-color: var(--red-border);
+      box-shadow: 0 0 35px var(--red-border);
+    }
+
+    .results-header.orange {
+      background: var(--orange-bg);
+      border-color: var(--orange-border);
+      box-shadow: 0 0 35px var(--orange-border);
+    }
+
+    .results-header.green {
+      background: var(--green-bg);
+      border-color: var(--green-border);
+      box-shadow: 0 0 35px var(--green-border);
+    }
 
     .urgency-badge {
       display: inline-block;
@@ -735,28 +995,87 @@
       z-index: 1;
     }
 
-    .results-header.red .urgency-badge { background: var(--red); color: #fff; }
-    .results-header.orange .urgency-badge { background: var(--orange); color: #fff; }
-    .results-header.green .urgency-badge { background: var(--green); color: #fff; }
+    .results-header.red .urgency-badge {
+      background: var(--red);
+      color: #fff;
+    }
 
-    .condition-title { font-size: 1.85rem; font-weight: 700; margin-bottom: 0.5rem; position: relative; z-index: 1; }
-    .results-header.red .condition-title { color: var(--red); }
-    .results-header.orange .condition-title { color: var(--orange); }
-    .results-header.green .condition-title { color: var(--green); }
+    .results-header.orange .urgency-badge {
+      background: var(--orange);
+      color: #fff;
+    }
 
-    .results-desc { color: var(--text-2); max-width: 600px; margin: 0 auto; position: relative; z-index: 1; }
+    .results-header.green .urgency-badge {
+      background: var(--green);
+      color: #fff;
+    }
 
-    .rec-list { list-style: none; display: flex; flex-direction: column; gap: 1rem; }
-    .rec-list li { display: flex; gap: 0.875rem; font-size: 0.975rem; color: var(--text-2); }
-    .rec-list li::before { content: "✦"; color: var(--primary); font-weight: bold; }
+    .condition-title {
+      font-size: 1.85rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      position: relative;
+      z-index: 1;
+    }
 
-    .results-actions { display: flex; gap: 1rem; justify-content: center; }
+    .results-header.red .condition-title {
+      color: var(--red);
+    }
+
+    .results-header.orange .condition-title {
+      color: var(--orange);
+    }
+
+    .results-header.green .condition-title {
+      color: var(--green);
+    }
+
+    .results-desc {
+      color: var(--text-2);
+      max-width: 600px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 1;
+    }
+
+    .rec-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .rec-list li {
+      display: flex;
+      gap: 0.875rem;
+      font-size: 0.975rem;
+      color: var(--text-2);
+    }
+
+    .rec-list li::before {
+      content: "✦";
+      color: var(--primary);
+      font-weight: bold;
+    }
+
+    .results-actions {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+    }
 
     /* ============================================================
        NUTRITION SCREEN
        ============================================================ */
-    .food-header h2 { font-size: 1.6rem; margin-bottom: 0.25rem; }
-    .food-header p { color: var(--text-muted); font-size: 0.95rem; }
+    .food-header h2 {
+      font-size: 1.6rem;
+      margin-bottom: 0.25rem;
+    }
+
+    .food-header p {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+    }
 
     .mood-section-label {
       font-size: 0.85rem;
@@ -767,7 +1086,11 @@
       margin-bottom: 0.75rem;
     }
 
-    .mood-chips { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+    .mood-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
 
     .chip {
       background: var(--input-bg);
@@ -784,17 +1107,36 @@
       gap: 0.35rem;
     }
 
-    .chip:hover { border-color: var(--primary); color: var(--primary); background: var(--primary-glow); }
-    .chip.selected { background: var(--primary-glow); border-color: var(--primary); color: var(--primary); }
+    .chip:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+      background: var(--primary-glow);
+    }
 
-    .food-input-row { display: flex; gap: 0.75rem; }
-    .food-input-row input { flex: 1; }
+    .chip.selected {
+      background: var(--primary-glow);
+      border-color: var(--primary);
+      color: var(--primary);
+    }
 
-    .food-loading { text-align: center; padding: 2rem; }
+    .food-input-row {
+      display: flex;
+      gap: 0.75rem;
+    }
+
+    .food-input-row input {
+      flex: 1;
+    }
+
+    .food-loading {
+      text-align: center;
+      padding: 2rem;
+    }
 
     .pulse-ring-wrap {
       position: relative;
-      width: 80px; height: 80px;
+      width: 80px;
+      height: 80px;
       margin: 0 auto 1rem;
       display: flex;
       align-items: center;
@@ -803,16 +1145,29 @@
 
     .pulse-ring {
       position: absolute;
-      width: 80px; height: 80px;
+      width: 80px;
+      height: 80px;
       border-radius: 50%;
       border: 2px solid var(--primary);
       animation: ringPulse 1.5s ease-in-out infinite;
     }
 
-    .pulse-emoji { font-size: 2.5rem; }
-    .food-error { text-align: center; padding: 1.5rem; color: var(--red); }
+    .pulse-emoji {
+      font-size: 2.5rem;
+    }
 
-    .food-results-header { display: flex; align-items: center; gap: 1rem; margin-bottom: 1.25rem; }
+    .food-error {
+      text-align: center;
+      padding: 1.5rem;
+      color: var(--red);
+    }
+
+    .food-results-header {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1.25rem;
+    }
 
     .food-condition-badge {
       background: var(--primary-glow);
@@ -824,7 +1179,11 @@
       color: var(--primary);
     }
 
-    .food-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; }
+    .food-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1rem;
+    }
 
     .food-card {
       background: var(--bg-surface);
@@ -837,12 +1196,42 @@
       transition: all var(--speed);
     }
 
-    .food-card:hover { border-color: var(--primary); transform: translateY(-2px); box-shadow: var(--shadow); }
-    .food-card-icon { font-size: 2rem; }
-    .food-card-title { font-family: var(--font-heading); font-size: 1rem; font-weight: 700; color: var(--primary); }
-    .food-card-items { list-style: none; display: flex; flex-direction: column; gap: 0.3rem; }
-    .food-card-items li { font-size: 0.875rem; color: var(--text-2); display: flex; align-items: center; gap: 0.4rem; }
-    .food-card-items li::before { content: "•"; color: var(--primary); }
+    .food-card:hover {
+      border-color: var(--primary);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow);
+    }
+
+    .food-card-icon {
+      font-size: 2rem;
+    }
+
+    .food-card-title {
+      font-family: var(--font-heading);
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--primary);
+    }
+
+    .food-card-items {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+    }
+
+    .food-card-items li {
+      font-size: 0.875rem;
+      color: var(--text-2);
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .food-card-items li::before {
+      content: "•";
+      color: var(--primary);
+    }
 
     .api-toggle-btn {
       width: 100%;
@@ -860,20 +1249,53 @@
       transition: all var(--speed);
     }
 
-    .api-toggle-btn:hover { border-color: var(--primary); color: var(--primary); }
-    .api-arrow { margin-left: auto; transition: transform var(--speed); }
-    .api-toggle-btn[aria-expanded="true"] .api-arrow { transform: rotate(180deg); }
+    .api-toggle-btn:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+    }
 
-    .api-panel { padding: 1rem 0 0; }
-    .api-panel p { font-size: 0.875rem; color: var(--text-2); margin-bottom: 0.75rem; }
-    .api-panel a { color: var(--primary); text-decoration: underline; }
-    .api-status { font-size: 0.82rem; margin-top: 0.5rem; color: var(--green); }
+    .api-arrow {
+      margin-left: auto;
+      transition: transform var(--speed);
+    }
+
+    .api-toggle-btn[aria-expanded="true"] .api-arrow {
+      transform: rotate(180deg);
+    }
+
+    .api-panel {
+      padding: 1rem 0 0;
+    }
+
+    .api-panel p {
+      font-size: 0.875rem;
+      color: var(--text-2);
+      margin-bottom: 0.75rem;
+    }
+
+    .api-panel a {
+      color: var(--primary);
+      text-decoration: underline;
+    }
+
+    .api-status {
+      font-size: 0.82rem;
+      margin-top: 0.5rem;
+      color: var(--green);
+    }
 
     /* ============================================================
        BMI SCREEN
        ============================================================ */
-    .bmi-header { display: flex; align-items: center; gap: 1rem; }
-    .bmi-header-icon { font-size: 2rem; }
+    .bmi-header {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .bmi-header-icon {
+      font-size: 2rem;
+    }
 
     .bmi-form-grid {
       display: grid;
@@ -895,7 +1317,9 @@
       vertical-align: middle;
     }
 
-    .bmi-result-card { margin-top: 1.5rem; }
+    .bmi-result-card {
+      margin-top: 1.5rem;
+    }
 
     .bmi-hero {
       display: flex;
@@ -906,7 +1330,8 @@
     }
 
     .bmi-circle {
-      width: 110px; height: 110px;
+      width: 110px;
+      height: 110px;
       flex-shrink: 0;
       border-radius: 50%;
       border: 4px solid var(--primary);
@@ -919,15 +1344,40 @@
       transition: all 0.6s ease;
     }
 
-    .bmi-circle.underweight { border-color: var(--secondary); }
-    .bmi-circle.normal { border-color: var(--green); }
-    .bmi-circle.overweight { border-color: var(--orange); }
-    .bmi-circle.obese { border-color: var(--red); }
+    .bmi-circle.underweight {
+      border-color: var(--secondary);
+    }
 
-    .bmi-value { font-family: var(--font-heading); font-size: 2rem; font-weight: 800; color: var(--primary); line-height: 1; }
-    .bmi-sublabel { font-size: 0.75rem; color: var(--text-muted); font-weight: 600; }
+    .bmi-circle.normal {
+      border-color: var(--green);
+    }
 
-    .bmi-cat-info { flex: 1; min-width: 160px; }
+    .bmi-circle.overweight {
+      border-color: var(--orange);
+    }
+
+    .bmi-circle.obese {
+      border-color: var(--red);
+    }
+
+    .bmi-value {
+      font-family: var(--font-heading);
+      font-size: 2rem;
+      font-weight: 800;
+      color: var(--primary);
+      line-height: 1;
+    }
+
+    .bmi-sublabel {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    .bmi-cat-info {
+      flex: 1;
+      min-width: 160px;
+    }
 
     .bmi-cat-badge {
       display: inline-block;
@@ -940,14 +1390,34 @@
       margin-bottom: 0.5rem;
     }
 
-    .bmi-cat-badge.underweight { background: rgba(14, 165, 233, 0.15); color: var(--secondary); }
-    .bmi-cat-badge.normal { background: var(--green-bg); color: var(--green); }
-    .bmi-cat-badge.overweight { background: var(--orange-bg); color: var(--orange); }
-    .bmi-cat-badge.obese { background: var(--red-bg); color: var(--red); }
+    .bmi-cat-badge.underweight {
+      background: rgba(14, 165, 233, 0.15);
+      color: var(--secondary);
+    }
 
-    .bmi-cat-desc { font-size: 0.9rem; color: var(--text-2); }
+    .bmi-cat-badge.normal {
+      background: var(--green-bg);
+      color: var(--green);
+    }
 
-    .bmi-gauge { margin: 1.5rem 0; }
+    .bmi-cat-badge.overweight {
+      background: var(--orange-bg);
+      color: var(--orange);
+    }
+
+    .bmi-cat-badge.obese {
+      background: var(--red-bg);
+      color: var(--red);
+    }
+
+    .bmi-cat-desc {
+      font-size: 0.9rem;
+      color: var(--text-2);
+    }
+
+    .bmi-gauge {
+      margin: 1.5rem 0;
+    }
 
     .gauge-track {
       position: relative;
@@ -961,7 +1431,8 @@
     .gauge-pointer {
       position: absolute;
       top: -5px;
-      width: 24px; height: 24px;
+      width: 24px;
+      height: 24px;
       border-radius: 50%;
       background: var(--bg-page);
       border: 3px solid var(--text-1);
@@ -970,13 +1441,44 @@
       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
     }
 
-    .gauge-labels { display: flex; justify-content: space-between; font-size: 0.72rem; color: var(--text-muted); padding: 0 2px; }
+    .gauge-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      padding: 0 2px;
+    }
 
-    .tips-section { margin-top: 1.25rem; }
-    .tips-title { font-size: 1rem; font-weight: 700; color: var(--primary); margin-bottom: 0.75rem; }
-    .tips-list { list-style: none; display: flex; flex-direction: column; gap: 0.65rem; }
-    .tips-list li { display: flex; gap: 0.75rem; font-size: 0.9rem; color: var(--text-2); }
-    .tips-list li::before { content: "✦"; color: var(--primary); flex-shrink: 0; }
+    .tips-section {
+      margin-top: 1.25rem;
+    }
+
+    .tips-title {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 0.75rem;
+    }
+
+    .tips-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.65rem;
+    }
+
+    .tips-list li {
+      display: flex;
+      gap: 0.75rem;
+      font-size: 0.9rem;
+      color: var(--text-2);
+    }
+
+    .tips-list li::before {
+      content: "✦";
+      color: var(--primary);
+      flex-shrink: 0;
+    }
 
     .bmi-disclaimer {
       margin-top: 1.25rem;
@@ -993,7 +1495,11 @@
     /* ============================================================
        PROFILE / AUTH SCREENS
        ============================================================ */
-    .auth-tabs { display: flex; border-bottom: 2px solid var(--border); margin-bottom: 1.5rem; }
+    .auth-tabs {
+      display: flex;
+      border-bottom: 2px solid var(--border);
+      margin-bottom: 1.5rem;
+    }
 
     .auth-tab {
       flex: 1;
@@ -1010,22 +1516,51 @@
       transition: all var(--speed);
     }
 
-    .auth-tab:hover { color: var(--primary); }
-    .auth-tab.active { color: var(--primary); border-bottom-color: var(--primary); }
+    .auth-tab:hover {
+      color: var(--primary);
+    }
 
-    .auth-form { display: none; flex-direction: column; gap: 1.25rem; }
-    .auth-form.active { display: flex; animation: fadeIn 0.4s ease-out; }
+    .auth-tab.active {
+      color: var(--primary);
+      border-bottom-color: var(--primary);
+    }
 
-    .form-row { display: flex; gap: 1rem; }
-    .form-row .form-group { flex: 1; }
+    .auth-form {
+      display: none;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
 
-    .auth-subtitle { font-size: 0.9rem; color: var(--text-2); }
+    .auth-form.active {
+      display: flex;
+      animation: fadeIn 0.4s ease-out;
+    }
 
-    .profile-header { display: flex; align-items: center; gap: 1.25rem; margin-bottom: 1.75rem; }
+    .form-row {
+      display: flex;
+      gap: 1rem;
+    }
+
+    .form-row .form-group {
+      flex: 1;
+    }
+
+    .auth-subtitle {
+      font-size: 0.9rem;
+      color: var(--text-2);
+    }
+
+    .profile-header {
+      display: flex;
+      align-items: center;
+      gap: 1.25rem;
+      margin-bottom: 1.75rem;
+    }
 
     .avatar {
       font-size: 2.25rem;
-      width: 64px; height: 64px;
+      width: 64px;
+      height: 64px;
       border-radius: 50%;
       border: 2px solid var(--primary);
       background: var(--primary-glow);
@@ -1035,7 +1570,12 @@
       box-shadow: 0 0 15px var(--primary-glow);
     }
 
-    .detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem; }
+    .detail-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
 
     .detail-card {
       background: var(--input-bg);
@@ -1048,9 +1588,23 @@
       transition: all var(--speed);
     }
 
-    .detail-card:hover { border-color: var(--primary); }
-    .detail-label { font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; font-weight: 700; }
-    .detail-value { font-family: var(--font-heading); font-size: 1.25rem; font-weight: 700; color: var(--primary); }
+    .detail-card:hover {
+      border-color: var(--primary);
+    }
+
+    .detail-label {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+
+    .detail-value {
+      font-family: var(--font-heading);
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--primary);
+    }
 
     .med-history-box {
       background: var(--input-bg);
@@ -1062,7 +1616,11 @@
       line-height: 1.6;
     }
 
-    .profile-actions { display: flex; gap: 1rem; margin-top: 2rem; }
+    .profile-actions {
+      display: flex;
+      gap: 1rem;
+      margin-top: 2rem;
+    }
 
     /* ============================================================
        HISTORY SCREEN
@@ -1076,9 +1634,16 @@
       gap: 1rem;
     }
 
-    .panel-icon { font-size: 3rem; }
+    .panel-icon {
+      font-size: 3rem;
+    }
 
-    .history-list { display: flex; flex-direction: column; gap: 1rem; width: 100%; }
+    .history-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      width: 100%;
+    }
 
     .history-card {
       background: var(--bg-surface);
@@ -1094,22 +1659,65 @@
       gap: 1.25rem;
     }
 
-    .history-card:hover { transform: translateY(-2px); box-shadow: var(--shadow); }
-    .history-card.red { border-left-color: var(--red); }
-    .history-card.orange { border-left-color: var(--orange); }
-    .history-card.green { border-left-color: var(--green); }
+    .history-card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow);
+    }
 
-    .hc-info { display: flex; flex-direction: column; gap: 0.35rem; flex-grow: 1; overflow: hidden; }
-    .hc-title { font-family: var(--font-heading); font-size: 1.1rem; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .hc-meta { font-size: 0.8rem; color: var(--text-muted); }
-    .hc-symptom { font-size: 0.85rem; color: var(--text-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .hc-actions { display: flex; gap: 0.5rem; flex-shrink: 0; }
+    .history-card.red {
+      border-left-color: var(--red);
+    }
+
+    .history-card.orange {
+      border-left-color: var(--orange);
+    }
+
+    .history-card.green {
+      border-left-color: var(--green);
+    }
+
+    .hc-info {
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+      flex-grow: 1;
+      overflow: hidden;
+    }
+
+    .hc-title {
+      font-family: var(--font-heading);
+      font-size: 1.1rem;
+      font-weight: 700;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .hc-meta {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .hc-symptom {
+      font-size: 0.85rem;
+      color: var(--text-2);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .hc-actions {
+      display: flex;
+      gap: 0.5rem;
+      flex-shrink: 0;
+    }
 
     .icon-btn {
       background: var(--input-bg);
       border: 1px solid var(--border);
       border-radius: 10px;
-      width: 38px; height: 38px;
+      width: 38px;
+      height: 38px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -1119,7 +1727,11 @@
       transition: all var(--speed);
     }
 
-    .icon-btn:hover { background: var(--input-focus); color: var(--red); border-color: rgba(225, 29, 72, 0.25); }
+    .icon-btn:hover {
+      background: var(--input-focus);
+      color: var(--red);
+      border-color: rgba(225, 29, 72, 0.25);
+    }
 
     /* ============================================================
        MODAL
@@ -1136,7 +1748,10 @@
       padding: 1.5rem;
     }
 
-    .modal-overlay.open { display: flex; animation: fadeIn 0.3s ease; }
+    .modal-overlay.open {
+      display: flex;
+      animation: fadeIn 0.3s ease;
+    }
 
     .modal-card {
       background: var(--bg-page);
@@ -1163,7 +1778,8 @@
       font-size: 2.25rem;
       color: var(--text-muted);
       cursor: pointer;
-      width: 38px; height: 38px;
+      width: 38px;
+      height: 38px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -1171,7 +1787,10 @@
       transition: all var(--speed);
     }
 
-    .modal-close:hover { color: var(--red); transform: rotate(90deg); }
+    .modal-close:hover {
+      color: var(--red);
+      transform: rotate(90deg);
+    }
 
     .modal-scroll {
       overflow-y: auto;
@@ -1183,8 +1802,14 @@
       padding-right: 0.5rem;
     }
 
-    .modal-scroll::-webkit-scrollbar { width: 5px; }
-    .modal-scroll::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+    .modal-scroll::-webkit-scrollbar {
+      width: 5px;
+    }
+
+    .modal-scroll::-webkit-scrollbar-thumb {
+      background: var(--border);
+      border-radius: 3px;
+    }
 
     .modal-section {
       background: var(--bg-surface);
@@ -1196,7 +1821,11 @@
       gap: 0.65rem;
     }
 
-    .modal-section h4 { font-family: var(--font-heading); color: var(--primary); font-size: 1.05rem; }
+    .modal-section h4 {
+      font-family: var(--font-heading);
+      color: var(--primary);
+      font-size: 1.05rem;
+    }
 
     .modal-transcript {
       background: var(--input-bg);
@@ -1221,7 +1850,9 @@
     /* ============================================================
        MEDICATION REMINDER SCREEN
        ============================================================ */
-    #screen-meds { gap: 0; }
+    #screen-meds {
+      gap: 0;
+    }
 
     .meds-header {
       display: flex;
@@ -1239,7 +1870,10 @@
       font-weight: 700;
     }
 
-    .meds-title i { font-size: 1.4rem; color: var(--primary); }
+    .meds-title i {
+      font-size: 1.4rem;
+      color: var(--primary);
+    }
 
     .meds-add-btn {
       background: linear-gradient(135deg, var(--primary), var(--secondary));
@@ -1258,7 +1892,10 @@
       white-space: nowrap;
     }
 
-    .meds-add-btn:hover { transform: translateY(-1px); filter: brightness(1.05); }
+    .meds-add-btn:hover {
+      transform: translateY(-1px);
+      filter: brightness(1.05);
+    }
 
     .meds-progress-wrap {
       background: var(--bg-surface);
@@ -1277,9 +1914,19 @@
       margin-bottom: 0.75rem;
     }
 
-    .meds-progress-count { font-family: var(--font-heading); font-weight: 700; color: var(--primary); font-size: 0.95rem; }
+    .meds-progress-count {
+      font-family: var(--font-heading);
+      font-weight: 700;
+      color: var(--primary);
+      font-size: 0.95rem;
+    }
 
-    .meds-progress-track { background: var(--border); border-radius: 10px; height: 8px; overflow: hidden; }
+    .meds-progress-track {
+      background: var(--border);
+      border-radius: 10px;
+      height: 8px;
+      overflow: hidden;
+    }
 
     .meds-progress-fill {
       height: 100%;
@@ -1312,7 +1959,11 @@
       transition: all 0.2s;
     }
 
-    .meds-tab.active { background: var(--primary-glow); color: var(--primary); border: 1px solid var(--med-border); }
+    .meds-tab.active {
+      background: var(--primary-glow);
+      color: var(--primary);
+      border: 1px solid var(--med-border);
+    }
 
     .meds-section-label {
       font-size: 0.7rem;
@@ -1337,11 +1988,19 @@
       position: relative;
     }
 
-    .med-card:hover { border-color: var(--primary); box-shadow: var(--shadow); }
-    .med-card.taken { opacity: 0.55; background: var(--med-taken); }
+    .med-card:hover {
+      border-color: var(--primary);
+      box-shadow: var(--shadow);
+    }
+
+    .med-card.taken {
+      opacity: 0.55;
+      background: var(--med-taken);
+    }
 
     .med-pill-icon {
-      width: 46px; height: 46px;
+      width: 46px;
+      height: 46px;
       border-radius: 14px;
       display: flex;
       align-items: center;
@@ -1350,7 +2009,10 @@
       flex-shrink: 0;
     }
 
-    .med-info { flex: 1; min-width: 0; }
+    .med-info {
+      flex: 1;
+      min-width: 0;
+    }
 
     .med-name {
       font-family: var(--font-heading);
@@ -1363,7 +2025,12 @@
       flex-wrap: wrap;
     }
 
-    .med-dose { font-size: 0.78rem; color: var(--text-muted); font-weight: 400; font-family: var(--font-body); }
+    .med-dose {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      font-weight: 400;
+      font-family: var(--font-body);
+    }
 
     .med-skip-badge {
       font-size: 0.7rem;
@@ -1375,7 +2042,11 @@
       border: 1px solid var(--red-border);
     }
 
-    .med-sub { font-size: 0.8rem; color: var(--text-2); margin-top: 0.2rem; }
+    .med-sub {
+      font-size: 0.8rem;
+      color: var(--text-2);
+      margin-top: 0.2rem;
+    }
 
     .med-note {
       font-size: 0.75rem;
@@ -1396,7 +2067,8 @@
     }
 
     .med-check-btn {
-      width: 36px; height: 36px;
+      width: 36px;
+      height: 36px;
       border-radius: 50%;
       border: 1.5px solid var(--border);
       background: none;
@@ -1409,9 +2081,21 @@
       color: var(--text-muted);
     }
 
-    .med-check-btn:hover { border-color: var(--primary); background: var(--primary-glow); color: var(--primary); }
-    .med-check-btn.done { background: var(--med-check); border-color: var(--med-check); color: #fff; }
-    .med-check-btn i { font-size: 18px; }
+    .med-check-btn:hover {
+      border-color: var(--primary);
+      background: var(--primary-glow);
+      color: var(--primary);
+    }
+
+    .med-check-btn.done {
+      background: var(--med-check);
+      border-color: var(--med-check);
+      color: #fff;
+    }
+
+    .med-check-btn i {
+      font-size: 18px;
+    }
 
     .meds-tip-card {
       background: var(--orange-bg);
@@ -1424,11 +2108,32 @@
       margin-bottom: 1rem;
     }
 
-    .meds-tip-card i { font-size: 1.1rem; color: var(--orange); margin-top: 2px; flex-shrink: 0; }
-    .meds-tip-card p { font-size: 0.82rem; color: var(--text-2); line-height: 1.5; }
-    .meds-tip-card a { color: var(--primary); cursor: pointer; text-decoration: none; font-weight: 600; }
+    .meds-tip-card i {
+      font-size: 1.1rem;
+      color: var(--orange);
+      margin-top: 2px;
+      flex-shrink: 0;
+    }
 
-    .meds-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.75rem; margin-top: 0.5rem; }
+    .meds-tip-card p {
+      font-size: 0.82rem;
+      color: var(--text-2);
+      line-height: 1.5;
+    }
+
+    .meds-tip-card a {
+      color: var(--primary);
+      cursor: pointer;
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .meds-stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.75rem;
+      margin-top: 0.5rem;
+    }
 
     .meds-stat {
       background: var(--bg-surface);
@@ -1438,10 +2143,30 @@
       text-align: center;
     }
 
-    .meds-stat-num { font-family: var(--font-heading); font-size: 1.6rem; font-weight: 800; color: var(--primary); line-height: 1; margin-bottom: 0.25rem; }
-    .meds-stat-num.streak { color: var(--med-streak); }
-    .meds-stat-num.missed { color: var(--med-missed); }
-    .meds-stat-label { font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600; }
+    .meds-stat-num {
+      font-family: var(--font-heading);
+      font-size: 1.6rem;
+      font-weight: 800;
+      color: var(--primary);
+      line-height: 1;
+      margin-bottom: 0.25rem;
+    }
+
+    .meds-stat-num.streak {
+      color: var(--med-streak);
+    }
+
+    .meds-stat-num.missed {
+      color: var(--med-missed);
+    }
+
+    .meds-stat-label {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      font-weight: 600;
+    }
 
     .meds-empty {
       text-align: center;
@@ -1452,9 +2177,20 @@
       gap: 0.75rem;
     }
 
-    .meds-empty i { font-size: 3rem; color: var(--text-muted); }
-    .meds-empty h3 { font-size: 1.1rem; color: var(--text-2); }
-    .meds-empty p { font-size: 0.875rem; color: var(--text-muted); }
+    .meds-empty i {
+      font-size: 3rem;
+      color: var(--text-muted);
+    }
+
+    .meds-empty h3 {
+      font-size: 1.1rem;
+      color: var(--text-2);
+    }
+
+    .meds-empty p {
+      font-size: 0.875rem;
+      color: var(--text-muted);
+    }
 
     /* ============================================================
        ADD MEDICATION MODAL (bottom sheet)
@@ -1471,7 +2207,10 @@
       padding: 0;
     }
 
-    .meds-modal-overlay.open { display: flex; animation: fadeIn 0.25s ease; }
+    .meds-modal-overlay.open {
+      display: flex;
+      animation: fadeIn 0.25s ease;
+    }
 
     .meds-modal {
       background: var(--bg-page);
@@ -1497,9 +2236,13 @@
       gap: 0.6rem;
     }
 
-    .meds-modal h3 i { color: var(--primary); }
+    .meds-modal h3 i {
+      color: var(--primary);
+    }
 
-    .meds-field { margin-bottom: 0.875rem; }
+    .meds-field {
+      margin-bottom: 0.875rem;
+    }
 
     .meds-field label {
       display: block;
@@ -1512,11 +2255,22 @@
     }
 
     .meds-field input,
-    .meds-field select { font-size: 0.9rem; padding: 0.7rem 1rem; }
+    .meds-field select {
+      font-size: 0.9rem;
+      padding: 0.7rem 1rem;
+    }
 
-    .meds-field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
+    .meds-field-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem;
+    }
 
-    .meds-modal-btns { display: flex; gap: 0.75rem; margin-top: 1.25rem; }
+    .meds-modal-btns {
+      display: flex;
+      gap: 0.75rem;
+      margin-top: 1.25rem;
+    }
 
     .meds-modal-btns button {
       flex: 1;
@@ -1528,8 +2282,16 @@
       font-family: var(--font-heading);
     }
 
-    .meds-btn-cancel { background: var(--input-bg); border: 1px solid var(--border); color: var(--text-2); transition: all 0.2s; }
-    .meds-btn-cancel:hover { border-color: var(--text-2); }
+    .meds-btn-cancel {
+      background: var(--input-bg);
+      border: 1px solid var(--border);
+      color: var(--text-2);
+      transition: all 0.2s;
+    }
+
+    .meds-btn-cancel:hover {
+      border-color: var(--text-2);
+    }
 
     .meds-btn-save {
       background: linear-gradient(135deg, var(--primary), var(--secondary));
@@ -1538,13 +2300,19 @@
       transition: all 0.2s;
     }
 
-    .meds-btn-save:hover { filter: brightness(1.05); }
+    .meds-btn-save:hover {
+      filter: brightness(1.05);
+    }
 
-    /* Dose count selector */
-    .dose-count-row { display: flex; align-items: center; gap: 0.75rem; }
+    .dose-count-row {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
 
     .dose-count-btn {
-      width: 36px; height: 36px;
+      width: 36px;
+      height: 36px;
       border-radius: 50%;
       border: 1.5px solid var(--border);
       background: var(--input-bg);
@@ -1560,7 +2328,11 @@
       line-height: 1;
     }
 
-    .dose-count-btn:hover { border-color: var(--primary); background: var(--primary-glow); color: var(--primary); }
+    .dose-count-btn:hover {
+      border-color: var(--primary);
+      background: var(--primary-glow);
+      color: var(--primary);
+    }
 
     .dose-count-display {
       font-family: var(--font-heading);
@@ -1571,10 +2343,17 @@
       text-align: center;
     }
 
-    .dose-count-info { font-size: 0.78rem; color: var(--text-muted); }
+    .dose-count-info {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+    }
 
-    /* Dose slot rows */
-    .dose-slots-container { display: flex; flex-direction: column; gap: 0.55rem; margin-top: 0.6rem; }
+    .dose-slots-container {
+      display: flex;
+      flex-direction: column;
+      gap: 0.55rem;
+      margin-top: 0.6rem;
+    }
 
     .dose-slot-row {
       display: flex;
@@ -1587,7 +2366,9 @@
       transition: border-color 0.2s;
     }
 
-    .dose-slot-row:focus-within { border-color: var(--primary); }
+    .dose-slot-row:focus-within {
+      border-color: var(--primary);
+    }
 
     .dose-slot-label {
       font-size: 0.78rem;
@@ -1619,7 +2400,9 @@
     /* ============================================================
        FCM SETTINGS PANEL
        ============================================================ */
-    .fcm-settings-wrap { margin-top: 1rem; }
+    .fcm-settings-wrap {
+      margin-top: 1rem;
+    }
 
     .fcm-toggle-btn {
       width: 100%;
@@ -1637,9 +2420,19 @@
       transition: all var(--speed);
     }
 
-    .fcm-toggle-btn:hover { border-color: var(--primary); color: var(--primary); }
-    .fcm-arrow { margin-left: auto; transition: transform var(--speed); }
-    .fcm-toggle-btn[aria-expanded="true"] .fcm-arrow { transform: rotate(180deg); }
+    .fcm-toggle-btn:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    .fcm-arrow {
+      margin-left: auto;
+      transition: transform var(--speed);
+    }
+
+    .fcm-toggle-btn[aria-expanded="true"] .fcm-arrow {
+      transform: rotate(180deg);
+    }
 
     .fcm-panel {
       padding: 1rem 0 0;
@@ -1658,7 +2451,11 @@
       display: block;
     }
 
-    .fcm-status { font-size: 0.82rem; color: var(--green); min-height: 1.2em; }
+    .fcm-status {
+      font-size: 0.82rem;
+      color: var(--green);
+      min-height: 1.2em;
+    }
 
     /* ============================================================
        PUSH NOTIFICATION LINK MODAL
@@ -1675,7 +2472,10 @@
       padding: 1.5rem;
     }
 
-    .notification-modal-overlay.open { display: flex; animation: fadeIn 0.3s ease; }
+    .notification-modal-overlay.open {
+      display: flex;
+      animation: fadeIn 0.3s ease;
+    }
 
     .notification-modal-card {
       background: var(--bg-page);
@@ -1684,7 +2484,7 @@
       border-radius: var(--radius);
       border: 1px solid var(--border);
       padding: 2.5rem 2rem 2rem;
-      box-shadow: 0 30px 80px rgba(0,0,0,0.4);
+      box-shadow: 0 30px 80px rgba(0, 0, 0, 0.4);
       animation: slideUp 0.4s cubic-bezier(0.18, 0.89, 0.32, 1.15);
       text-align: center;
       display: flex;
@@ -1693,9 +2493,24 @@
       gap: 1.25rem;
     }
 
-    .notification-modal-icon { font-size: 3.5rem; animation: pulse 2s infinite; }
-    .notification-modal-title { font-family: var(--font-heading); font-size: 1.4rem; font-weight: 700; color: var(--text-1); }
-    .notification-modal-desc { font-size: 0.92rem; color: var(--text-2); line-height: 1.65; max-width: 340px; }
+    .notification-modal-icon {
+      font-size: 3.5rem;
+      animation: pulse 2s infinite;
+    }
+
+    .notification-modal-title {
+      font-family: var(--font-heading);
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: var(--text-1);
+    }
+
+    .notification-modal-desc {
+      font-size: 0.92rem;
+      color: var(--text-2);
+      line-height: 1.65;
+      max-width: 340px;
+    }
 
     .notification-perm-btn {
       display: inline-flex;
@@ -1717,7 +2532,10 @@
       width: 100%;
     }
 
-    .notification-perm-btn:hover { transform: translateY(-2px); filter: brightness(1.08); }
+    .notification-perm-btn:hover {
+      transform: translateY(-2px);
+      filter: brightness(1.08);
+    }
 
     .notification-benefits {
       text-align: left;
@@ -1728,11 +2546,22 @@
       width: 100%;
     }
 
-    .notification-benefit { display: flex; gap: 0.75rem; align-items: flex-start; font-size: 0.875rem; color: var(--text-2); margin-bottom: 0.75rem; }
-    .notification-benefit:last-child { margin-bottom: 0; }
+    .notification-benefit {
+      display: flex;
+      gap: 0.75rem;
+      align-items: flex-start;
+      font-size: 0.875rem;
+      color: var(--text-2);
+      margin-bottom: 0.75rem;
+    }
+
+    .notification-benefit:last-child {
+      margin-bottom: 0;
+    }
 
     .step-num {
-      width: 22px; height: 22px;
+      width: 22px;
+      height: 22px;
       border-radius: 50%;
       background: var(--primary);
       color: #fff;
@@ -1755,7 +2584,13 @@
       border-top: 1px solid var(--border);
     }
 
-    .emergency-row { display: flex; justify-content: center; gap: 2rem; flex-wrap: wrap; margin-bottom: 1rem; }
+    .emergency-row {
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+      flex-wrap: wrap;
+      margin-bottom: 1rem;
+    }
 
     .emergency-item {
       display: flex;
@@ -1766,76 +2601,210 @@
       color: var(--red);
     }
 
-    .emergency-item a { color: inherit; text-decoration: underline; }
+    .emergency-item a {
+      color: inherit;
+      text-decoration: underline;
+    }
 
-    .footer-note { font-size: 0.785rem; color: var(--text-muted); max-width: 700px; margin: 0 auto; line-height: 1.5; }
+    .footer-note {
+      font-size: 0.785rem;
+      color: var(--text-muted);
+      max-width: 700px;
+      margin: 0 auto;
+      line-height: 1.5;
+    }
 
     /* ============================================================
        KEYFRAMES
        ============================================================ */
     @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
 
     @keyframes msgPop {
-      from { opacity: 0; transform: scale(0.9); }
-      to { opacity: 1; transform: scale(1); }
+      from {
+        opacity: 0;
+        transform: scale(0.9);
+      }
+
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
     }
 
     @keyframes slideDown {
-      from { opacity: 0; transform: translateY(-15px); }
-      to { opacity: 1; transform: translateY(0); }
+      from {
+        opacity: 0;
+        transform: translateY(-15px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
 
     @keyframes slideUp {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
 
     @keyframes fadeSlideUp {
-      from { opacity: 0; transform: translateY(16px); }
-      to { opacity: 1; transform: translateY(0); }
+      from {
+        opacity: 0;
+        transform: translateY(16px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
 
     @keyframes ringPulse {
-      0%, 100% { transform: scale(1); opacity: 0.6; }
-      50% { transform: scale(1.12); opacity: 0.1; }
+
+      0%,
+      100% {
+        transform: scale(1);
+        opacity: 0.6;
+      }
+
+      50% {
+        transform: scale(1.12);
+        opacity: 0.1;
+      }
     }
 
     @keyframes bounce {
-      0%, 80%, 100% { transform: scale(0); }
-      40% { transform: scale(1.0); }
+
+      0%,
+      80%,
+      100% {
+        transform: scale(0);
+      }
+
+      40% {
+        transform: scale(1.0);
+      }
     }
 
     @keyframes pulse {
-      0%, 100% { transform: scale(1); opacity: 1; }
-      50% { transform: scale(1.08); opacity: 0.8; }
+
+      0%,
+      100% {
+        transform: scale(1);
+        opacity: 1;
+      }
+
+      50% {
+        transform: scale(1.08);
+        opacity: 0.8;
+      }
     }
 
     /* ============================================================
        RESPONSIVE
        ============================================================ */
     @media (max-width: 768px) {
-      .app { padding: 1rem 1rem 2rem; }
-      .glass { padding: 1.75rem; }
-      .logo { font-size: 2rem; }
-      .app-nav { gap: 0.25rem; padding: 0.35rem; }
-      .nav-btn { padding: 0.5rem 0.7rem; font-size: 0.8rem; flex: 1; justify-content: center; }
-      .nav-btn .nav-label { display: none; }
-      .bmi-form-grid { grid-template-columns: 1fr; }
-      .results-actions { flex-direction: column; }
-      .btn { width: 100%; }
-      .form-row { flex-direction: column; }
-      .modal-card { padding: 1.75rem 1.25rem 1.25rem; max-height: 90vh; }
-      .modal-actions { flex-direction: column; }
-      .diff-grid { flex-direction: column; align-items: stretch; }
-      .diff-btn { flex-direction: row; justify-content: flex-start; min-width: unset; }
-      .detail-grid { grid-template-columns: 1fr; }
-      .history-card { flex-direction: column; }
-      .meds-stats { grid-template-columns: repeat(3, 1fr); }
-      .meds-field-row { grid-template-columns: 1fr; }
-      .meds-modal { padding: 1.25rem 1.25rem 2rem; }
+      .app {
+        padding: 1rem 1rem 2rem;
+      }
+
+      .glass {
+        padding: 1.75rem;
+      }
+
+      .logo {
+        font-size: 2rem;
+      }
+
+      .app-nav {
+        gap: 0.25rem;
+        padding: 0.35rem;
+      }
+
+      .nav-btn {
+        padding: 0.5rem 0.7rem;
+        font-size: 0.8rem;
+        flex: 1;
+        justify-content: center;
+      }
+
+      .nav-btn .nav-label {
+        display: none;
+      }
+
+      .bmi-form-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .results-actions {
+        flex-direction: column;
+      }
+
+      .btn {
+        width: 100%;
+      }
+
+      .form-row {
+        flex-direction: column;
+      }
+
+      .modal-card {
+        padding: 1.75rem 1.25rem 1.25rem;
+        max-height: 90vh;
+      }
+
+      .modal-actions {
+        flex-direction: column;
+      }
+
+      .diff-grid {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .diff-btn {
+        flex-direction: row;
+        justify-content: flex-start;
+        min-width: unset;
+      }
+
+      .detail-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .history-card {
+        flex-direction: column;
+      }
+
+      .meds-stats {
+        grid-template-columns: repeat(3, 1fr);
+      }
+
+      .meds-field-row {
+        grid-template-columns: 1fr;
+      }
+
+      .meds-modal {
+        padding: 1.25rem 1.25rem 2rem;
+      }
     }
   </style>
 </head>
@@ -1846,18 +2815,17 @@
   <svg xmlns="http://www.w3.org/2000/svg" style="display:none">
     <symbol id="icon-triage" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
       stroke-linecap="round" stroke-linejoin="round">
-      <path d="M4.8 2.3A.3.3 0 1 0 5 2H4a2 2 0 0 0-2 2v5a6 6 0 0 0 6 6 6 6 0 0 0 6-6V4a2 2 0 0 0-2-2h-1a.3.3 0 1 0 .3.3" />
+      <path
+        d="M4.8 2.3A.3.3 0 1 0 5 2H4a2 2 0 0 0-2 2v5a6 6 0 0 0 6 6 6 6 0 0 0 6-6V4a2 2 0 0 0-2-2h-1a.3.3 0 1 0 .3.3" />
       <path d="M8 15v1a6 6 0 0 0 6 6v0a6 6 0 0 0 6-6v-4" />
       <circle cx="20" cy="10" r="2" />
     </symbol>
-
     <symbol id="icon-history" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
       stroke-linecap="round" stroke-linejoin="round">
       <rect x="5" y="3" width="14" height="18" rx="2" />
       <path d="M9 3v2h6V3" />
       <path d="M9 12h6M9 16h4" />
     </symbol>
-
     <symbol id="icon-food" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
       stroke-linecap="round" stroke-linejoin="round">
       <path d="M4 10 C4 16 20 16 20 10" />
@@ -1870,7 +2838,6 @@
       <line x1="15" y1="16" x2="15" y2="18" />
       <line x1="7" y1="18" x2="17" y2="18" />
     </symbol>
-
     <symbol id="icon-bmi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
       stroke-linecap="round" stroke-linejoin="round">
       <circle cx="12" cy="4" r="2" />
@@ -1884,13 +2851,11 @@
       <line x1="10" y1="22" x2="14" y2="22" />
       <line x1="12" y1="13" x2="12" y2="22" />
     </symbol>
-
     <symbol id="icon-profile" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
       stroke-linecap="round" stroke-linejoin="round">
       <circle cx="12" cy="8" r="4" />
       <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" />
     </symbol>
-
     <symbol id="icon-trash" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
       stroke-linecap="round" stroke-linejoin="round">
       <polyline points="3 6 5 6 21 6" />
@@ -1898,7 +2863,6 @@
       <path d="M10 11v6M14 11v6" />
       <path d="M9 6V4h6v2" />
     </symbol>
-
     <symbol id="icon-eye" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
       stroke-linecap="round" stroke-linejoin="round">
       <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
@@ -1910,7 +2874,7 @@
 
     <!-- Header -->
     <header class="app-header">
-      <button class="theme-btn" id="themeBtn" aria-label="Toggle dark/light mode">☀️</button>
+      <button class="theme-btn" id="themeBtn" aria-label="تبديل الوضع الليلي/النهاري">☀️</button>
       <div class="logo">
         <span class="logo-icon">🩺</span>
         <span>طبيبك</span>
@@ -1921,7 +2885,9 @@
     <!-- Navigation -->
     <nav class="app-nav">
       <button class="nav-btn active" data-tab="landing">
-        <svg><use href="#icon-triage" /></svg>
+        <svg>
+          <use href="#icon-triage" />
+        </svg>
         <span class="nav-label">الفحص الطبي</span>
       </button>
       <button class="nav-btn" data-tab="meds">
@@ -1929,19 +2895,27 @@
         <span class="nav-label">الأدوية</span>
       </button>
       <button class="nav-btn" data-tab="history">
-        <svg><use href="#icon-history" /></svg>
+        <svg>
+          <use href="#icon-history" />
+        </svg>
         <span class="nav-label">السجل</span>
       </button>
       <button class="nav-btn" data-tab="food">
-        <svg><use href="#icon-food" /></svg>
+        <svg>
+          <use href="#icon-food" />
+        </svg>
         <span class="nav-label">التغذية</span>
       </button>
       <button class="nav-btn" data-tab="bmi">
-        <svg><use href="#icon-bmi" /></svg>
+        <svg>
+          <use href="#icon-bmi" />
+        </svg>
         <span class="nav-label">كتلة الجسم</span>
       </button>
       <button class="nav-btn" data-tab="profile">
-        <svg><use href="#icon-profile" /></svg>
+        <svg>
+          <use href="#icon-profile" />
+        </svg>
         <span class="nav-label">الحساب</span>
       </button>
     </nav>
@@ -1954,7 +2928,9 @@
       <div class="disclaimer">
         <span class="disclaimer-icon">⚠️</span>
         <div>
-          <p><strong>إخلاء مسؤولية طبي مهم:</strong> طبيبك هو أداة فحص وتقييم طبي تعتمد على الذكاء الاصطناعي للأغراض المعلوماتية فقط. ولا يقدم تشخيصات أو علاجات أو وصفات طبية رسمية. في الحالات الطارئة والمهددة للحياة، يرجى الاتصال بخدمات الطوارئ فوراً.</p>
+          <p><strong>إخلاء مسؤولية طبي مهم:</strong> طبيبك هو أداة فحص وتقييم طبي تعتمد على الذكاء الاصطناعي للأغراض
+            المعلوماتية فقط. ولا يقدم تشخيصات أو علاجات أو وصفات طبية رسمية. في الحالات الطارئة والمهددة للحياة، يرجى
+            الاتصال بخدمات الطوارئ فوراً.</p>
         </div>
       </div>
 
@@ -1969,7 +2945,8 @@
       <div style="display:flex;flex-direction:column;gap:0.5rem;margin-top:0.5rem;">
         <div class="divider-line"><span>أو</span></div>
         <button class="btn-breathing" id="startBreathingBtn">🫁 إجراء اختبار تقييم التنفس</button>
-        <p style="font-size:0.78rem;color:var(--text-muted);text-align:center;">تمرين تنفس موجه لمساعدتك في تقييم مدى صعوبة التنفس</p>
+        <p style="font-size:0.78rem;color:var(--text-muted);text-align:center;">تمرين تنفس موجه لمساعدتك في تقييم مدى
+          صعوبة التنفس</p>
       </div>
 
     </main>
@@ -1991,10 +2968,12 @@
         <span style="font-size:1.6rem;animation:pulse 1.5s infinite;">🚨</span>
         <div style="flex-grow:1;">
           <h4 style="color:var(--red);margin-bottom:0.15rem;">تحذير: أعراض حرجة</h4>
-          <p style="font-size:0.85rem;color:var(--text-2);">لقد قمت بالإبلاغ عن أعراض قد ترتبط بحالات طارئة عالية الخطورة. يرجى الاتصال بالطوارئ فوراً إذا كنت تشعر بالخطر.</p>
+          <p style="font-size:0.85rem;color:var(--text-2);">لقد أبلغت عن أعراض قد ترتبط بحالات طارئة عالية الخطورة. يرجى
+            الاتصال بالطوارئ فوراً إذا كنت تشعر بالخطر.</p>
         </div>
         <button class="btn btn-secondary"
-          style="color:var(--red);border-color:var(--red-border);padding:0.5rem 1rem;font-size:0.85rem;">دليل الطوارئ</button>
+          style="color:var(--red);border-color:var(--red-border);padding:0.5rem 1rem;font-size:0.85rem;">دليل
+          الطوارئ</button>
       </div>
 
       <div class="chat-log" id="chatLog"></div>
@@ -2012,12 +2991,11 @@
     <main id="screen-breathing" class="screen glass">
       <div class="breathing-container">
 
-        <!-- Mute toggle -->
         <button class="breath-mute-btn" id="breathMuteBtn" title="تشغيل/إيقاف التوجيه الصوتي">🔊</button>
 
         <div class="breathing-header">
           <h2>🫁 تقييم التنفس</h2>
-          <p style="color:var(--text-muted);">اتبع الدائرة المتحركة. سيوجهك التوجيه الصوتي في كل مرحلة.</p>
+          <p style="color:var(--text-muted);">اتبع الدائرة المتحركة. سيوجهك الصوت في كل مرحلة.</p>
           <div class="cycle-badge" id="cycleBadge">الدورة 1 من 3</div>
         </div>
 
@@ -2058,7 +3036,7 @@
               <span class="score-num" id="breathScoreNum">0</span>
               <span class="score-denom">/10</span>
             </div>
-            <h3 class="result-title" id="breathResultTitle">تم اكتمال تقييم التنفس</h3>
+            <h3 class="result-title" id="breathResultTitle">اكتمل تقييم التنفس</h3>
             <p class="result-desc" id="breathResultDesc"></p>
             <span class="result-urgency" id="breathUrgency"></span>
           </div>
@@ -2082,7 +3060,7 @@
     <main id="screen-results" class="screen">
 
       <div class="results-header glass" id="resultsHeader">
-        <span class="urgency-badge" id="urgencyBadge">الأهمية</span>
+        <span class="urgency-badge" id="urgencyBadge">الأولوية</span>
         <h2 class="condition-title" id="conditionTitle">الحالة المشتبه بها</h2>
         <p class="results-desc" id="resultsDesc"></p>
       </div>
@@ -2107,7 +3085,6 @@
     <main id="screen-meds" class="screen">
       <h2 class="sr-only" style="position:absolute;left:-9999px">تذكير الأدوية — جدولة ومتابعة جرعاتك اليومية</h2>
 
-      <!-- Top bar -->
       <div class="meds-header">
         <div class="meds-title">
           <i class="ti ti-pill" aria-hidden="true"></i>
@@ -2119,7 +3096,6 @@
         </button>
       </div>
 
-      <!-- Progress bar -->
       <div class="meds-progress-wrap" id="medsProgressWrap">
         <div class="meds-progress-header">
           <span>تقدم اليوم</span>
@@ -2130,61 +3106,61 @@
         </div>
       </div>
 
-      <!-- Tabs -->
       <div class="meds-tabs">
-        <button class="meds-tab active" data-medtab="today">Today</button>
-        <button class="meds-tab" data-medtab="upcoming">Upcoming</button>
-        <button class="meds-tab" data-medtab="history">History</button>
+        <button class="meds-tab active" data-medtab="today">اليوم</button>
+        <button class="meds-tab" data-medtab="upcoming">القادم</button>
+        <button class="meds-tab" data-medtab="history">السجل</button>
       </div>
 
-      <!-- Med list injected here -->
       <div id="medsListContainer"></div>
 
-      <!-- Side effect tip -->
       <div class="meds-tip-card" id="medsTipCard" style="display:none;">
         <i class="ti ti-alert-triangle" aria-hidden="true"></i>
-        <p id="medsTipText">Critical medication reminder</p>
+        <p id="medsTipText">تذكير بدواء حيوي</p>
       </div>
 
-      <!-- Stats -->
       <div class="meds-stats">
         <div class="meds-stat">
           <div class="meds-stat-num" id="medsAdherenceStat">0%</div>
-          <div class="meds-stat-label">Adherence</div>
+          <div class="meds-stat-label">الالتزام</div>
         </div>
         <div class="meds-stat">
           <div class="meds-stat-num streak" id="medsStreakStat">0</div>
-          <div class="meds-stat-label">Day streak</div>
+          <div class="meds-stat-label">أيام متتالية</div>
         </div>
         <div class="meds-stat">
           <div class="meds-stat-num missed" id="medsMissedStat">0</div>
-          <div class="meds-stat-label">Missed this week</div>
+          <div class="meds-stat-label">جرعات فائتة هذا الأسبوع</div>
         </div>
       </div>
 
-      <!-- FCM Push Notifications Settings -->
       <div class="fcm-settings-wrap">
         <button class="fcm-toggle-btn" id="fcmToggle" aria-expanded="false">
           <span>🔔</span>
-          <span>Notification Settings (FCM Push)</span>
+          <span>إعدادات الإشعارات (FCM)</span>
           <span class="fcm-arrow">▾</span>
         </button>
         <div id="fcmPanel" class="fcm-panel" style="display:none;">
           <div class="meds-field">
-            <label>Push Notification Status</label>
-            <div id="fcmStatusText" style="font-weight: 500; font-size: 0.95rem; color: var(--text-2);">Checking...</div>
+            <label>حالة الإشعارات</label>
+            <div id="fcmStatusText" style="font-weight: 500; font-size: 0.95rem; color: var(--text-2);">جاري التحقق...
+            </div>
           </div>
           <div class="meds-field">
-            <label>FCM Device Token</label>
-            <textarea id="fcmTokenInput" readonly style="width:100%; height:75px; padding:0.5rem; font-size:0.8rem; font-family:monospace; background:rgba(0,0,0,0.03); border:1px solid var(--border); border-radius:8px; color:var(--text-1); resize:none;" placeholder="No FCM Token registered yet. Click 'Enable Push Reminders' below."></textarea>
+            <label>رمز جهاز FCM</label>
+            <textarea id="fcmTokenInput" readonly
+              style="width:100%; height:75px; padding:0.5rem; font-size:0.8rem; font-family:monospace; background:rgba(0,0,0,0.03); border:1px solid var(--border); border-radius:8px; color:var(--text-1); resize:none;"
+              placeholder="لم يتم تسجيل رمز FCM بعد. انقر على 'تفعيل الإشعارات' أدناه."></textarea>
           </div>
           <div style="display:flex;gap:0.75rem;align-items:center;flex-wrap:wrap;">
-            <button class="btn btn-primary" id="fcmEnableBtn" style="padding:0.7rem 1.5rem;font-size:0.9rem;">Enable Push Reminders</button>
-            <button class="btn btn-secondary" id="fcmTestBtn" style="padding:0.7rem 1.5rem;font-size:0.9rem;display:none;">Test Notification</button>
+            <button class="btn btn-primary" id="fcmEnableBtn" style="padding:0.7rem 1.5rem;font-size:0.9rem;">تفعيل
+              إشعارات الأدوية</button>
+            <button class="btn btn-secondary" id="fcmTestBtn"
+              style="padding:0.7rem 1.5rem;font-size:0.9rem;display:none;">اختبار الإشعار</button>
           </div>
           <p style="font-size:0.8rem;color:var(--text-muted);line-height:1.55;">
-            By enabling push reminders, your device will request permission and register with Firebase Cloud Messaging (FCM).
-            Medication reminders will be delivered as push notifications to your screen even when the app is closed.
+            بتفعيل الإشعارات، سيطلب جهازك الإذن ويتم تسجيله عبر Firebase Cloud Messaging. ستصلك تنبيهات تذكير الأدوية
+            حتى عند إغلاق التطبيق.
           </p>
         </div>
       </div>
@@ -2197,50 +3173,49 @@
     <main id="screen-food" class="screen glass">
 
       <div class="food-header">
-        <h2>🥗 Nutritional Guidance</h2>
-        <p>Select how you feel or describe your condition — we'll suggest the best foods, drinks, and habits for
-          recovery.</p>
+        <h2>🥗 التوجيه الغذائي</h2>
+        <p>اختر كيف تشعر أو صف حالتك — سنقترح أفضل الأطعمة والمشروبات والعادات للتعافي.</p>
       </div>
 
       <div>
-        <p class="mood-section-label">How are you feeling right now?</p>
+        <p class="mood-section-label">كيف تشعر الآن؟</p>
         <div class="mood-chips" id="moodChips">
-          <button class="chip" data-mood="nausea and upset stomach">🤢 Nauseous</button>
-          <button class="chip" data-mood="fever and high body temperature">🤒 Fever</button>
-          <button class="chip" data-mood="stomach pain and cramps">😣 Stomach Pain</button>
-          <button class="chip" data-mood="fatigue and low energy">😴 Fatigue</button>
-          <button class="chip" data-mood="sore throat and difficulty swallowing">🤧 Sore Throat</button>
-          <button class="chip" data-mood="headache and migraine">🤕 Headache</button>
-          <button class="chip" data-mood="diarrhea and loose stools">😰 Diarrhea</button>
-          <button class="chip" data-mood="cold and flu symptoms">🥶 Cold &amp; Flu</button>
-          <button class="chip" data-mood="anxiety and stress">😟 Anxiety</button>
-          <button class="chip" data-mood="constipation">😖 Constipation</button>
-          <button class="chip" data-mood="muscle pain and soreness">💪 Muscle Pain</button>
-          <button class="chip" data-mood="poor sleep and insomnia">😵 Poor Sleep</button>
+          <button class="chip" data-mood="nausea and upset stomach">🤢 غثيان</button>
+          <button class="chip" data-mood="fever and high body temperature">🤒 حمى</button>
+          <button class="chip" data-mood="stomach pain and cramps">😣 ألم في المعدة</button>
+          <button class="chip" data-mood="fatigue and low energy">😴 إرهاق</button>
+          <button class="chip" data-mood="sore throat and difficulty swallowing">🤧 التهاب الحلق</button>
+          <button class="chip" data-mood="headache and migraine">🤕 صداع</button>
+          <button class="chip" data-mood="diarrhea and loose stools">😰 إسهال</button>
+          <button class="chip" data-mood="cold and flu symptoms">🥶 زكام وأنفلونزا</button>
+          <button class="chip" data-mood="anxiety and stress">😟 قلق وتوتر</button>
+          <button class="chip" data-mood="constipation">😖 إمساك</button>
+          <button class="chip" data-mood="muscle pain and soreness">💪 ألم عضلي</button>
+          <button class="chip" data-mood="poor sleep and insomnia">😵 اضطراب النوم</button>
         </div>
       </div>
 
       <div>
-        <p class="mood-section-label">Or describe it in your own words</p>
+        <p class="mood-section-label">أو صف حالتك بكلماتك الخاصة</p>
         <div class="food-input-row">
-          <input type="text" id="foodCustomInput"
-            placeholder="e.g. I have a stomach ache and feel bloated after eating..." autocomplete="off" />
-          <button class="btn btn-primary" id="foodGetBtn">Get Suggestions</button>
+          <input type="text" id="foodCustomInput" placeholder="مثال: أشعر بألم في المعدة وانتفاخ بعد الأكل..."
+            autocomplete="off" />
+          <button class="btn btn-primary" id="foodGetBtn">احصل على التوصيات</button>
         </div>
       </div>
 
       <div>
         <button class="api-toggle-btn" id="apiToggle" aria-expanded="false">
           <span>🔑</span>
-          <span id="apiLabel">AI Key Required — Click to Set</span>
+          <span id="apiLabel">مفتاح الذكاء الاصطناعي مطلوب — انقر للإضافة</span>
           <span class="api-arrow">▾</span>
         </button>
         <div id="apiPanel" class="api-panel" style="display:none;">
-          <p>This feature uses the Claude API. Get a key at <a href="https://console.anthropic.com" target="_blank"
-              rel="noopener">console.anthropic.com</a>. Stored only in this browser session.</p>
+          <p>تستخدم هذه الميزة واجهة برمجة Claude. احصل على مفتاح من <a href="https://console.anthropic.com"
+              target="_blank" rel="noopener">console.anthropic.com</a>. يُحفظ في جلسة المتصفح الحالية فقط.</p>
           <div class="food-input-row">
             <input type="password" id="apiKeyInput" placeholder="sk-ant-..." autocomplete="off" spellcheck="false" />
-            <button class="btn btn-secondary" id="apiSaveBtn">Save</button>
+            <button class="btn btn-secondary" id="apiSaveBtn">حفظ</button>
           </div>
           <p class="api-status" id="apiStatus"></p>
         </div>
@@ -2251,22 +3226,22 @@
           <div class="pulse-ring"></div>
           <span class="pulse-emoji">🥗</span>
         </div>
-        <p style="color:var(--text-2);">Analyzing your condition and preparing recommendations...</p>
+        <p style="color:var(--text-2);">جاري تحليل حالتك وإعداد التوصيات...</p>
       </div>
 
       <div id="foodResults" style="display:none;">
         <div class="food-results-header">
           <span class="food-condition-badge" id="foodConditionBadge"></span>
-          <h3>Nutritional Recommendations</h3>
+          <h3>التوصيات الغذائية</h3>
         </div>
         <div class="food-cards" id="foodCards"></div>
-        <button class="btn btn-secondary" id="foodResetBtn" style="margin-top:1rem;width:100%;">↩ Get New
-          Recommendations</button>
+        <button class="btn btn-secondary" id="foodResetBtn" style="margin-top:1rem;width:100%;">↩ الحصول على توصيات
+          جديدة</button>
       </div>
 
       <div id="foodError" style="display:none;" class="food-error">
         <span>⚠️</span>
-        <p id="foodErrorMsg">Something went wrong. Please check your API key and try again.</p>
+        <p id="foodErrorMsg">حدث خطأ. يرجى التحقق من مفتاح API والمحاولة مجدداً.</p>
       </div>
 
     </main>
@@ -2280,34 +3255,34 @@
         <div class="bmi-header">
           <span class="bmi-header-icon">⚖️</span>
           <div>
-            <h2>BMI Calculator</h2>
-            <p style="color:var(--text-muted);">Body Mass Index &amp; Health Assessment</p>
+            <h2>حاسبة مؤشر كتلة الجسم</h2>
+            <p style="color:var(--text-muted);">مؤشر كتلة الجسم وتقييم الصحة العامة</p>
           </div>
         </div>
 
         <div class="bmi-form-grid">
           <div class="form-group">
-            <label for="bmiHeight">Height <span class="bmi-unit-badge">cm</span></label>
+            <label for="bmiHeight">الطول <span class="bmi-unit-badge">سم</span></label>
             <input type="number" id="bmiHeight" placeholder="175" min="100" max="250" inputmode="numeric" />
           </div>
           <div class="form-group">
-            <label for="bmiWeight">Weight <span class="bmi-unit-badge">kg</span></label>
+            <label for="bmiWeight">الوزن <span class="bmi-unit-badge">كجم</span></label>
             <input type="number" id="bmiWeight" placeholder="70" min="20" max="300" inputmode="numeric" />
           </div>
           <div class="form-group">
-            <label for="bmiAge">Age <span class="bmi-unit-badge">yrs</span></label>
+            <label for="bmiAge">العمر <span class="bmi-unit-badge">سنة</span></label>
             <input type="number" id="bmiAge" placeholder="25" min="5" max="110" inputmode="numeric" />
           </div>
           <div class="form-group">
-            <label for="bmiGender">Gender</label>
+            <label for="bmiGender">الجنس</label>
             <select id="bmiGender">
-              <option value="male">Male</option>
-              <option value="female">Female</option>
+              <option value="male">ذكر</option>
+              <option value="female">أنثى</option>
             </select>
           </div>
         </div>
 
-        <button class="btn btn-primary" id="bmiCalcBtn" style="width:100%;">Calculate BMI</button>
+        <button class="btn btn-primary" id="bmiCalcBtn" style="width:100%;">احسب مؤشر كتلة الجسم</button>
       </div>
 
       <div class="glass bmi-result-card" id="bmiResultCard" style="display:none;">
@@ -2315,7 +3290,7 @@
         <div class="bmi-hero">
           <div class="bmi-circle" id="bmiCircle">
             <span class="bmi-value" id="bmiValue">0.0</span>
-            <span class="bmi-sublabel">BMI</span>
+            <span class="bmi-sublabel">كتلة الجسم</span>
           </div>
           <div class="bmi-cat-info">
             <span class="bmi-cat-badge" id="bmiCatBadge">—</span>
@@ -2328,25 +3303,25 @@
             <div class="gauge-pointer" id="gaugePointer"></div>
           </div>
           <div class="gauge-labels">
-            <span>Underweight</span>
-            <span>Normal</span>
-            <span>Overweight</span>
-            <span>Obese</span>
+            <span>نحيف</span>
+            <span>طبيعي</span>
+            <span>زيادة وزن</span>
+            <span>سمنة</span>
           </div>
         </div>
 
         <div class="tips-section">
-          <h4 class="tips-title">💡 Personalised Recommendations</h4>
+          <h4 class="tips-title">💡 توصيات شخصية</h4>
           <ul class="tips-list" id="tipsList"></ul>
         </div>
 
         <div class="bmi-disclaimer">
           <span>ℹ️</span>
-          <span>BMI is a screening tool, not a diagnostic measure. Muscle mass, bone density, and ethnicity affect
-            health risk independently of BMI. Consult a physician for a full assessment.</span>
+          <span>مؤشر كتلة الجسم أداة فحص وليس مقياساً تشخيصياً. تؤثر كتلة العضلات وكثافة العظام والعرق على مخاطر الصحة
+            بشكل مستقل. استشر طبيبك لتقييم شامل.</span>
         </div>
 
-        <button class="btn btn-secondary" id="bmiResetBtn" style="width:100%;margin-top:0.5rem;">↩ Recalculate</button>
+        <button class="btn btn-secondary" id="bmiResetBtn" style="width:100%;margin-top:0.5rem;">↩ إعادة الحساب</button>
       </div>
 
     </main>
@@ -2358,66 +3333,68 @@
 
       <div id="authContainer" style="max-width:520px;margin:0 auto;width:100%;">
         <div class="auth-tabs">
-          <button class="auth-tab active" data-form="loginForm">Sign In</button>
-          <button class="auth-tab" data-form="registerForm">Register</button>
+          <button class="auth-tab active" data-form="loginForm">تسجيل الدخول</button>
+          <button class="auth-tab" data-form="registerForm">إنشاء حساب</button>
         </div>
 
         <form class="auth-form active" id="loginForm">
-          <h3>Welcome Back</h3>
-          <p class="auth-subtitle">Sign in to access your personal triage history.</p>
+          <h3>مرحباً بعودتك</h3>
+          <p class="auth-subtitle">سجّل الدخول للوصول إلى سجل فحصك الطبي الشخصي.</p>
           <div class="form-group">
-            <label for="loginUser">Username</label>
-            <input type="text" id="loginUser" placeholder="Enter username..." autocomplete="username" />
+            <label for="loginUser">اسم المستخدم</label>
+            <input type="text" id="loginUser" placeholder="أدخل اسم المستخدم..." autocomplete="username" />
           </div>
           <div class="form-group">
-            <label for="loginPass">Password</label>
-            <input type="password" id="loginPass" placeholder="Enter password..." autocomplete="current-password" />
+            <label for="loginPass">كلمة المرور</label>
+            <input type="password" id="loginPass" placeholder="أدخل كلمة المرور..." autocomplete="current-password" />
           </div>
-          <button type="submit" class="btn btn-primary">Sign In</button>
+          <button type="submit" class="btn btn-primary">تسجيل الدخول</button>
         </form>
 
         <form class="auth-form" id="registerForm">
-          <h3>Create Patient Account</h3>
-          <p class="auth-subtitle">Register to save histories and customise triage analysis.</p>
+          <h3>إنشاء حساب مريض</h3>
+          <p class="auth-subtitle">سجّل لحفظ سجلاتك وتخصيص تحليل الفحص.</p>
           <div class="form-row">
             <div class="form-group">
-              <label for="regUser">Username *</label>
-              <input type="text" id="regUser" placeholder="Username..." autocomplete="username" />
+              <label for="regUser">اسم المستخدم *</label>
+              <input type="text" id="regUser" placeholder="اسم المستخدم..." autocomplete="username" />
             </div>
             <div class="form-group">
-              <label for="regPass">Password *</label>
-              <input type="password" id="regPass" placeholder="Password..." autocomplete="new-password" />
+              <label for="regPass">كلمة المرور *</label>
+              <input type="password" id="regPass" placeholder="كلمة المرور..." autocomplete="new-password" />
             </div>
           </div>
           <div class="form-group">
-            <label for="regName">Full Name *</label>
-            <input type="text" id="regName" placeholder="Your full name..." autocomplete="name" />
+            <label for="regName">الاسم الكامل *</label>
+            <input type="text" id="regName" placeholder="اسمك الكامل..." autocomplete="name" />
           </div>
           <div class="form-row">
             <div class="form-group">
-              <label for="regAge">Age *</label>
-              <input type="number" id="regAge" placeholder="Age..." min="0" max="120" />
+              <label for="regAge">العمر *</label>
+              <input type="number" id="regAge" placeholder="العمر..." min="0" max="120" />
             </div>
             <div class="form-group">
-              <label for="regGender">Gender *</label>
+              <label for="regGender">الجنس *</label>
               <select id="regGender">
-                <option value="" disabled selected>Select...</option>
-                <option value="Male">Male</option>
-                <option value="Female">Female</option>
-                <option value="Other">Other</option>
+                <option value="" disabled selected>اختر...</option>
+                <option value="ذكر">ذكر</option>
+                <option value="أنثى">أنثى</option>
+                <option value="أخرى">أخرى</option>
               </select>
             </div>
           </div>
-           <div class="form-group">
-            <label for="regMobile">Mobile Number * <span style="font-size:0.75rem;color:var(--text-muted);font-weight:400;">(used for emergency contact and verification)</span></label>
-            <input type="tel" id="regMobile" placeholder="+1 234 567 8900" autocomplete="tel" />
+          <div class="form-group">
+            <label for="regMobile">رقم الجوال * <span
+                style="font-size:0.75rem;color:var(--text-muted);font-weight:400;">(يُستخدم للتواصل الطارئ
+                والتحقق)</span></label>
+            <input type="tel" id="regMobile" placeholder="+966 5X XXX XXXX" autocomplete="tel" />
           </div>
           <div class="form-group">
-            <label for="regHistory">Medical History (Optional)</label>
-            <textarea id="regHistory" placeholder="E.g. High blood pressure, asthma, penicillin allergy..."
+            <label for="regHistory">التاريخ المرضي (اختياري)</label>
+            <textarea id="regHistory" placeholder="مثال: ضغط دم مرتفع، ربو، حساسية من البنسلين..."
               style="height:80px;"></textarea>
           </div>
-          <button type="submit" class="btn btn-primary">Create Account &amp; Setup Reminders →</button>
+          <button type="submit" class="btn btn-primary">إنشاء الحساب وإعداد التذكيرات ←</button>
         </form>
       </div>
 
@@ -2425,55 +3402,58 @@
         <div class="profile-header">
           <div class="avatar">👤</div>
           <div>
-            <h2 id="profileName">Patient Name</h2>
+            <h2 id="profileName">اسم المريض</h2>
             <p id="profileUsername" style="color:var(--text-muted);">@username</p>
           </div>
         </div>
 
         <div class="detail-grid">
-          <div class="detail-card"><span class="detail-label">Age</span><span class="detail-value" id="profileAge">-</span></div>
-          <div class="detail-card"><span class="detail-label">Gender</span><span class="detail-value" id="profileGender">-</span></div>
-          <div class="detail-card"><span class="detail-label">Mobile</span><span class="detail-value" id="profileMobile" style="font-size:1rem;">-</span></div>
+          <div class="detail-card"><span class="detail-label">العمر</span><span class="detail-value"
+              id="profileAge">-</span></div>
+          <div class="detail-card"><span class="detail-label">الجنس</span><span class="detail-value"
+              id="profileGender">-</span></div>
+          <div class="detail-card"><span class="detail-label">الجوال</span><span class="detail-value" id="profileMobile"
+              style="font-size:1rem;">-</span></div>
         </div>
 
         <div class="form-group" style="margin-top:1.5rem;">
-          <label>Medical Background</label>
-          <div class="med-history-box" id="profileHistory">No medical background declared.</div>
+          <label>التاريخ المرضي</label>
+          <div class="med-history-box" id="profileHistory">لا يوجد تاريخ مرضي مسجّل.</div>
         </div>
 
         <div class="profile-actions">
-          <button class="btn btn-secondary" id="editProfileBtn">Edit Profile</button>
-          <button class="btn btn-secondary" id="logoutBtn" style="color:var(--red);border-color:var(--red-border);">Log
-            Out</button>
+          <button class="btn btn-secondary" id="editProfileBtn">تعديل الملف الشخصي</button>
+          <button class="btn btn-secondary" id="logoutBtn"
+            style="color:var(--red);border-color:var(--red-border);">تسجيل الخروج</button>
         </div>
 
         <form id="editProfileForm"
           style="display:none;margin-top:2rem;border-top:1px solid var(--border);padding-top:1.5rem;">
-          <h3>Edit Profile Details</h3>
+          <h3>تعديل بيانات الملف الشخصي</h3>
           <div style="margin-top:1rem;display:flex;flex-direction:column;gap:1.25rem;">
-            <div class="form-group"><label for="editName">Full Name</label><input type="text" id="editName"
+            <div class="form-group"><label for="editName">الاسم الكامل</label><input type="text" id="editName"
                 autocomplete="name" /></div>
             <div class="form-row">
-              <div class="form-group"><label for="editAge">Age</label><input type="number" id="editAge" min="0"
+              <div class="form-group"><label for="editAge">العمر</label><input type="number" id="editAge" min="0"
                   max="120" /></div>
               <div class="form-group">
-                <label for="editGender">Gender</label>
+                <label for="editGender">الجنس</label>
                 <select id="editGender">
-                  <option value="Male">Male</option>
-                  <option value="Female">Female</option>
-                  <option value="Other">Other</option>
+                  <option value="ذكر">ذكر</option>
+                  <option value="أنثى">أنثى</option>
+                  <option value="أخرى">أخرى</option>
                 </select>
               </div>
             </div>
             <div class="form-group">
-              <label for="editMobile">Mobile Number</label>
-              <input type="tel" id="editMobile" placeholder="+1 234 567 8900" autocomplete="tel" />
+              <label for="editMobile">رقم الجوال</label>
+              <input type="tel" id="editMobile" placeholder="+966 5X XXX XXXX" autocomplete="tel" />
             </div>
-            <div class="form-group"><label for="editHistory">Medical History Notes</label><textarea id="editHistory"
+            <div class="form-group"><label for="editHistory">ملاحظات التاريخ المرضي</label><textarea id="editHistory"
                 style="height:80px;"></textarea></div>
             <div style="display:flex;gap:1rem;">
-              <button type="submit" class="btn btn-primary">Save Changes</button>
-              <button type="button" class="btn btn-secondary" id="cancelEditBtn">Cancel</button>
+              <button type="submit" class="btn btn-primary">حفظ التغييرات</button>
+              <button type="button" class="btn btn-secondary" id="cancelEditBtn">إلغاء</button>
             </div>
           </div>
         </form>
@@ -2488,22 +3468,22 @@
 
       <div id="historyLoggedOut" class="glass text-center-panel">
         <span class="panel-icon">🔐</span>
-        <h3>Secure Medical History</h3>
-        <p>Sign in or register to view and save your triage assessments.</p>
-        <button class="btn btn-primary" id="historyAuthBtn" style="margin-top:1rem;">Go to Account Login</button>
+        <h3>السجل الطبي الآمن</h3>
+        <p>سجّل الدخول أو أنشئ حساباً لعرض وحفظ تقييماتك الطبية.</p>
+        <button class="btn btn-primary" id="historyAuthBtn" style="margin-top:1rem;">انتقل إلى تسجيل الدخول</button>
       </div>
 
       <div id="historyLoggedIn" style="display:none;width:100%;">
         <div style="margin-bottom:1.75rem;">
-          <h2 style="font-size:1.75rem;">Your Saved Assessments</h2>
-          <p style="color:var(--text-muted);">Click any session to view the full report and chat transcript.</p>
+          <h2 style="font-size:1.75rem;">تقييماتك المحفوظة</h2>
+          <p style="color:var(--text-muted);">انقر على أي جلسة لعرض التقرير الكامل ومحادثة الفحص.</p>
         </div>
         <div class="history-list" id="historyList"></div>
         <div id="historyEmpty" class="glass text-center-panel" style="display:none;">
           <span class="panel-icon">📋</span>
-          <h3>No Saved Sessions</h3>
-          <p>Complete a triage assessment to see it saved here.</p>
-          <button class="btn btn-primary" id="historyStartBtn" style="margin-top:1rem;">Start Triage Session</button>
+          <h3>لا توجد جلسات محفوظة</h3>
+          <p>أكمل تقييم طبي لرؤيته محفوظاً هنا.</p>
+          <button class="btn btn-primary" id="historyStartBtn" style="margin-top:1rem;">ابدأ جلسة فحص</button>
         </div>
       </div>
 
@@ -2514,12 +3494,12 @@
        ============================================================ -->
     <footer class="app-footer">
       <div class="emergency-row">
-        <div class="emergency-item"><span>Emergency:</span><a href="tel:123">123</a></div>
-        <div class="emergency-item" style="color:var(--text-muted);"><span>Helpline:</span><a href="tel:16000"
+        <div class="emergency-item"><span>الطوارئ:</span><a href="tel:123">123</a></div>
+        <div class="emergency-item" style="color:var(--text-muted);"><span>خط المساعدة:</span><a href="tel:16000"
             style="color:var(--text-muted);">16000</a></div>
       </div>
-      <p class="footer-note">Tabibak is a screening support system. It cannot replace professional clinical decisions,
-        physical assessments, or physician consults. In any medical emergency, contact paramedics directly.</p>
+      <p class="footer-note">طبيبك هو نظام دعم وفحص. لا يمكنه استبدال القرارات السريرية المهنية أو الفحوصات الجسدية أو
+        استشارات الأطباء. في أي حالة طارئة، اتصل بالإسعاف مباشرة.</p>
     </footer>
 
   </div><!-- /app -->
@@ -2533,36 +3513,36 @@
 
       <div class="modal-scroll">
         <div style="border-bottom:1px solid var(--border);padding-bottom:1rem;margin-bottom:0.5rem;">
-          <span class="urgency-badge" id="modalUrgency">Urgency</span>
+          <span class="urgency-badge" id="modalUrgency">الأولوية</span>
           <h2 style="font-size:1.65rem;margin-top:0.5rem;" id="modalTitle"></h2>
           <p style="color:var(--text-muted);font-size:0.875rem;" id="modalMeta"></p>
         </div>
 
         <div class="modal-section">
-          <h4>🩺 Symptom Description</h4>
+          <h4>🩺 وصف الأعراض</h4>
           <p id="modalSymptom"></p>
         </div>
 
         <div class="modal-section">
-          <h4>💬 Chat Transcript</h4>
+          <h4>💬 سجل المحادثة</h4>
           <div class="modal-transcript" id="modalTranscript"></div>
         </div>
 
         <div class="modal-section">
-          <h4>📋 Triage Diagnosis &amp; Clinical Analysis</h4>
+          <h4>📋 تشخيص الفحص والتحليل السريري</h4>
           <p id="modalDesc"></p>
         </div>
 
         <div class="modal-section">
-          <h4>✦ Next Steps &amp; Recommendations</h4>
+          <h4>✦ الخطوات التالية والتوصيات</h4>
           <ul class="rec-list" id="modalRecs"></ul>
         </div>
       </div>
 
       <div class="modal-actions">
-        <button class="btn btn-primary" id="modalCopyBtn">Copy Report</button>
+        <button class="btn btn-primary" id="modalCopyBtn">نسخ التقرير</button>
         <button class="btn btn-secondary" id="modalDeleteBtn"
-          style="color:var(--red);border-color:var(--red-border);">Delete Session</button>
+          style="color:var(--red);border-color:var(--red-border);">حذف الجلسة</button>
       </div>
     </div>
   </div>
@@ -2572,112 +3552,110 @@
      ============================================================ -->
   <div class="meds-modal-overlay" id="medsModalOverlay">
     <div class="meds-modal">
-      <h3><i class="ti ti-pill" aria-hidden="true"></i>Add Medication</h3>
+      <h3><i class="ti ti-pill" aria-hidden="true"></i>إضافة دواء</h3>
 
       <div class="meds-field">
-        <label>Medication Name *</label>
-        <input type="text" id="medNameInput" placeholder="e.g. Paracetamol, Metformin..." />
+        <label>اسم الدواء *</label>
+        <input type="text" id="medNameInput" placeholder="مثال: باراسيتامول، ميتفورمين..." />
       </div>
 
       <div class="meds-field-row">
         <div class="meds-field">
-          <label>Dose</label>
-          <input type="text" id="medDoseInput" placeholder="e.g. 500mg" />
+          <label>الجرعة</label>
+          <input type="text" id="medDoseInput" placeholder="مثال: 500 ملجم" />
         </div>
         <div class="meds-field">
-          <label>Form</label>
+          <label>الشكل الدوائي</label>
           <select id="medFormInput">
-            <option>Tablet</option>
-            <option>Capsule</option>
-            <option>Syrup</option>
-            <option>Injection</option>
-            <option>Drops</option>
-            <option>Cream</option>
+            <option>قرص</option>
+            <option>كبسولة</option>
+            <option>شراب</option>
+            <option>حقنة</option>
+            <option>قطرات</option>
+            <option>كريم</option>
           </select>
         </div>
       </div>
 
-      <!-- Dose count (replaces frequency) -->
       <div class="meds-field">
-        <label>Times per day</label>
+        <label>عدد الجرعات يومياً</label>
         <div class="dose-count-row">
           <button type="button" class="dose-count-btn" id="doseCountMinus">−</button>
           <span class="dose-count-display" id="doseCountDisplay">1</span>
           <button type="button" class="dose-count-btn" id="doseCountPlus">+</button>
-          <span class="dose-count-info">time(s) per day</span>
+          <span class="dose-count-info">جرعة/يوم</span>
         </div>
       </div>
 
-      <!-- Dynamic dose time slots -->
       <div class="meds-field">
-        <label>Dose times <span style="font-size:0.72rem;color:var(--text-muted);text-transform:none;letter-spacing:0;">(5-min steps)</span></label>
+        <label>مواعيد الجرعات <span
+            style="font-size:0.72rem;color:var(--text-muted);text-transform:none;letter-spacing:0;">(بفوارق 5
+            دقائق)</span></label>
         <div class="dose-slots-container" id="doseSlotContainer"></div>
       </div>
 
       <div class="meds-field">
-        <label>With food?</label>
+        <label>مع الطعام؟</label>
         <select id="medFoodInput">
-          <option>Yes — take with meal</option>
-          <option>No — empty stomach</option>
-          <option>Doesn't matter</option>
+          <option>نعم — يُؤخذ مع الوجبة</option>
+          <option>لا — على معدة فارغة</option>
+          <option>لا يهم</option>
         </select>
       </div>
 
       <div class="meds-field">
-        <label>Critical — do not skip?</label>
+        <label>حيوي — لا يجب تفويته؟</label>
         <select id="medUrgentInput">
-          <option value="no">No</option>
-          <option value="yes">Yes — flag as critical</option>
+          <option value="no">لا</option>
+          <option value="yes">نعم — تمييزه كحيوي</option>
         </select>
       </div>
 
       <div class="meds-field">
-        <label>Notes (optional)</label>
-        <input type="text" id="medNoteInput" placeholder="e.g. for blood pressure, take sitting down..." />
+        <label>ملاحظات (اختياري)</label>
+        <input type="text" id="medNoteInput" placeholder="مثال: لضغط الدم، يُؤخذ جالساً..." />
       </div>
-
-
 
       <div class="meds-modal-btns">
-        <button class="meds-btn-cancel" id="medsCancelBtn">Cancel</button>
-        <button class="meds-btn-save" id="medsSaveBtn">Save Medication</button>
+        <button class="meds-btn-cancel" id="medsCancelBtn">إلغاء</button>
+        <button class="meds-btn-save" id="medsSaveBtn">حفظ الدواء</button>
       </div>
     </div>
   </div>
 
   <!-- ============================================================
-     FCM PUSH NOTIFICATIONS MODAL (shown after registration)
+     FCM PUSH NOTIFICATIONS MODAL
      ============================================================ -->
   <div class="notification-modal-overlay" id="notificationModal">
     <div class="notification-modal-card">
       <div class="notification-modal-icon">🔔</div>
-      <h2 class="notification-modal-title">Enable Medication Reminders</h2>
+      <h2 class="notification-modal-title">تفعيل تذكيرات الأدوية</h2>
       <p class="notification-modal-desc">
-        Never miss a dose! Enable push notifications to receive medication reminders directly on your device, even if the app is closed.
+        لا تفوّت جرعة! فعّل الإشعارات لاستلام تذكيرات الأدوية مباشرة على جهازك حتى عند إغلاق التطبيق.
       </p>
 
       <button id="notificationEnableBtn" class="notification-perm-btn">
         <i class="ti ti-bell-ringing"></i>
-        <span>Enable Push Reminders</span>
+        <span>تفعيل إشعارات الأدوية</span>
       </button>
 
       <div class="notification-benefits">
         <div class="notification-benefit">
           <span class="step-num">1</span>
-          <span>Grant browser notification permission when prompted</span>
+          <span>امنح إذن الإشعارات عند الطلب</span>
         </div>
         <div class="notification-benefit">
           <span class="step-num">2</span>
-          <span>Register your device securely via Firebase Cloud Messaging</span>
+          <span>سيتم تسجيل جهازك بأمان عبر Firebase Cloud Messaging</span>
         </div>
         <div class="notification-benefit">
           <span class="step-num">3</span>
-          <span>Receive timely alerts 5 minutes before scheduled dose times</span>
+          <span>ستصلك تنبيهات 5 دقائق قبل موعد كل جرعة</span>
         </div>
       </div>
 
       <button class="btn btn-secondary" id="notificationModalClose" style="width:100%;">
-        Skip for Now
+        تخطي الآن
       </button>
     </div>
   </div>
@@ -2700,7 +3678,7 @@
         chatLog: [],
         step: 0,
         totalSteps: 5,
-        category: 'General',
+        category: 'عام',
         redFlagFired: false,
         result: null,
       },
@@ -2720,7 +3698,7 @@
       },
       meds: {
         list: [],
-        taken: {},           // { "medId_doseIdx": true }
+        taken: {},
         activeTab: 'today',
         streak: 0,
         missedWeek: 0,
@@ -2847,7 +3825,7 @@
         gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + duration);
         osc.start(ctx.currentTime);
         osc.stop(ctx.currentTime + duration);
-      } catch (e) { /* silent fail */ }
+      } catch (e) { }
     }
 
     function speakPhase(text) {
@@ -2859,18 +3837,16 @@
           utt.rate = 0.82;
           utt.pitch = 0.95;
           utt.volume = 1;
-          // Prefer a calm, clear voice if available
           const voices = speechSynthesis.getVoices();
           const preferred = voices.find(v =>
-            v.lang.startsWith('en') && (v.name.includes('Google') || v.name.includes('Samantha') || v.name.includes('Karen'))
+            v.lang.startsWith('ar') || v.lang.startsWith('en')
           );
           if (preferred) utt.voice = preferred;
           speechSynthesis.speak(utt);
-        } catch (e) { /* silent fail */ }
+        } catch (e) { }
       }
     }
 
-    // Mute toggle
     document.getElementById('breathMuteBtn').addEventListener('click', () => {
       STATE.breathing.muted = !STATE.breathing.muted;
       document.getElementById('breathMuteBtn').textContent = STATE.breathing.muted ? '🔕' : '🔊';
@@ -2883,10 +3859,10 @@
        MEDICATION REMINDER MODULE
        ================================================================ */
     const DEFAULT_MEDS = [
-      { id: 1, name: 'Metformin', dose: '500mg', form: 'Tablet', doseCount: 2, doses: [{ time: '08:00' }, { time: '20:00' }], food: "Yes — take with meal", urgent: false, note: 'Take with breakfast and dinner', icon: '💊', color: '#0e2a2a' },
-      { id: 2, name: 'Lisinopril', dose: '10mg', form: 'Tablet', doseCount: 1, doses: [{ time: '09:00' }], food: "Doesn't matter", urgent: true, note: 'Blood pressure — do not skip', icon: '💙', color: '#1a1a3a' },
-      { id: 3, name: 'Vitamin D', dose: '1000 IU', form: 'Capsule', doseCount: 1, doses: [{ time: '12:00' }], food: "Yes — take with meal", urgent: false, note: 'Take with a meal', icon: '🌤️', color: '#2a1a00' },
-      { id: 4, name: 'Omega 3', dose: '1g', form: 'Capsule', doseCount: 1, doses: [{ time: '21:00' }], food: "Doesn't matter", urgent: false, note: 'Evening dose', icon: '🐟', color: '#0e1a2a' },
+      { id: 1, name: 'ميتفورمين', dose: '500 ملجم', form: 'قرص', doseCount: 2, doses: [{ time: '08:00' }, { time: '20:00' }], food: "نعم — يُؤخذ مع الوجبة", urgent: false, note: 'مع الإفطار والعشاء', icon: '💊', color: '#0e2a2a' },
+      { id: 2, name: 'ليزينوبريل', dose: '10 ملجم', form: 'قرص', doseCount: 1, doses: [{ time: '09:00' }], food: "لا يهم", urgent: true, note: 'ضغط الدم — لا يُفوَّت', icon: '💙', color: '#1a1a3a' },
+      { id: 3, name: 'فيتامين د', dose: '1000 وحدة', form: 'كبسولة', doseCount: 1, doses: [{ time: '12:00' }], food: "نعم — يُؤخذ مع الوجبة", urgent: false, note: 'يُؤخذ مع وجبة', icon: '🌤️', color: '#2a1a00' },
+      { id: 4, name: 'أوميغا 3', dose: '1 جرام', form: 'كبسولة', doseCount: 1, doses: [{ time: '21:00' }], food: "لا يهم", urgent: false, note: 'جرعة المساء', icon: '🐟', color: '#0e1a2a' },
     ];
 
     const PILL_ICONS = ['💊', '🔵', '🟡', '🟢', '🔴', '🟠', '🟣', '⚪', '🩵', '💛'];
@@ -2894,7 +3870,7 @@
 
     function getTimeLabel(time24) {
       const [h, m] = time24.split(':').map(Number);
-      const ampm = h >= 12 ? 'PM' : 'AM';
+      const ampm = h >= 12 ? 'م' : 'ص';
       const h12 = h % 12 || 12;
       return `${h12}:${String(m).padStart(2, '0')} ${ampm}`;
     }
@@ -2910,24 +3886,22 @@
     function renderMedsScreen() {
       if (STATE.meds.list.length === 0) {
         STATE.meds.list = JSON.parse(JSON.stringify(DEFAULT_MEDS));
-        STATE.meds.taken['1_0'] = true; // demo: first dose of Metformin
+        STATE.meds.taken['1_0'] = true;
       }
 
       const list = STATE.meds.list;
       const taken = STATE.meds.taken;
 
-      // Count total dose slots across all meds
       const totalDoses = list.reduce((sum, m) => sum + (m.doses ? m.doses.length : 1), 0);
       const takenCount = Object.keys(taken).filter(k => taken[k]).length;
       const pct = totalDoses > 0 ? Math.round((takenCount / totalDoses) * 100) : 0;
 
-      document.getElementById('medsProgressCount').textContent = `${takenCount}/${totalDoses} doses taken`;
+      document.getElementById('medsProgressCount').textContent = `تم أخذ ${takenCount}/${totalDoses} من الجرعات`;
       document.getElementById('medsProgressFill').style.width = `${pct}%`;
       document.getElementById('medsAdherenceStat').textContent = `${pct}%`;
       document.getElementById('medsStreakStat').textContent = STATE.meds.streak || 5;
       document.getElementById('medsMissedStat').textContent = STATE.meds.missedWeek || 1;
 
-      // Tip card
       const urgentNotTaken = list.find(m => {
         if (!m.urgent) return false;
         const doses = m.doses || [{ time: m.time || '08:00' }];
@@ -2937,12 +3911,12 @@
       const tipCard = document.getElementById('medsTipCard');
       if (urgentNotTaken) {
         document.getElementById('medsTipText').innerHTML =
-          `<strong>${urgentNotTaken.name}</strong> is flagged as critical — one or more doses not taken today. ` +
-          `<a id="medsTipLearnMore">Learn more ↗</a>`;
+          `<strong>${urgentNotTaken.name}</strong> مُصنَّف كدواء حيوي — لم تُؤخذ إحدى الجرعات اليوم. ` +
+          `<a id="medsTipLearnMore">اعرف المزيد ↗</a>`;
         tipCard.style.display = '';
         const learnMore = document.getElementById('medsTipLearnMore');
         if (learnMore) learnMore.onclick = () => {
-          alert(`Ask your doctor about ${urgentNotTaken.name} before skipping any dose.`);
+          alert(`استشر طبيبك قبل تفويت أي جرعة من ${urgentNotTaken.name}.`);
         };
       } else {
         tipCard.style.display = 'none';
@@ -2954,8 +3928,8 @@
       if (activeTab === 'history') {
         container.innerHTML = `<div class="meds-empty">
           <i class="ti ti-history"></i>
-          <h3>History coming soon</h3>
-          <p>Weekly and monthly adherence tracking will appear here.</p>
+          <h3>السجل قريباً</h3>
+          <p>سيظهر هنا سجل الالتزام الأسبوعي والشهري.</p>
         </div>`;
         return;
       }
@@ -2963,13 +3937,12 @@
       if (activeTab === 'upcoming') {
         container.innerHTML = `<div class="meds-empty">
           <i class="ti ti-calendar"></i>
-          <h3>No upcoming doses</h3>
-          <p>Future scheduled doses and refill reminders will appear here.</p>
+          <h3>لا توجد جرعات قادمة</h3>
+          <p>ستظهر هنا الجرعات المستقبلية وتذكيرات الإعادة.</p>
         </div>`;
         return;
       }
 
-      // Flatten all doses from all meds, group by time of day
       const allDoses = [];
       list.forEach(med => {
         const doses = med.doses || [{ time: med.time || '08:00' }];
@@ -2986,21 +3959,20 @@
       const evening = allDoses.filter(d => parseInt(d.dose.time.split(':')[0]) >= 17);
 
       let html = '';
-      if (morning.length) html += renderDoseSection('🌅 Morning Doses', morning, taken);
-      if (afternoon.length) html += renderDoseSection('☀️ Afternoon Doses', afternoon, taken);
-      if (evening.length) html += renderDoseSection('🌙 Evening Doses', evening, taken);
+      if (morning.length) html += renderDoseSection('🌅 جرعات الصباح', morning, taken);
+      if (afternoon.length) html += renderDoseSection('☀️ جرعات الظهر', afternoon, taken);
+      if (evening.length) html += renderDoseSection('🌙 جرعات المساء', evening, taken);
 
       if (!allDoses.length) {
         html = `<div class="meds-empty">
           <i class="ti ti-pill"></i>
-          <h3>No medications added yet</h3>
-          <p>Tap "Add Med" to schedule your first medication.</p>
+          <h3>لم تُضَف أدوية بعد</h3>
+          <p>انقر على "إضافة دواء" لجدولة دوائك الأول.</p>
         </div>`;
       }
 
       container.innerHTML = html;
 
-      // Bind check buttons
       container.querySelectorAll('.med-check-btn').forEach(btn => {
         btn.addEventListener('click', e => {
           e.stopPropagation();
@@ -3015,12 +3987,11 @@
         });
       });
 
-      // Delete buttons
       container.querySelectorAll('.med-delete-btn').forEach(btn => {
         btn.addEventListener('click', e => {
           e.stopPropagation();
           const id = parseInt(btn.dataset.id);
-          if (confirm('Remove this medication from your list?')) {
+          if (confirm('هل تريد حذف هذا الدواء من القائمة؟')) {
             STATE.meds.list = STATE.meds.list.filter(m => m.id !== id);
             Object.keys(STATE.meds.taken).forEach(k => {
               if (k.startsWith(`${id}_`)) delete STATE.meds.taken[k];
@@ -3041,7 +4012,7 @@
       const key = `${med.id}_${doseIdx}`;
       const done = !!taken[key];
       const totalDoses = med.doses ? med.doses.length : 1;
-      const doseLabel = totalDoses > 1 ? ` · Dose ${doseIdx + 1}/${totalDoses}` : '';
+      const doseLabel = totalDoses > 1 ? ` · الجرعة ${doseIdx + 1}/${totalDoses}` : '';
 
       return `
       <div class="med-card ${done ? 'taken' : ''}">
@@ -3050,7 +4021,7 @@
           <div class="med-name">
             ${med.name}
             <span class="med-dose">${med.dose} · ${med.form}${doseLabel}</span>
-            ${med.urgent ? '<span class="med-skip-badge">Do not skip</span>' : ''}
+            ${med.urgent ? '<span class="med-skip-badge">لا يُفوَّت</span>' : ''}
           </div>
           <div class="med-sub">${med.food}</div>
           ${med.note ? `<div class="med-note"><i class="ti ti-info-circle" style="font-size:13px;" aria-hidden="true"></i>${med.note}</div>` : ''}
@@ -3060,17 +4031,16 @@
           </div>
         </div>
         <div style="display:flex;gap:0.5rem;align-items:center;flex-shrink:0;">
-          ${doseIdx === 0 ? `<button class="icon-btn med-delete-btn" data-id="${med.id}" title="Remove medication" style="width:32px;height:32px;border-radius:8px;">
+          ${doseIdx === 0 ? `<button class="icon-btn med-delete-btn" data-id="${med.id}" title="حذف الدواء" style="width:32px;height:32px;border-radius:8px;">
             <svg style="width:14px;height:14px;"><use href="#icon-trash"/></svg>
           </button>` : '<div style="width:32px;"></div>'}
-          <button class="med-check-btn ${done ? 'done' : ''}" data-key="${key}" aria-label="${done ? 'Mark as not taken' : 'Mark as taken'}">
+          <button class="med-check-btn ${done ? 'done' : ''}" data-key="${key}" aria-label="${done ? 'تمييز كغير مأخوذ' : 'تمييز كمأخوذ'}">
             <i class="ti ti-check" aria-hidden="true"></i>
           </button>
         </div>
       </div>`;
     }
 
-    // Tabs
     document.querySelectorAll('.meds-tab').forEach(tab => {
       tab.addEventListener('click', () => {
         document.querySelectorAll('.meds-tab').forEach(t => t.classList.remove('active'));
@@ -3081,7 +4051,7 @@
     });
 
     /* ================================================================
-       ADD MEDICATION MODAL — Dose count + Time slots
+       ADD MEDICATION MODAL
        ================================================================ */
     let currentDoseCount = 1;
 
@@ -3101,14 +4071,13 @@
         const row = document.createElement('div');
         row.className = 'dose-slot-row';
         row.innerHTML = `
-          <span class="dose-slot-label">Dose ${i + 1}</span>
+          <span class="dose-slot-label">الجرعة ${i + 1}</span>
           <input type="time" id="doseTime_${i}" step="300" value="${getDefaultDoseTime(i, count)}" />
         `;
         container.appendChild(row);
       }
     }
 
-    // Open modal
     document.getElementById('medsAddBtn').addEventListener('click', () => {
       currentDoseCount = 1;
       document.getElementById('doseCountDisplay').textContent = '1';
@@ -3120,7 +4089,6 @@
       document.getElementById('medsModalOverlay').classList.add('open');
     });
 
-    // Dose count controls
     document.getElementById('doseCountMinus').addEventListener('click', () => {
       if (currentDoseCount > 1) {
         currentDoseCount--;
@@ -3137,7 +4105,6 @@
       }
     });
 
-    // Close modal
     document.getElementById('medsCancelBtn').addEventListener('click', () => {
       document.getElementById('medsModalOverlay').classList.remove('open');
     });
@@ -3148,7 +4115,6 @@
       }
     });
 
-    // Save medication
     document.getElementById('medsSaveBtn').addEventListener('click', async () => {
       const name = document.getElementById('medNameInput').value.trim();
       const dose = document.getElementById('medDoseInput').value.trim();
@@ -3157,17 +4123,9 @@
       const urgent = document.getElementById('medUrgentInput').value === 'yes';
       const note = document.getElementById('medNoteInput').value.trim();
 
-      // Input Validation
-      if (!name) {
-        alert('يرجى إدخال اسم الدواء.');
-        return;
-      }
-      if (!dose) {
-        alert('يرجى إدخال جرعة الدواء.');
-        return;
-      }
+      if (!name) { alert('يرجى إدخال اسم الدواء.'); return; }
+      if (!dose) { alert('يرجى إدخال جرعة الدواء.'); return; }
 
-      // Collect and round dose times to 5-minute intervals
       const doses = [];
       for (let i = 0; i < currentDoseCount; i++) {
         const timeInput = document.getElementById(`doseTime_${i}`);
@@ -3178,41 +4136,20 @@
       const idx = STATE.meds.list.length % PILL_ICONS.length;
       const newMed = {
         id: Date.now(),
-        name,
-        dose: dose || '—',
-        form,
-        doseCount: currentDoseCount,
-        doses,
-        food,
-        urgent,
-        note,
-        icon: PILL_ICONS[idx],
-        color: PILL_COLORS[idx],
+        name, dose: dose || '—', form, doseCount: currentDoseCount,
+        doses, food, urgent, note,
+        icon: PILL_ICONS[idx], color: PILL_COLORS[idx],
       };
 
       STATE.meds.list.push(newMed);
       saveStorage();
-
-      // DATABASE REQUIRED
-      // Store medication reminder schedule
-      // Persist the medication list changes to the backend database:
-      // HTTP POST /api/medications { user: username, medication: newMed }
-      // This allows the scheduled backend process to know when reminders should be sent.
-
-      // CRON JOBS / SCHEDULED TASKS
-      // The backend will run a cron schedule (e.g. every minute) to query this medication schedule,
-      // match it against the current time, and send FCM notifications.
-
       document.getElementById('medsModalOverlay').classList.remove('open');
       renderMedsScreen();
     });
 
     /* ================================================================
-       FCM PUSH NOTIFICATIONS HELPERS
+       FCM PUSH NOTIFICATIONS
        ================================================================ */
-
-    // FCM TOKEN STORAGE
-    // Update FCM settings panel UI based on notification permission
     function refreshFcmSettingsUi() {
       const statusText = document.getElementById('fcmStatusText');
       const tokenInput = document.getElementById('fcmTokenInput');
@@ -3222,140 +4159,98 @@
       if (!statusText || !tokenInput) return;
 
       if (!('Notification' in window)) {
-        statusText.textContent = '❌ Push notifications not supported on this browser';
+        statusText.textContent = '❌ الإشعارات غير مدعومة في هذا المتصفح';
         enableBtn.style.display = 'none';
         testBtn.style.display = 'none';
         return;
       }
 
       if (Notification.permission === 'granted') {
-        statusText.textContent = '🟢 Granted (Reminders Active)';
+        statusText.textContent = '🟢 مفعّلة (التذكيرات نشطة)';
         statusText.style.color = 'var(--green)';
         enableBtn.style.display = 'none';
         testBtn.style.display = 'inline-block';
-        
         const fcmToken = STATE.currentUser?.fcmToken || localStorage.getItem('tabibak_fcm_token') || 'fcm-mock-token-tabibak-12345';
         tokenInput.value = fcmToken;
       } else if (Notification.permission === 'denied') {
-        statusText.textContent = '🔴 Blocked (Permission Denied)';
+        statusText.textContent = '🔴 محجوبة (تم رفض الإذن)';
         statusText.style.color = 'var(--red)';
-        enableBtn.textContent = 'Enable Push Reminders (Blocked)';
+        enableBtn.textContent = 'تفعيل الإشعارات (محجوب)';
         enableBtn.disabled = true;
         testBtn.style.display = 'none';
         tokenInput.value = '';
       } else {
-        statusText.textContent = '🟡 Not Requested (Reminders Inactive)';
+        statusText.textContent = '🟡 لم يُطلَب بعد (التذكيرات غير نشطة)';
         statusText.style.color = 'var(--orange)';
         enableBtn.style.display = 'inline-block';
-        enableBtn.textContent = 'Enable Push Reminders';
+        enableBtn.textContent = 'تفعيل إشعارات الأدوية';
         enableBtn.disabled = false;
         testBtn.style.display = 'none';
         tokenInput.value = '';
       }
     }
 
-    // Request Notification permission and obtain/save FCM Token
     async function requestFcmPermission() {
       if (!('Notification' in window)) {
-        alert('Push notifications are not supported in this browser.');
+        alert('الإشعارات غير مدعومة في هذا المتصفح.');
         return;
       }
-
       try {
         const permission = await Notification.requestPermission();
         if (permission === 'granted') {
-          console.log('Notification permission granted.');
-          
-          let token = 'fcm-mock-token-tabibak-12345'; // Default mock token for local testing
-
-          // FIREBASE CONFIGURATION
-          // Initialize client-side FCM messaging if Firebase SDK is successfully loaded
+          let token = 'fcm-mock-token-tabibak-12345';
           if (typeof firebase !== 'undefined') {
             try {
-              // Retrieve FCM Registration Token using the VAPID key
-              // Replace VAPID key with your actual web push certificate key
               const firebaseConfig = {
-                apiKey: "YOUR_API_KEY",
-                authDomain: "YOUR_AUTH_DOMAIN",
-                projectId: "YOUR_PROJECT_ID",
-                storageBucket: "YOUR_STORAGE_BUCKET",
-                messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-                appId: "YOUR_APP_ID"
+                apiKey: "YOUR_API_KEY", authDomain: "YOUR_AUTH_DOMAIN",
+                projectId: "YOUR_PROJECT_ID", storageBucket: "YOUR_STORAGE_BUCKET",
+                messagingSenderId: "YOUR_MESSAGING_SENDER_ID", appId: "YOUR_APP_ID"
               };
-              
-              if (!firebase.apps.length) {
-                firebase.initializeApp(firebaseConfig);
-              }
-              
+              if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
               if (firebase.messaging.isSupported()) {
                 const messaging = firebase.messaging();
                 token = await messaging.getToken({ vapidKey: 'YOUR_VAPID_KEY_PLACEHOLDER' });
-                console.log('FCM Token retrieved:', token);
               }
-            } catch (err) {
-              console.warn('Firebase initialization or token retrieval failed. Using mock token.', err);
-            }
+            } catch (err) { console.warn('فشل تهيئة Firebase.', err); }
           }
-
-          // Store token in current user state and local storage
           if (STATE.currentUser) {
             STATE.currentUser.fcmToken = token;
-            
-            // DATABASE REQUIRED
-            // Store FCM token here
-            // Update the user's document/record in the database to link their profile to this FCM token
-            // HTTP POST /api/notifications/store-token { username: STATE.currentUser.username, fcmToken: token }
             STATE.users[STATE.currentUser.username].fcmToken = token;
             saveStorage();
           }
           localStorage.setItem('tabibak_fcm_token', token);
-
-          alert('✓ Push reminders enabled successfully!');
+          alert('✓ تم تفعيل التذكيرات بنجاح!');
           refreshFcmSettingsUi();
-          
-          // Close notification modal if open
           document.getElementById('notificationModal').classList.remove('open');
-          
-          // Redirect to profile or keep current view
           if (STATE.currentTab === 'profile') refreshProfileScreen();
         } else {
-          alert('Notification permission denied. You can enable it anytime in browser settings.');
+          alert('تم رفض إذن الإشعارات. يمكنك تفعيله في أي وقت من إعدادات المتصفح.');
           refreshFcmSettingsUi();
         }
-      } catch (error) {
-        console.error('Error requesting notification permission:', error);
-      }
+      } catch (error) { console.error('خطأ في طلب إذن الإشعارات:', error); }
     }
 
-    // NOTIFICATION DELIVERY LOGIC
-    // Client-side local notification generator to simulate the FCM push notification delivery
     function triggerTestNotification() {
       if (Notification.permission === 'granted') {
-        const title = '💊 Medication Reminder (Tabibak)';
+        const title = '💊 تذكير دواء (طبيبك)';
         const options = {
-          body: 'It is time to take your scheduled medication. Open Tabibak to check details.',
+          body: 'حان وقت أخذ دوائك المجدول. افتح طبيبك للاطلاع على التفاصيل.',
           icon: 'https://cdn-icons-png.flaticon.com/512/1930/1930985.png',
           badge: 'https://cdn-icons-png.flaticon.com/512/1930/1930985.png',
           tag: 'medication-reminder-test',
         };
-
-        // Try service worker notification first, fallback to basic browser notification
         if ('serviceWorker' in navigator) {
           navigator.serviceWorker.ready.then(registration => {
             registration.showNotification(title, options);
-          }).catch(err => {
-            console.warn('Service worker not ready. Triggering inline notification.', err);
-            new Notification(title, options);
-          });
+          }).catch(err => { new Notification(title, options); });
         } else {
           new Notification(title, options);
         }
       } else {
-        alert('Please enable notifications first.');
+        alert('يرجى تفعيل الإشعارات أولاً.');
       }
     }
 
-    // FCM settings panel toggle
     document.getElementById('fcmToggle').addEventListener('click', () => {
       const panel = document.getElementById('fcmPanel');
       const btn = document.getElementById('fcmToggle');
@@ -3364,33 +4259,28 @@
       panel.style.display = isOpen ? 'none' : '';
     });
 
-    // FCM Save/Enable settings button listener
-    document.getElementById('fcmEnableBtn').addEventListener('click', () => {
-      requestFcmPermission();
-    });
-
-    // FCM Test notification button listener
-    document.getElementById('fcmTestBtn').addEventListener('click', () => {
-      triggerTestNotification();
-    });
+    document.getElementById('fcmEnableBtn').addEventListener('click', () => { requestFcmPermission(); });
+    document.getElementById('fcmTestBtn').addEventListener('click', () => { triggerTestNotification(); });
 
     /* ================================================================
        TRIAGE CHAT ENGINE
        ================================================================ */
     const RED_FLAG_TERMS = [
-      'chest pain', 'crushing pain', 'heart attack', 'can\'t breathe', 'can not breathe',
-      'difficulty breathing', 'severe chest', 'numbness left arm', 'left arm',
-      'stroke', 'facial droop', 'speech problem', 'worst headache', 'thunderclap',
-      'unconscious', 'fainted', 'severe bleeding', 'coughing blood', 'vomiting blood',
-      'suicidal', 'suicide', 'overdose',
+      'ألم في الصدر', 'ضغط على الصدر', 'نوبة قلبية', 'لا أستطيع التنفس',
+      'صعوبة في التنفس', 'ألم شديد في الصدر', 'تنميل في الذراع',
+      'جلطة', 'تدلي الوجه', 'مشكلة في الكلام', 'صداع شديد',
+      'فقدان الوعي', 'إغماء', 'نزيف حاد', 'سعال بدم', 'تقيؤ دم',
+      'انتحار', 'إيذاء النفس', 'جرعة زائدة',
+      'chest pain', 'can\'t breathe', 'difficulty breathing', 'stroke',
+      'unconscious', 'severe bleeding', 'suicidal', 'overdose',
     ];
 
     const TRIAGE_QUESTIONS = [
-      { q: 'How long have you been experiencing these symptoms?', category: 'Duration' },
-      { q: 'On a scale of 1–10, how would you rate the severity of your discomfort?', category: 'Severity' },
-      { q: 'Do you have any pre-existing medical conditions or current medications?', category: 'Medical History' },
-      { q: 'Have these symptoms occurred before? If so, what happened?', category: 'History' },
-      { q: 'Do you have any allergies, especially to medications?', category: 'Allergies' },
+      { q: 'منذ متى بدأت هذه الأعراض؟', category: 'المدة' },
+      { q: 'على مقياس من 1 إلى 10، ما شدة الانزعاج الذي تشعر به؟', category: 'الشدة' },
+      { q: 'هل لديك أي أمراض مزمنة أو أدوية تأخذها حالياً؟', category: 'التاريخ المرضي' },
+      { q: 'هل سبق أن عانيت من هذه الأعراض؟ وماذا حدث؟', category: 'السوابق' },
+      { q: 'هل لديك حساسية من أي شيء، خاصة الأدوية؟', category: 'الحساسية' },
     ];
 
     function appendMessage(role, text) {
@@ -3410,24 +4300,19 @@
       dots.innerHTML = '<div class="dot"></div><div class="dot"></div><div class="dot"></div>';
       log.appendChild(dots);
       log.scrollTop = log.scrollHeight;
-
       return new Promise(resolve => {
-        setTimeout(() => {
-          dots.remove();
-          appendMessage('bot', text);
-          resolve();
-        }, delay);
+        setTimeout(() => { dots.remove(); appendMessage('bot', text); resolve(); }, delay);
       });
     }
 
     function updateProgress(step, total) {
-      document.getElementById('progressLabel').textContent = `Question ${step}/${total}`;
+      document.getElementById('progressLabel').textContent = `السؤال ${step}/${total}`;
       document.getElementById('progressFill').style.width = `${(step / total) * 100}%`;
     }
 
     function checkRedFlags(text) {
       const lower = text.toLowerCase();
-      const hit = RED_FLAG_TERMS.some(term => lower.includes(term));
+      const hit = RED_FLAG_TERMS.some(term => lower.includes(term.toLowerCase()));
       if (hit && !STATE.triageSession.redFlagFired) {
         STATE.triageSession.redFlagFired = true;
         document.getElementById('redFlagBanner').classList.add('visible');
@@ -3445,23 +4330,18 @@
 
     function startTriage(initialSymptom, breathingContext = '') {
       STATE.triageSession = {
-        symptom: initialSymptom,
-        chatLog: [],
-        step: 0,
-        totalSteps: TRIAGE_QUESTIONS.length,
-        category: 'General',
-        redFlagFired: false,
-        result: null,
+        symptom: initialSymptom, chatLog: [], step: 0,
+        totalSteps: TRIAGE_QUESTIONS.length, category: 'عام',
+        redFlagFired: false, result: null,
       };
-
       showTab('chat');
       document.getElementById('chatLog').innerHTML = '';
       document.getElementById('redFlagBanner').classList.remove('visible');
       updateProgress(0, TRIAGE_QUESTIONS.length);
 
       const intro = breathingContext
-        ? `Hi! I'm Tabibak. Based on your breathing assessment (${breathingContext}), and your reported symptom "${initialSymptom}" — let me ask a few questions to better understand your condition.`
-        : `Hi! I'm Tabibak. I've noted your symptom: "${initialSymptom}". I'll ask ${TRIAGE_QUESTIONS.length} quick questions to understand your condition better.`;
+        ? `مرحباً! أنا طبيبك. بناءً على نتيجة تقييم التنفس (${breathingContext})، وعَرَضك المُبلَّغ عنه "${initialSymptom}" — سأطرح عليك بعض الأسئلة لفهم حالتك بشكل أفضل.`
+        : `مرحباً! أنا طبيبك. لاحظتُ عَرَضك: "${initialSymptom}". سأطرح عليك ${TRIAGE_QUESTIONS.length} أسئلة سريعة لفهم حالتك بشكل أفضل.`;
 
       appendMessage('bot', intro);
       checkRedFlags(initialSymptom);
@@ -3488,58 +4368,58 @@
       const fullText = STATE.triageSession.chatLog.map(m => m.text).join(' ').toLowerCase();
       const result = generateTriageResult(fullText, STATE.triageSession.symptom);
       STATE.triageSession.result = result;
-      showTypingThenAppend('Thank you for answering those questions. Let me now compile your personalised triage assessment…', 1200)
+      showTypingThenAppend('شكراً على إجاباتك. سأقوم الآن بإعداد تقرير الفحص الشخصي الخاص بك...', 1200)
         .then(() => { displayResults(result); saveSession(); });
     }
 
     function generateTriageResult(fullText, symptom) {
       const sym = (symptom + ' ' + fullText).toLowerCase();
 
-      const isRed = RED_FLAG_TERMS.some(t => sym.includes(t))
-        || (sym.includes('severe') && sym.includes('pain'))
-        || (sym.includes('10') && sym.includes('scale'));
+      const isRed = RED_FLAG_TERMS.some(t => sym.includes(t.toLowerCase()))
+        || (sym.includes('شديد') && sym.includes('ألم'))
+        || (sym.includes('10') && sym.includes('مقياس'));
 
       const isOrange = !isRed && (
-        sym.includes('fever') || sym.includes('vomit')
-        || sym.includes('diarrhea') || sym.includes('moderate')
-        || sym.includes('dizziness') || sym.includes('infection')
+        sym.includes('حمى') || sym.includes('تقيؤ') || sym.includes('قيء')
+        || sym.includes('إسهال') || sym.includes('متوسط')
+        || sym.includes('دوار') || sym.includes('التهاب')
       );
 
       if (isRed) return {
         level: 'red',
-        condition: 'High-Risk Emergency Symptoms',
-        desc: 'Your reported symptoms match patterns associated with potentially serious or life-threatening medical conditions. Immediate professional evaluation is strongly advised.',
+        condition: 'أعراض طارئة عالية الخطورة',
+        desc: 'الأعراض التي أبلغت عنها تتطابق مع أنماط قد تكون مرتبطة بحالات طبية خطيرة أو مهددة للحياة. يُنصح بشدة بالتقييم الفوري من قِبَل متخصص.',
         recs: [
-          'Call emergency services (123) or go to your nearest emergency department immediately.',
-          'Do not drive yourself — ask someone to take you or call an ambulance.',
-          'Keep a list of your symptoms and current medications ready for the medical team.',
-          'If you have prescribed emergency medication (e.g. nitroglycerin, EpiPen), use it as directed.',
+          'اتصل بخدمات الطوارئ (123) أو توجه فوراً إلى أقرب قسم طوارئ.',
+          'لا تقود السيارة بنفسك — اطلب من شخص ما إيصالك أو اتصل بسيارة إسعاف.',
+          'احتفظ بقائمة أعراضك وأدويتك الحالية جاهزة للفريق الطبي.',
+          'إذا كان لديك دواء طارئ موصوف (مثل نيتروغليسرين أو قلم الأدرينالين)، استخدمه وفقاً للتعليمات.',
         ],
       };
 
       if (isOrange) return {
         level: 'orange',
-        condition: 'Moderate Concern — Prompt Care Advised',
-        desc: 'Your symptoms suggest a moderate health concern that warrants professional attention within the next few hours to avoid potential complications.',
+        condition: 'قلق معتدل — يُنصح بالرعاية السريعة',
+        desc: 'تشير أعراضك إلى مشكلة صحية معتدلة تستوجب الاهتمام المتخصص خلال الساعات القليلة القادمة لتجنب المضاعفات.',
         recs: [
-          'Visit an urgent care clinic or contact your primary care physician today.',
-          'Monitor your temperature every 4 hours and note any changes.',
-          'Stay well-hydrated — drink clear fluids steadily throughout the day.',
-          'Avoid strenuous activity until you have been evaluated.',
-          'If symptoms worsen significantly, go to the emergency department.',
+          'زر عيادة الرعاية العاجلة أو تواصل مع طبيبك اليوم.',
+          'راقب درجة حرارتك كل 4 ساعات ولاحظ أي تغييرات.',
+          'حافظ على ترطيب جيد — اشرب السوائل الصافية بانتظام.',
+          'تجنب الجهد البدني الشاق حتى يتم تقييمك.',
+          'إذا ساءت الأعراض بشكل ملحوظ، توجه إلى قسم الطوارئ.',
         ],
       };
 
       return {
         level: 'green',
-        condition: 'Mild / Self-Manageable Condition',
-        desc: 'Based on your responses, your symptoms appear mild and are likely manageable with appropriate home care and rest. No immediate emergency intervention is indicated.',
+        condition: 'حالة خفيفة / قابلة للإدارة ذاتياً',
+        desc: 'بناءً على إجاباتك، تبدو أعراضك خفيفة ومن المرجح أن تُعالَج بالراحة المناسبة والعناية المنزلية. لا يوجد ما يستدعي التدخل الطارئ الفوري.',
         recs: [
-          'Rest adequately and monitor your symptoms over the next 24–48 hours.',
-          'Stay hydrated and maintain a light, easy-to-digest diet.',
-          'Use over-the-counter remedies appropriate for your symptom (as directed).',
-          'If symptoms persist beyond 48 hours or worsen, consult a physician.',
-          'Follow up with your family doctor at your next routine appointment.',
+          'استرح جيداً وراقب أعراضك خلال الـ 24 إلى 48 ساعة القادمة.',
+          'حافظ على ترطيب جيد وتناول نظاماً غذائياً خفيفاً وسهل الهضم.',
+          'استخدم العلاجات المتاحة دون وصفة المناسبة لعَرَضك (حسب التعليمات).',
+          'إذا استمرت الأعراض أكثر من 48 ساعة أو ازدادت سوءاً، استشر طبيباً.',
+          'تابع مع طبيب الأسرة في موعدك الدوري القادم.',
         ],
       };
     }
@@ -3547,7 +4427,7 @@
     function displayResults(result) {
       const header = document.getElementById('resultsHeader');
       header.className = `results-header glass ${result.level}`;
-      document.getElementById('urgencyBadge').textContent = result.level === 'red' ? '🚨 Emergency' : result.level === 'orange' ? '⚠️ Moderate' : '✅ Mild';
+      document.getElementById('urgencyBadge').textContent = result.level === 'red' ? '🚨 طارئ' : result.level === 'orange' ? '⚠️ معتدل' : '✅ خفيف';
       document.getElementById('conditionTitle').textContent = result.condition;
       document.getElementById('resultsDesc').textContent = result.desc;
 
@@ -3560,7 +4440,7 @@
       });
 
       document.getElementById('reportText').value =
-        `=== TABIBAK TRIAGE REPORT ===\n\nSymptom: ${STATE.triageSession.symptom}\nUrgency: ${result.level.toUpperCase()}\nCondition: ${result.condition}\n\nAssessment:\n${result.desc}\n\nRecommendations:\n${result.recs.map((r, i) => `${i + 1}. ${r}`).join('\n')}\n\nGenerated: ${new Date().toLocaleString()}\n\n⚠️ This report is AI-generated and not a clinical diagnosis.`;
+        `=== تقرير فحص طبيبك ===\n\nالأعراض: ${STATE.triageSession.symptom}\nالأولوية: ${result.level === 'red' ? 'طارئ' : result.level === 'orange' ? 'معتدل' : 'خفيف'}\nالحالة: ${result.condition}\n\nالتقييم:\n${result.desc}\n\nالتوصيات:\n${result.recs.map((r, i) => `${i + 1}. ${r}`).join('\n')}\n\nتاريخ التقرير: ${new Date().toLocaleString('ar-EG')}\n\n⚠️ هذا التقرير صادر من الذكاء الاصطناعي وليس تشخيصاً سريرياً.`;
 
       showTab('results');
     }
@@ -3583,7 +4463,7 @@
 
     document.getElementById('startTriageBtn').addEventListener('click', () => {
       const sym = document.getElementById('symptomInput').value.trim();
-      if (!sym) { alert('Please describe your symptoms before starting.'); return; }
+      if (!sym) { alert('يرجى وصف أعراضك قبل البدء.'); return; }
       startTriage(sym);
     });
 
@@ -3601,17 +4481,17 @@
       const ta = document.getElementById('reportText');
       ta.select();
       navigator.clipboard.writeText(ta.value).catch(() => document.execCommand('copy'));
-      document.getElementById('copyReportBtn').textContent = '✓ Copied!';
-      setTimeout(() => document.getElementById('copyReportBtn').textContent = 'Copy Medical Report', 2000);
+      document.getElementById('copyReportBtn').textContent = '✓ تم النسخ!';
+      setTimeout(() => document.getElementById('copyReportBtn').textContent = 'نسخ التقرير الطبي', 2000);
     });
 
     /* ================================================================
        BREATHING TEST
        ================================================================ */
     const BREATHING_PHASES = [
-      { name: 'Inhale', dur: 4, cls: 'inhale', freq: 528 },
-      { name: 'Hold', dur: 4, cls: 'hold', freq: 396 },
-      { name: 'Exhale', dur: 6, cls: 'exhale', freq: 432 },
+      { name: 'شهيق', dur: 4, cls: 'inhale', freq: 528 },
+      { name: 'احبس', dur: 4, cls: 'hold', freq: 396 },
+      { name: 'زفير', dur: 6, cls: 'exhale', freq: 432 },
     ];
 
     document.getElementById('startBreathingBtn').addEventListener('click', () => {
@@ -3620,46 +4500,38 @@
       document.getElementById('difficultyPanel').style.display = 'none';
       document.getElementById('breathResults').style.display = 'none';
       document.getElementById('breathCancelWrap').style.display = '';
-      // Pre-load voices
       if ('speechSynthesis' in window) speechSynthesis.getVoices();
-      speakPhase('Breathing assessment. Get ready.');
+      speakPhase('تقييم التنفس. استعد.');
       setTimeout(runBreathingCycle, 1500);
     });
 
     function runBreathingCycle() {
-      document.getElementById('cycleBadge').textContent = `Cycle ${STATE.breathing.cycle + 1} of ${STATE.breathing.totalCycles}`;
+      document.getElementById('cycleBadge').textContent = `الدورة ${STATE.breathing.cycle + 1} من ${STATE.breathing.totalCycles}`;
       let phaseIdx = 0;
 
       function runPhase() {
         if (phaseIdx >= BREATHING_PHASES.length) {
           document.getElementById('breathCircle').className = 'breath-circle';
-          document.getElementById('phaseLabel').textContent = 'Done';
+          document.getElementById('phaseLabel').textContent = 'تم';
           document.getElementById('phaseTimer').textContent = '';
-          speakPhase('Cycle complete. How did that feel?');
+          speakPhase('اكتملت الدورة. كيف شعرت؟');
           document.getElementById('difficultyPanel').style.display = '';
           return;
         }
-
         const phase = BREATHING_PHASES[phaseIdx];
         document.getElementById('breathCircle').className = `breath-circle ${phase.cls}`;
         document.getElementById('phaseLabel').textContent = phase.name;
-
-        // Audio cues
         playChime(phase.freq, 1.0);
         speakPhase(phase.name);
-
         let t = phase.dur;
         document.getElementById('phaseTimer').textContent = t;
-
         const tick = setInterval(() => {
           t--;
           document.getElementById('phaseTimer').textContent = t > 0 ? t : '';
           if (t <= 0) { clearInterval(tick); phaseIdx++; runPhase(); }
         }, 1000);
-
         STATE.breathing.timerHandle = tick;
       }
-
       runPhase();
     }
 
@@ -3686,24 +4558,23 @@
 
       let level, title, desc, bgColor;
       if (hardCt >= 2 || (hardCt === 1 && modCt >= 1)) {
-        level = 'red'; title = 'Significant Breathing Difficulty';
-        desc = 'You reported substantial difficulty breathing during the assessment. This may indicate a respiratory condition requiring medical attention.';
+        level = 'red'; title = 'صعوبة تنفس ملحوظة';
+        desc = 'أبلغت عن صعوبة كبيرة في التنفس خلال التقييم. قد يشير هذا إلى حالة تنفسية تستوجب عناية طبية.';
         bgColor = 'var(--red)';
-        speakPhase('Assessment complete. Significant breathing difficulty detected. Please consult a doctor.');
+        speakPhase('اكتمل التقييم. تم رصد صعوبة تنفس ملحوظة. يُرجى استشارة طبيب.');
       } else if (modCt >= 2 || hardCt === 1) {
-        level = 'orange'; title = 'Moderate Breathing Strain';
-        desc = 'You experienced some difficulty during the breathing cycles. Consider speaking with a healthcare provider to evaluate your respiratory health.';
+        level = 'orange'; title = 'إجهاد تنفسي معتدل';
+        desc = 'واجهت بعض الصعوبة خلال دورات التنفس. فكّر في التحدث مع مختص لتقييم صحتك التنفسية.';
         bgColor = 'var(--orange)';
-        speakPhase('Assessment complete. Moderate breathing strain detected.');
+        speakPhase('اكتمل التقييم. تم رصد إجهاد تنفسي معتدل.');
       } else {
-        level = 'green'; title = 'Normal Breathing Pattern';
-        desc = 'You completed all three breathing cycles comfortably. Your respiratory function appears normal based on this self-assessment.';
+        level = 'green'; title = 'نمط تنفس طبيعي';
+        desc = 'أتممت الدورات الثلاث بارتياح. يبدو أن وظيفتك التنفسية طبيعية بناءً على هذا التقييم الذاتي.';
         bgColor = 'var(--green)';
-        speakPhase('Assessment complete. Your breathing pattern appears normal. Well done!');
+        speakPhase('اكتمل التقييم. نمط التنفس يبدو طبيعياً. أحسنت!');
       }
 
       STATE.breathing.breathResult = { level, title, desc, score };
-
       document.getElementById('breathResultCard').className = `result-card ${level}`;
       document.getElementById('breathScoreCircle').className = `score-circle ${level}`;
       document.getElementById('breathScoreNum').textContent = score;
@@ -3711,16 +4582,15 @@
       document.getElementById('breathResultDesc').textContent = desc;
 
       const urgEl = document.getElementById('breathUrgency');
-      urgEl.textContent = level === 'red' ? '⚠️ Seek Medical Attention' : level === 'orange' ? '🔶 Monitor Symptoms' : '✅ Normal Range';
+      urgEl.textContent = level === 'red' ? '⚠️ راجع طبيباً' : level === 'orange' ? '🔶 راقب الأعراض' : '✅ ضمن المعدل الطبيعي';
       urgEl.style.background = bgColor;
-
       document.getElementById('breathResults').style.display = '';
     }
 
     document.getElementById('breathToTriageBtn').addEventListener('click', () => {
       const r = STATE.breathing.breathResult;
-      const sym = document.getElementById('symptomInput').value.trim() || 'breathing difficulty';
-      startTriage(sym, `${r.title} (score ${r.score}/10)`);
+      const sym = document.getElementById('symptomInput').value.trim() || 'صعوبة في التنفس';
+      startTriage(sym, `${r.title} (درجة ${r.score}/10)`);
     });
 
     document.getElementById('breathRestartBtn').addEventListener('click', () => {
@@ -3728,7 +4598,7 @@
       document.getElementById('difficultyPanel').style.display = 'none';
       document.getElementById('breathResults').style.display = 'none';
       document.getElementById('breathCancelWrap').style.display = '';
-      speakPhase('Restarting. Get ready.');
+      speakPhase('إعادة البدء. استعد.');
       setTimeout(runBreathingCycle, 1200);
     });
 
@@ -3752,7 +4622,7 @@
       const weight = parseFloat(document.getElementById('bmiWeight').value);
       const age = parseInt(document.getElementById('bmiAge').value, 10);
       const gender = document.getElementById('bmiGender').value;
-      if (!height || !weight || !age) { alert('Please fill in all fields to calculate your BMI.'); return; }
+      if (!height || !weight || !age) { alert('يرجى ملء جميع الحقول لحساب مؤشر كتلة الجسم.'); return; }
       displayBMIResult(weight / ((height / 100) ** 2), age, gender);
     });
 
@@ -3771,17 +4641,17 @@
 
       let cat, catClass, catDesc;
       if (bmi < 18.5) {
-        cat = 'Underweight'; catClass = 'underweight';
-        catDesc = 'Your BMI is below the healthy range. Increasing caloric intake with nutrient-rich foods is recommended.';
+        cat = 'نحيف'; catClass = 'underweight';
+        catDesc = 'مؤشر كتلة جسمك أقل من النطاق الصحي. يُنصح بزيادة السعرات الحرارية بالأطعمة الغنية بالمغذيات.';
       } else if (bmi < 25) {
-        cat = 'Normal Weight'; catClass = 'normal';
-        catDesc = 'Your BMI falls in the healthy range. Maintain your current lifestyle with balanced nutrition and regular exercise.';
+        cat = 'وزن طبيعي'; catClass = 'normal';
+        catDesc = 'مؤشر كتلة جسمك ضمن النطاق الصحي. حافظ على نمط حياتك الحالي بتغذية متوازنة وتمارين منتظمة.';
       } else if (bmi < 30) {
-        cat = 'Overweight'; catClass = 'overweight';
-        catDesc = 'Your BMI is slightly above the healthy range. A combination of dietary adjustments and increased physical activity is advised.';
+        cat = 'زيادة وزن'; catClass = 'overweight';
+        catDesc = 'مؤشر كتلة جسمك أعلى قليلاً من النطاق الصحي. يُنصح بمزيج من التعديلات الغذائية وزيادة النشاط البدني.';
       } else {
-        cat = 'Obese'; catClass = 'obese';
-        catDesc = 'Your BMI indicates obesity. Consultation with a healthcare provider for a structured weight management plan is recommended.';
+        cat = 'سمنة'; catClass = 'obese';
+        catDesc = 'يشير مؤشر كتلة جسمك إلى سمنة. يُنصح باستشارة مقدم الرعاية الصحية لوضع خطة إدارة وزن منظمة.';
       }
 
       document.getElementById('bmiCircle').className = `bmi-circle ${catClass}`;
@@ -3800,26 +4670,26 @@
     function buildBMITips(bmi, age, gender) {
       const tips = [];
       if (bmi < 18.5) {
-        tips.push('Aim for 5–6 smaller meals throughout the day rather than 3 large ones.');
-        tips.push('Include calorie-dense but nutritious foods: nuts, avocados, whole grains, legumes.');
-        tips.push('Incorporate light resistance training to build healthy muscle mass.');
-        if (age > 50) tips.push('Talk to your doctor about bone density, as low BMI can affect skeletal health.');
+        tips.push('احرص على تناول 5 إلى 6 وجبات صغيرة خلال اليوم بدلاً من 3 وجبات كبيرة.');
+        tips.push('أدرج أطعمة غنية بالسعرات ومغذية: المكسرات والأفوكادو والحبوب الكاملة والبقوليات.');
+        tips.push('مارس تمارين مقاومة خفيفة لبناء كتلة عضلية صحية.');
+        if (age > 50) tips.push('تحدث مع طبيبك حول كثافة العظام، فانخفاض المؤشر يؤثر على الصحة الهيكلية.');
       } else if (bmi < 25) {
-        tips.push('Continue balanced meals with a mix of protein, complex carbs, and healthy fats.');
-        tips.push('Aim for at least 150 minutes of moderate aerobic activity per week.');
-        tips.push('Prioritise quality sleep (7–9 hours) to maintain metabolic health.');
-        if (gender === 'female') tips.push('Ensure adequate calcium and iron intake, particularly important for women.');
+        tips.push('واصل تناول وجبات متوازنة تحتوي على البروتين والكربوهيدرات المعقدة والدهون الصحية.');
+        tips.push('احرص على ممارسة 150 دقيقة على الأقل من النشاط الهوائي المعتدل أسبوعياً.');
+        tips.push('أعطِ الأولوية لنوم جيد (7-9 ساعات) للحفاظ على الصحة الأيضية.');
+        if (gender === 'أنثى') tips.push('احرصي على تناول الكالسيوم والحديد الكافيين، فهما مهمان بشكل خاص للمرأة.');
       } else if (bmi < 30) {
-        tips.push('Reduce refined sugars and processed foods; opt for whole-food alternatives.');
-        tips.push('Aim for a daily calorie deficit of 300–500 kcal combined with exercise.');
-        tips.push('Walking 10,000 steps per day is an effective low-impact starting point.');
-        if (age > 40) tips.push('Consider cardiovascular screening, as excess weight increases heart disease risk.');
+        tips.push('قلّل السكريات المكررة والأطعمة المصنّعة واختر بدائل الأطعمة الكاملة.');
+        tips.push('احرص على عجز يومي بالسعرات الحرارية يتراوح بين 300 و500 سعرة مع التمرين.');
+        tips.push('المشي 10,000 خطوة يومياً نقطة بداية فعّالة وذات تأثير منخفض.');
+        if (age > 40) tips.push('فكّر في فحص القلب والأوعية الدموية، إذ يزيد الوزن الزائد من مخاطر أمراض القلب.');
       } else {
-        tips.push('Consult your physician before starting any weight-loss programme.');
-        tips.push('Start with low-impact activities (swimming, cycling) to protect joints.');
-        tips.push('A Mediterranean-style diet has strong evidence for sustainable weight loss.');
-        tips.push('Set realistic, incremental targets — losing 0.5–1 kg per week is healthy and maintainable.');
-        if (gender === 'male' && age > 45) tips.push('Request a blood panel to check cholesterol, blood sugar, and blood pressure.');
+        tips.push('استشر طبيبك قبل البدء بأي برنامج لفقدان الوزن.');
+        tips.push('ابدأ بأنشطة منخفضة التأثير (السباحة، ركوب الدراجة) لحماية المفاصل.');
+        tips.push('النظام الغذائي المتوسطي يتمتع بأدلة قوية على الفاعلية المستدامة لفقدان الوزن.');
+        tips.push('ضع أهدافاً واقعية وتدريجية — فقدان 0.5 إلى 1 كجم أسبوعياً صحي وقابل للاستمرار.');
+        if (gender === 'ذكر' && age > 45) tips.push('اطلب فحص دم لمراقبة الكوليسترول وسكر الدم وضغط الدم.');
       }
       return tips;
     }
@@ -3834,54 +4704,54 @@
        ================================================================ */
     const FOOD_FALLBACK = {
       'nausea and upset stomach': {
-        badge: 'Nausea / Upset Stomach',
+        badge: 'غثيان / اضطراب المعدة',
         cards: [
-          { icon: '🍚', title: 'Eat', items: ['Plain white rice', 'Saltine crackers', 'Bananas (BRAT diet)', 'Boiled chicken breast', 'Plain toast'] },
-          { icon: '💧', title: 'Drink', items: ['Ginger tea (anti-nausea)', 'Clear broth', 'Electrolyte water', 'Peppermint tea'] },
-          { icon: '🚫', title: 'Avoid', items: ['Spicy foods', 'Fried or fatty meals', 'Dairy products', 'Caffeine'] },
-          { icon: '💡', title: 'Tips', items: ['Eat small amounts every 2 hrs', 'Sit upright after eating', 'Keep a ginger chew handy', 'Avoid strong smells'] },
+          { icon: '🍚', title: 'تناوَل', items: ['أرز أبيض سادة', 'بسكويت المالح', 'الموز (حمية BRAT)', 'صدر دجاج مسلوق', 'خبز محمص سادة'] },
+          { icon: '💧', title: 'اشرب', items: ['شاي الزنجبيل (مضاد للغثيان)', 'مرق맑ي', 'ماء مع إلكتروليتات', 'شاي النعناع'] },
+          { icon: '🚫', title: 'تجنَّب', items: ['الأطعمة الحارة', 'الوجبات الدهنية والمقلية', 'منتجات الألبان', 'الكافيين'] },
+          { icon: '💡', title: 'نصائح', items: ['تناوَل كميات صغيرة كل ساعتين', 'اجلس مستقيماً بعد الأكل', 'احتفظ بحلوى الزنجبيل معك', 'تجنَّب الروائح القوية'] },
         ],
       },
       'fever and high body temperature': {
-        badge: 'Fever',
+        badge: 'حمى',
         cards: [
-          { icon: '🍜', title: 'Eat', items: ['Warm chicken broth', 'Soft-boiled eggs', 'Cooked oatmeal', 'Yoghurt (probiotics)'] },
-          { icon: '💧', title: 'Drink', items: ['Water (2–3 L/day)', 'Coconut water', 'Herbal teas', 'Oral rehydration salts'] },
-          { icon: '🚫', title: 'Avoid', items: ['Alcohol', 'Caffeine (dehydrating)', 'Heavy proteins', 'Sugary drinks'] },
-          { icon: '💡', title: 'Tips', items: ['Rest and keep cool', 'Monitor temp every 4 hrs', 'Take paracetamol if >38.5°C'] },
+          { icon: '🍜', title: 'تناوَل', items: ['مرق دجاج دافئ', 'بيض مسلوق ناعم', 'شوفان مطبوخ', 'زبادي (بروبيوتيك)'] },
+          { icon: '💧', title: 'اشرب', items: ['ماء (2-3 لتر/يوم)', 'ماء جوز الهند', 'شاي أعشاب', 'محاليل معالجة الجفاف الفموية'] },
+          { icon: '🚫', title: 'تجنَّب', items: ['الكحول', 'الكافيين (مدرّ للبول)', 'البروتينات الثقيلة', 'المشروبات السكرية'] },
+          { icon: '💡', title: 'نصائح', items: ['استرح وحافظ على البرودة', 'راقب درجة الحرارة كل 4 ساعات', 'تناوَل الباراسيتامول إذا تجاوزت 38.5°م'] },
         ],
       },
       'headache and migraine': {
-        badge: 'Headache / Migraine',
+        badge: 'صداع / شقيقة',
         cards: [
-          { icon: '🥑', title: 'Eat', items: ['Magnesium-rich almonds', 'Dark chocolate (small amount)', 'Salmon (omega-3)', 'Leafy greens'] },
-          { icon: '💧', title: 'Drink', items: ['Plenty of water', 'Ginger tea', 'Peppermint tea', 'Electrolyte drinks'] },
-          { icon: '🚫', title: 'Avoid', items: ['Alcohol (especially red wine)', 'Aged cheeses', 'Processed meats (nitrates)', 'MSG-containing foods'] },
-          { icon: '💡', title: 'Tips', items: ['Rest in a dark, quiet room', 'Apply cold/warm compress', 'Practice deep breathing'] },
+          { icon: '🥑', title: 'تناوَل', items: ['اللوز الغني بالمغنيسيوم', 'الشوكولاتة الداكنة (كمية صغيرة)', 'السلمون (أوميغا 3)', 'الخضروات الورقية'] },
+          { icon: '💧', title: 'اشرب', items: ['الكثير من الماء', 'شاي الزنجبيل', 'شاي النعناع', 'مشروبات الإلكتروليتات'] },
+          { icon: '🚫', title: 'تجنَّب', items: ['الكحول (خاصة النبيذ الأحمر)', 'الأجبان المعتقة', 'اللحوم المصنّعة (النترات)', 'الأطعمة المحتوية على MSG'] },
+          { icon: '💡', title: 'نصائح', items: ['استرح في غرفة مظلمة وهادئة', 'ضع كمادة باردة/دافئة', 'مارس التنفس العميق'] },
         ],
       },
       'fatigue and low energy': {
-        badge: 'Fatigue / Low Energy',
+        badge: 'إرهاق / انخفاض الطاقة',
         cards: [
-          { icon: '🥩', title: 'Eat', items: ['Iron-rich lean meats', 'Lentils and legumes', 'Quinoa', 'Pumpkin seeds'] },
-          { icon: '☕', title: 'Drink', items: ['Green tea (L-theanine)', 'Water (8 glasses)', 'Matcha', 'Smoothies with spinach'] },
-          { icon: '🚫', title: 'Avoid', items: ['Sugar spikes (candy, soda)', 'Skipping breakfast', 'Excess alcohol', 'Heavy lunches'] },
-          { icon: '💡', title: 'Tips', items: ['Sleep 7–9 hrs per night', 'Take short 10-min walks', 'Check iron / vitamin D levels'] },
+          { icon: '🥩', title: 'تناوَل', items: ['لحم خالٍ من الدهن غني بالحديد', 'العدس والبقوليات', 'الكينوا', 'بذور اليقطين'] },
+          { icon: '☕', title: 'اشرب', items: ['الشاي الأخضر (L-theanine)', 'الماء (8 أكواب)', 'ماتشا', 'عصائر السبانخ'] },
+          { icon: '🚫', title: 'تجنَّب', items: ['ارتفاع السكر المفاجئ (حلوى، مشروبات غازية)', 'تخطي الفطور', 'الكحول الزائد', 'الغدا الثقيل'] },
+          { icon: '💡', title: 'نصائح', items: ['نَم 7-9 ساعات ليلاً', 'قم بمشي قصير 10 دقائق', 'افحص مستوى الحديد وفيتامين د'] },
         ],
       },
       default: {
-        badge: 'General Wellness',
+        badge: 'الصحة العامة',
         cards: [
-          { icon: '🥗', title: 'Balanced Meals', items: ['Half plate vegetables', 'Quarter plate lean protein', 'Quarter plate whole grains', 'Colourful variety'] },
-          { icon: '💧', title: 'Hydration', items: ['8 glasses of water daily', 'Herbal teas', 'Fruit-infused water', 'Low-fat milk'] },
-          { icon: '🚫', title: 'Limit These', items: ['Ultra-processed foods', 'Excess refined sugar', 'Trans fats (fried items)', 'Excess sodium'] },
-          { icon: '💡', title: 'Daily Habits', items: ['Eat at regular times', '30 min movement daily', 'Mindful eating (no screens)', 'Read nutrition labels'] },
+          { icon: '🥗', title: 'وجبات متوازنة', items: ['نصف الطبق خضروات', 'ربع الطبق بروتين خالٍ من الدهن', 'ربع الطبق حبوب كاملة', 'تنوع الألوان'] },
+          { icon: '💧', title: 'الترطيب', items: ['8 أكواب ماء يومياً', 'شاي أعشاب', 'ماء بالفاكهة', 'حليب منخفض الدسم'] },
+          { icon: '🚫', title: 'حدِّد هذه', items: ['الأطعمة فائقة المعالجة', 'السكر المكرر الزائد', 'الدهون المتحولة (المقلية)', 'الصوديوم الزائد'] },
+          { icon: '💡', title: 'عادات يومية', items: ['تناوَل الطعام في أوقات منتظمة', '30 دقيقة حركة يومياً', 'الأكل الواعي (بدون شاشات)', 'اقرأ قيم التغذية'] },
         ],
       },
     };
 
     async function getFoodRecsFromAI(mood, apiKey) {
-      const prompt = `You are a clinical nutritionist. A patient reports: "${mood}". Provide nutritional guidance in this EXACT JSON format (no markdown, no extra text):\n{"badge":"short condition label","cards":[{"icon":"emoji","title":"Eat","items":["item1","item2","item3","item4","item5"]},{"icon":"emoji","title":"Drink","items":["item1","item2","item3","item4"]},{"icon":"emoji","title":"Avoid","items":["item1","item2","item3","item4"]},{"icon":"emoji","title":"Tips","items":["tip1","tip2","tip3","tip4"]}]}`;
+      const prompt = `أنت أخصائي تغذية سريرية. يُفيد المريض بـ: "${mood}". قدّم توجيهاً غذائياً بهذا التنسيق JSON بالضبط (بدون markdown أو نص إضافي):\n{"badge":"تسمية قصيرة للحالة","cards":[{"icon":"emoji","title":"تناوَل","items":["عنصر1","عنصر2","عنصر3","عنصر4","عنصر5"]},{"icon":"emoji","title":"اشرب","items":["عنصر1","عنصر2","عنصر3","عنصر4"]},{"icon":"emoji","title":"تجنَّب","items":["عنصر1","عنصر2","عنصر3","عنصر4"]},{"icon":"emoji","title":"نصائح","items":["نصيحة1","نصيحة2","نصيحة3","نصيحة4"]}]}`;
       const res = await fetch('https://api.anthropic.com/v1/messages', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'x-api-key': apiKey, 'anthropic-version': '2023-06-01' },
@@ -3919,7 +4789,7 @@
         }
         renderFoodCards(data);
       } catch (e) {
-        document.getElementById('foodErrorMsg').textContent = `Error: ${e.message}. Showing built-in recommendations instead.`;
+        document.getElementById('foodErrorMsg').textContent = `خطأ: ${e.message}. جاري عرض التوصيات المدمجة.`;
         document.getElementById('foodError').style.display = '';
         await new Promise(r => setTimeout(r, 300));
         renderFoodCards(FOOD_FALLBACK[mood] || FOOD_FALLBACK['default']);
@@ -3940,7 +4810,7 @@
     document.getElementById('foodGetBtn').addEventListener('click', () => {
       const custom = document.getElementById('foodCustomInput').value.trim();
       const mood = custom || STATE.food.selectedMood;
-      if (!mood) { alert('Please select a mood chip or describe your condition.'); return; }
+      if (!mood) { alert('يرجى اختيار شعور أو وصف حالتك.'); return; }
       fetchFoodRecommendations(mood);
     });
 
@@ -3964,8 +4834,8 @@
       const key = document.getElementById('apiKeyInput').value.trim();
       if (!key) return;
       STATE.food.apiKey = key;
-      document.getElementById('apiStatus').textContent = '✓ Key saved for this session';
-      document.getElementById('apiLabel').textContent = '🔑 AI Key Set — Click to Change';
+      document.getElementById('apiStatus').textContent = '✓ تم حفظ المفتاح لهذه الجلسة';
+      document.getElementById('apiLabel').textContent = '🔑 تم إضافة مفتاح الذكاء الاصطناعي — انقر للتغيير';
     });
 
     /* ================================================================
@@ -3984,22 +4854,10 @@
       e.preventDefault();
       const u = document.getElementById('loginUser').value.trim();
       const p = document.getElementById('loginPass').value;
-
-      // Validation
-      if (!u) {
-        alert('يرجى إدخال اسم المستخدم.');
-        return;
-      }
-      if (!p) {
-        alert('يرجى إدخال كلمة المرور.');
-        return;
-      }
-
+      if (!u) { alert('يرجى إدخال اسم المستخدم.'); return; }
+      if (!p) { alert('يرجى إدخال كلمة المرور.'); return; }
       const user = STATE.users[u];
-      if (!user || user.password !== p) {
-        alert('اسم المستخدم أو كلمة المرور غير صحيحة.');
-        return;
-      }
+      if (!user || user.password !== p) { alert('اسم المستخدم أو كلمة المرور غير صحيحة.'); return; }
       STATE.currentUser = user;
       saveStorage();
       refreshProfileScreen();
@@ -4016,60 +4874,30 @@
       const mob = document.getElementById('regMobile').value.trim();
       const h = document.getElementById('regHistory').value.trim();
 
-      // Required fields check
-      if (!u || !p || !n || !a || !g || !mob) {
-        alert('يرجى ملء جميع الحقول المطلوبة بما في ذلك رقم الموبايل.');
-        return;
-      }
-
-      // Strict Validations
-      if (u.length < 4) {
-        alert('يجب أن يتكون اسم المستخدم من 4 أحرف على الأقل.');
-        return;
-      }
-      if (p.length < 6) {
-        alert('يجب أن تتكون كلمة المرور من 6 أحرف على الأقل.');
-        return;
-      }
+      if (!u || !p || !n || !a || !g || !mob) { alert('يرجى ملء جميع الحقول المطلوبة بما في ذلك رقم الجوال.'); return; }
+      if (u.length < 4) { alert('يجب أن يتكون اسم المستخدم من 4 أحرف على الأقل.'); return; }
+      if (p.length < 6) { alert('يجب أن تتكون كلمة المرور من 6 أحرف على الأقل.'); return; }
       const ageNum = parseInt(a, 10);
-      if (isNaN(ageNum) || ageNum < 1 || ageNum > 120) {
-        alert('يرجى إدخال عمر صحيح يتراوح بين 1 و 120 عاماً.');
-        return;
-      }
+      if (isNaN(ageNum) || ageNum < 1 || ageNum > 120) { alert('يرجى إدخال عمر صحيح يتراوح بين 1 و120 عاماً.'); return; }
       const mobileRegex = /^\+?[0-9]{10,15}$/;
-      if (!mobileRegex.test(mob)) {
-        alert('يرجى إدخال رقم هاتف محمول صحيح (يتكون من 10 إلى 15 رقماً).');
-        return;
-      }
-      if (STATE.users[u]) {
-        alert('اسم المستخدم هذا مستخدم بالفعل. يرجى اختيار اسم مستخدم آخر.');
-        return;
-      }
+      if (!mobileRegex.test(mob)) { alert('يرجى إدخال رقم هاتف جوال صحيح (10 إلى 15 رقماً).'); return; }
+      if (STATE.users[u]) { alert('اسم المستخدم هذا مستخدم بالفعل. يرجى اختيار اسم آخر.'); return; }
 
       const user = { username: u, password: p, name: n, age: a, gender: g, mobile: mob, history: h };
-      
-      // DATABASE REQUIRED
-      // Store user registration details in backend database
-      // HTTP POST /api/auth/register { username: u, password: p, name: n, ... }
-      
       STATE.users[u] = user;
       STATE.currentUser = user;
       saveStorage();
-
-      // Show FCM push notification linking modal
       showNotificationModal();
     });
 
     /* ================================================================
-       FCM PUSH NOTIFICATIONS MODAL ACTION LISTENERS
+       FCM NOTIFICATION MODAL
        ================================================================ */
     function showNotificationModal() {
       document.getElementById('notificationModal').classList.add('open');
     }
 
-    document.getElementById('notificationEnableBtn').addEventListener('click', () => {
-      requestFcmPermission();
-    });
+    document.getElementById('notificationEnableBtn').addEventListener('click', () => { requestFcmPermission(); });
 
     document.getElementById('notificationModalClose').addEventListener('click', () => {
       document.getElementById('notificationModal').classList.remove('open');
@@ -4114,35 +4942,12 @@
       const genderVal = document.getElementById('editGender').value;
       const mobileVal = document.getElementById('editMobile').value.trim();
       const historyVal = document.getElementById('editHistory').value.trim();
-
-      // Required fields validation
-      if (!nameVal || !ageVal || !genderVal || !mobileVal) {
-        alert('يرجى ملء جميع الحقول المطلوبة.');
-        return;
-      }
-
-      // Input Validation
+      if (!nameVal || !ageVal || !genderVal || !mobileVal) { alert('يرجى ملء جميع الحقول المطلوبة.'); return; }
       const ageNum = parseInt(ageVal, 10);
-      if (isNaN(ageNum) || ageNum < 1 || ageNum > 120) {
-        alert('يرجى إدخال عمر صحيح يتراوح بين 1 و 120 عاماً.');
-        return;
-      }
+      if (isNaN(ageNum) || ageNum < 1 || ageNum > 120) { alert('يرجى إدخال عمر صحيح يتراوح بين 1 و120 عاماً.'); return; }
       const mobileRegex = /^\+?[0-9]{10,15}$/;
-      if (!mobileRegex.test(mobileVal)) {
-        alert('يرجى إدخال رقم هاتف محمول صحيح (يتكون من 10 إلى 15 رقماً).');
-        return;
-      }
-
-      u.name = nameVal;
-      u.age = ageVal;
-      u.gender = genderVal;
-      u.mobile = mobileVal;
-      u.history = historyVal;
-      
-      // DATABASE REQUIRED
-      // Store updated user details in database
-      // HTTP PUT /api/users/profile { name, age, gender, mobile, history }
-      
+      if (!mobileRegex.test(mobileVal)) { alert('يرجى إدخال رقم هاتف جوال صحيح (10 إلى 15 رقماً).'); return; }
+      u.name = nameVal; u.age = ageVal; u.gender = genderVal; u.mobile = mobileVal; u.history = historyVal;
       STATE.users[u.username] = u;
       saveStorage();
       document.getElementById('editProfileForm').style.display = 'none';
@@ -4159,8 +4964,8 @@
         document.getElementById('profileUsername').textContent = `@${u.username}`;
         document.getElementById('profileAge').textContent = u.age;
         document.getElementById('profileGender').textContent = u.gender;
-        document.getElementById('profileMobile').textContent = u.mobile || 'Not set';
-        document.getElementById('profileHistory').textContent = u.history || 'No medical background declared.';
+        document.getElementById('profileMobile').textContent = u.mobile || 'غير محدد';
+        document.getElementById('profileHistory').textContent = u.history || 'لا يوجد تاريخ مرضي مسجّل.';
       }
     }
 
@@ -4188,19 +4993,20 @@
 
       empty.style.display = 'none';
       list.innerHTML = mySessions.map((s, i) => {
-        const date = new Date(s.date).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+        const date = new Date(s.date).toLocaleDateString('ar-EG', { day: '2-digit', month: 'short', year: 'numeric' });
+        const levelLabel = s.level === 'red' ? 'طارئ' : s.level === 'orange' ? 'معتدل' : 'خفيف';
         return `
         <div class="history-card ${s.level}" data-index="${i}">
           <div class="hc-info">
             <span class="hc-title">${s.condition}</span>
-            <span class="hc-meta">${date} · <span style="text-transform:capitalize;">${s.level}</span> urgency</span>
+            <span class="hc-meta">${date} · ${levelLabel}</span>
             <span class="hc-symptom">${s.symptom}</span>
           </div>
           <div class="hc-actions">
-            <button class="icon-btn view-btn" data-index="${i}" title="View session">
+            <button class="icon-btn view-btn" data-index="${i}" title="عرض الجلسة">
               <svg style="width:16px;height:16px;"><use href="#icon-eye"/></svg>
             </button>
-            <button class="icon-btn del-btn" data-index="${i}" title="Delete session">
+            <button class="icon-btn del-btn" data-index="${i}" title="حذف الجلسة">
               <svg style="width:16px;height:16px;"><use href="#icon-trash"/></svg>
             </button>
           </div>
@@ -4210,14 +5016,12 @@
       list.querySelectorAll('.view-btn').forEach(btn => {
         btn.addEventListener('click', e => { e.stopPropagation(); openHistoryModal(parseInt(btn.dataset.index)); });
       });
-
       list.querySelectorAll('.del-btn').forEach(btn => {
         btn.addEventListener('click', e => {
           e.stopPropagation();
-          if (confirm('Delete this session?')) deleteSession(parseInt(btn.dataset.index));
+          if (confirm('هل تريد حذف هذه الجلسة؟')) deleteSession(parseInt(btn.dataset.index));
         });
       });
-
       list.querySelectorAll('.history-card').forEach(card => {
         card.addEventListener('click', () => openHistoryModal(parseInt(card.dataset.index)));
       });
@@ -4234,16 +5038,15 @@
       const mySessions = STATE.sessions.filter(s => s.username === STATE.currentUser.username);
       const s = mySessions[localIdx];
       STATE.modalSessionIndex = localIdx;
-
-      const date = new Date(s.date).toLocaleDateString('en-GB', { day: '2-digit', month: 'long', year: 'numeric' });
+      const date = new Date(s.date).toLocaleDateString('ar-EG', { day: '2-digit', month: 'long', year: 'numeric' });
 
       const badge = document.getElementById('modalUrgency');
-      badge.textContent = s.level === 'red' ? '🚨 Emergency' : s.level === 'orange' ? '⚠️ Moderate' : '✅ Mild';
+      badge.textContent = s.level === 'red' ? '🚨 طارئ' : s.level === 'orange' ? '⚠️ معتدل' : '✅ خفيف';
       badge.style.background = s.level === 'red' ? 'var(--red)' : s.level === 'orange' ? 'var(--orange)' : 'var(--green)';
       badge.style.color = '#fff';
 
       document.getElementById('modalTitle').textContent = s.condition;
-      document.getElementById('modalMeta').textContent = `Saved on ${date}`;
+      document.getElementById('modalMeta').textContent = `محفوظ بتاريخ ${date}`;
       document.getElementById('modalSymptom').textContent = s.symptom;
       document.getElementById('modalDesc').textContent = s.desc;
 
@@ -4252,7 +5055,6 @@
       ).join('');
 
       document.getElementById('modalRecs').innerHTML = s.recs.map(r => `<li>${r}</li>`).join('');
-
       document.getElementById('historyModal').classList.add('open');
     }
 
@@ -4266,7 +5068,7 @@
     });
 
     document.getElementById('modalDeleteBtn').addEventListener('click', () => {
-      if (confirm('Delete this session?')) {
+      if (confirm('هل تريد حذف هذه الجلسة؟')) {
         deleteSession(STATE.modalSessionIndex);
         document.getElementById('historyModal').classList.remove('open');
       }
@@ -4276,10 +5078,10 @@
       const mySessions = STATE.sessions.filter(s => s.username === STATE.currentUser?.username);
       const s = mySessions[STATE.modalSessionIndex];
       if (!s) return;
-      const text = `=== TABIBAK TRIAGE REPORT ===\n\nSymptom: ${s.symptom}\nUrgency: ${s.level.toUpperCase()}\nCondition: ${s.condition}\n\nAssessment:\n${s.desc}\n\nRecommendations:\n${s.recs.map((r, i) => `${i + 1}. ${r}`).join('\n')}\n\nGenerated: ${new Date(s.date).toLocaleString()}\n\n⚠️ AI-generated — not a clinical diagnosis.`;
+      const text = `=== تقرير فحص طبيبك ===\n\nالأعراض: ${s.symptom}\nالأولوية: ${s.level === 'red' ? 'طارئ' : s.level === 'orange' ? 'معتدل' : 'خفيف'}\nالحالة: ${s.condition}\n\nالتقييم:\n${s.desc}\n\nالتوصيات:\n${s.recs.map((r, i) => `${i + 1}. ${r}`).join('\n')}\n\nتاريخ التقرير: ${new Date(s.date).toLocaleString('ar-EG')}\n\n⚠️ صادر من الذكاء الاصطناعي — ليس تشخيصاً سريرياً.`;
       navigator.clipboard.writeText(text).catch(() => { });
-      document.getElementById('modalCopyBtn').textContent = '✓ Copied!';
-      setTimeout(() => document.getElementById('modalCopyBtn').textContent = 'Copy Report', 2000);
+      document.getElementById('modalCopyBtn').textContent = '✓ تم النسخ!';
+      setTimeout(() => document.getElementById('modalCopyBtn').textContent = 'نسخ التقرير', 2000);
     });
 
     /* ================================================================
@@ -4288,8 +5090,6 @@
     loadStorage();
     refreshProfileScreen();
     refreshHistoryScreen();
-
-    // Initialize dose slots in modal on first render
     renderDoseSlots(1);
   </script>
 
