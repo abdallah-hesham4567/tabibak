@@ -17,16 +17,16 @@
   - A backend scheduled process (cron job) must query upcoming reminders and push messages.
   ================================================================
 -->
-<html lang="en">
+<html lang="ar" dir="rtl">
 
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Tabibak — AI Medical Triage Assistant</title>
-  <meta name="description" content="Tabibak is an AI-powered virtual medical triage assistant. Get symptom assessments, breathing tests, medication reminders, BMI calculations, and nutritional guidance." />
+  <title>طبيبك — مساعد الفحص الطبي بالذكاء الاصطناعي</title>
+  <meta name="description" content="طبيبك هو مساعد فحص طبي افتراضي يعتمد على الذكاء الاصطناعي. احصل على تقييم الأعراض، واختبارات التنفس، وتذكيرات الأدوية، وحساب مؤشر كتلة الجسم، والتوجيه الغذائي." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="stylesheet"
-    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Outfit:wght@400;500;600;700;800&display=swap" />
+    href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600&family=Outfit:wght@400;500;600;700;800&display=swap" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css" />
 
   <!-- Firebase App & Cloud Messaging SDKs -->
@@ -38,8 +38,8 @@
        DESIGN TOKENS — light & dark themes
        ============================================================ */
     :root {
-      --font-heading: 'Outfit', sans-serif;
-      --font-body: 'Inter', sans-serif;
+      --font-heading: 'Cairo', 'Outfit', sans-serif;
+      --font-body: 'Cairo', 'Inter', sans-serif;
       --radius: 20px;
       --speed: 0.3s;
 
@@ -1913,36 +1913,36 @@
       <button class="theme-btn" id="themeBtn" aria-label="Toggle dark/light mode">☀️</button>
       <div class="logo">
         <span class="logo-icon">🩺</span>
-        <span>Tabibak</span>
+        <span>طبيبك</span>
       </div>
-      <p class="app-subtitle">Intelligent Virtual Medical Triage Assistant</p>
+      <p class="app-subtitle">المساعد الافتراضي الذكي للفحص الطبي وتقييم الحالات</p>
     </header>
 
     <!-- Navigation -->
     <nav class="app-nav">
       <button class="nav-btn active" data-tab="landing">
         <svg><use href="#icon-triage" /></svg>
-        <span class="nav-label">Triage</span>
+        <span class="nav-label">الفحص الطبي</span>
       </button>
       <button class="nav-btn" data-tab="meds">
         <i class="ti ti-pill" aria-hidden="true"></i>
-        <span class="nav-label">Medications</span>
+        <span class="nav-label">الأدوية</span>
       </button>
       <button class="nav-btn" data-tab="history">
         <svg><use href="#icon-history" /></svg>
-        <span class="nav-label">History</span>
+        <span class="nav-label">السجل</span>
       </button>
       <button class="nav-btn" data-tab="food">
         <svg><use href="#icon-food" /></svg>
-        <span class="nav-label">Nutrition</span>
+        <span class="nav-label">التغذية</span>
       </button>
       <button class="nav-btn" data-tab="bmi">
         <svg><use href="#icon-bmi" /></svg>
-        <span class="nav-label">BMI</span>
+        <span class="nav-label">كتلة الجسم</span>
       </button>
       <button class="nav-btn" data-tab="profile">
         <svg><use href="#icon-profile" /></svg>
-        <span class="nav-label">Account</span>
+        <span class="nav-label">الحساب</span>
       </button>
     </nav>
 
@@ -1954,25 +1954,22 @@
       <div class="disclaimer">
         <span class="disclaimer-icon">⚠️</span>
         <div>
-          <p><strong>Important Medical Disclaimer:</strong> Tabibak is an AI-driven triage screening tool for
-            informational purposes only. It does <strong>not</strong> provide official medical diagnoses, treatments, or
-            prescriptions. In a life-threatening crisis, call emergency services immediately.</p>
+          <p><strong>إخلاء مسؤولية طبي مهم:</strong> طبيبك هو أداة فحص وتقييم طبي تعتمد على الذكاء الاصطناعي للأغراض المعلوماتية فقط. ولا يقدم تشخيصات أو علاجات أو وصفات طبية رسمية. في الحالات الطارئة والمهددة للحياة، يرجى الاتصال بخدمات الطوارئ فوراً.</p>
         </div>
       </div>
 
       <div class="form-group">
-        <label for="symptomInput">Describe Your Symptoms</label>
+        <label for="symptomInput">صف الأعراض التي تشعر بها</label>
         <textarea id="symptomInput"
-          placeholder="Example: I've had moderate stomach pain since this morning and feel slightly nauseated when eating..."></textarea>
+          placeholder="مثال: أشعر بألم متوسط في المعدة منذ الصباح الباكر، وأشعر بغثيان خفيف عند تناول الطعام..."></textarea>
       </div>
 
-      <button class="btn btn-primary" id="startTriageBtn">Start Triage Session ➔</button>
+      <button class="btn btn-primary" id="startTriageBtn">ابدأ جلسة الفحص ➔</button>
 
       <div style="display:flex;flex-direction:column;gap:0.5rem;margin-top:0.5rem;">
-        <div class="divider-line"><span>or</span></div>
-        <button class="btn-breathing" id="startBreathingBtn">🫁 Take Breathing Assessment Test</button>
-        <p style="font-size:0.78rem;color:var(--text-muted);text-align:center;">A guided breathing exercise with voice guidance to evaluate
-          respiratory difficulty</p>
+        <div class="divider-line"><span>أو</span></div>
+        <button class="btn-breathing" id="startBreathingBtn">🫁 إجراء اختبار تقييم التنفس</button>
+        <p style="font-size:0.78rem;color:var(--text-muted);text-align:center;">تمرين تنفس موجه لمساعدتك في تقييم مدى صعوبة التنفس</p>
       </div>
 
     </main>
@@ -1983,30 +1980,28 @@
     <main id="screen-chat" class="screen glass">
 
       <div class="progress-bar-row">
-        <span class="progress-label" id="progressLabel">Question 0/5</span>
+        <span class="progress-label" id="progressLabel">السؤال 0/5</span>
         <div class="progress-track">
           <div class="progress-fill" id="progressFill"></div>
         </div>
-        <span class="category-badge" id="categoryBadge">General</span>
+        <span class="category-badge" id="categoryBadge">عام</span>
       </div>
 
       <div class="red-flag-banner" id="redFlagBanner">
         <span style="font-size:1.6rem;animation:pulse 1.5s infinite;">🚨</span>
         <div style="flex-grow:1;">
-          <h4 style="color:var(--red);margin-bottom:0.15rem;">Critical Symptom Warning</h4>
-          <p style="font-size:0.85rem;color:var(--text-2);">You have reported symptoms linked to high-risk emergencies.
-            Call emergency services if you feel in danger.</p>
+          <h4 style="color:var(--red);margin-bottom:0.15rem;">تحذير: أعراض حرجة</h4>
+          <p style="font-size:0.85rem;color:var(--text-2);">لقد قمت بالإبلاغ عن أعراض قد ترتبط بحالات طارئة عالية الخطورة. يرجى الاتصال بالطوارئ فوراً إذا كنت تشعر بالخطر.</p>
         </div>
         <button class="btn btn-secondary"
-          style="color:var(--red);border-color:var(--red-border);padding:0.5rem 1rem;font-size:0.85rem;">Emergency
-          Guide</button>
+          style="color:var(--red);border-color:var(--red-border);padding:0.5rem 1rem;font-size:0.85rem;">دليل الطوارئ</button>
       </div>
 
       <div class="chat-log" id="chatLog"></div>
 
       <div class="chat-input-row">
-        <input type="text" id="chatInput" placeholder="Type your response..." autocomplete="off" />
-        <button class="btn btn-primary" id="sendBtn" style="padding:0.875rem 1.25rem;">Send</button>
+        <input type="text" id="chatInput" placeholder="اكتب ردك هنا..." autocomplete="off" />
+        <button class="btn btn-primary" id="sendBtn" style="padding:0.875rem 1.25rem;">إرسال</button>
       </div>
 
     </main>
@@ -2018,18 +2013,18 @@
       <div class="breathing-container">
 
         <!-- Mute toggle -->
-        <button class="breath-mute-btn" id="breathMuteBtn" title="Toggle voice guidance">🔊</button>
+        <button class="breath-mute-btn" id="breathMuteBtn" title="تشغيل/إيقاف التوجيه الصوتي">🔊</button>
 
         <div class="breathing-header">
-          <h2>🫁 Breathing Assessment</h2>
-          <p style="color:var(--text-muted);">Follow the animated circle. Voice guidance will direct each phase.</p>
-          <div class="cycle-badge" id="cycleBadge">Cycle 1 of 3</div>
+          <h2>🫁 تقييم التنفس</h2>
+          <p style="color:var(--text-muted);">اتبع الدائرة المتحركة. سيوجهك التوجيه الصوتي في كل مرحلة.</p>
+          <div class="cycle-badge" id="cycleBadge">الدورة 1 من 3</div>
         </div>
 
         <div class="circle-wrapper">
           <div class="breath-circle" id="breathCircle">
             <div class="breath-inner">
-              <span class="phase-label" id="phaseLabel">Get Ready</span>
+              <span class="phase-label" id="phaseLabel">استعد</span>
               <span class="phase-timer" id="phaseTimer">4</span>
             </div>
           </div>
@@ -2037,22 +2032,22 @@
         </div>
 
         <div class="difficulty-panel" id="difficultyPanel" style="display:none;">
-          <h3>How did that cycle feel?</h3>
+          <h3>كيف شعرت خلال هذه الدورة؟</h3>
           <div class="diff-grid">
             <button class="diff-btn easy" data-diff="easy">
               <span class="diff-icon">✅</span>
-              <span class="diff-label">Comfortable</span>
-              <span class="diff-desc">I breathed normally</span>
+              <span class="diff-label">مريح</span>
+              <span class="diff-desc">تنفس طبيعي وبدون مجهود</span>
             </button>
             <button class="diff-btn moderate" data-diff="moderate">
               <span class="diff-icon">⚠️</span>
-              <span class="diff-label">Slightly Difficult</span>
-              <span class="diff-desc">I felt some strain</span>
+              <span class="diff-label">صعب قليلاً</span>
+              <span class="diff-desc">شعرت ببعض الضيق والجهد</span>
             </button>
             <button class="diff-btn hard" data-diff="hard">
               <span class="diff-icon">🚨</span>
-              <span class="diff-label">Very Difficult</span>
-              <span class="diff-desc">I couldn't complete it</span>
+              <span class="diff-label">صعب جداً</span>
+              <span class="diff-desc">لم أستطع إكماله</span>
             </button>
           </div>
         </div>
@@ -2063,19 +2058,19 @@
               <span class="score-num" id="breathScoreNum">0</span>
               <span class="score-denom">/10</span>
             </div>
-            <h3 class="result-title" id="breathResultTitle">Breathing Assessment Complete</h3>
+            <h3 class="result-title" id="breathResultTitle">تم اكتمال تقييم التنفس</h3>
             <p class="result-desc" id="breathResultDesc"></p>
             <span class="result-urgency" id="breathUrgency"></span>
           </div>
           <div class="result-actions">
-            <button class="btn btn-primary" id="breathToTriageBtn">Start Triage with These Results</button>
-            <button class="btn btn-secondary" id="breathRestartBtn">Retake Test</button>
-            <button class="btn btn-secondary" id="breathBackBtn">Back to Home</button>
+            <button class="btn btn-primary" id="breathToTriageBtn">ابدأ الفحص بهذه النتائج</button>
+            <button class="btn btn-secondary" id="breathRestartBtn">إعادة الاختبار</button>
+            <button class="btn btn-secondary" id="breathBackBtn">العودة للرئيسية</button>
           </div>
         </div>
 
         <div id="breathCancelWrap">
-          <button class="btn btn-secondary" id="breathCancelBtn">Cancel Test</button>
+          <button class="btn btn-secondary" id="breathCancelBtn">إلغاء الاختبار</button>
         </div>
 
       </div>
@@ -2087,19 +2082,19 @@
     <main id="screen-results" class="screen">
 
       <div class="results-header glass" id="resultsHeader">
-        <span class="urgency-badge" id="urgencyBadge">Urgency</span>
-        <h2 class="condition-title" id="conditionTitle">Suspected Condition</h2>
+        <span class="urgency-badge" id="urgencyBadge">الأهمية</span>
+        <h2 class="condition-title" id="conditionTitle">الحالة المشتبه بها</h2>
         <p class="results-desc" id="resultsDesc"></p>
       </div>
 
       <div class="glass" style="margin-top:0;">
-        <h3 style="color:var(--primary);margin-bottom:1.25rem;font-size:1.35rem;">✦ Next Steps &amp; Recommendations</h3>
+        <h3 style="color:var(--primary);margin-bottom:1.25rem;font-size:1.35rem;">✦ الخطوات التالية والتوصيات</h3>
         <ul class="rec-list" id="recList"></ul>
       </div>
 
       <div class="results-actions">
-        <button class="btn btn-secondary" id="restartBtn">Start New Triage</button>
-        <button class="btn btn-primary" id="copyReportBtn">Copy Medical Report</button>
+        <button class="btn btn-secondary" id="restartBtn">بدء فحص جديد</button>
+        <button class="btn btn-primary" id="copyReportBtn">نسخ التقرير الطبي</button>
       </div>
 
       <textarea id="reportText" style="position:absolute;left:-9999px;" aria-hidden="true"></textarea>
@@ -2110,26 +2105,25 @@
        SCREEN 4 — MEDICATION REMINDER
        ============================================================ -->
     <main id="screen-meds" class="screen">
-      <h2 class="sr-only" style="position:absolute;left:-9999px">Medication Reminder — schedule and track your daily
-        doses</h2>
+      <h2 class="sr-only" style="position:absolute;left:-9999px">تذكير الأدوية — جدولة ومتابعة جرعاتك اليومية</h2>
 
       <!-- Top bar -->
       <div class="meds-header">
         <div class="meds-title">
           <i class="ti ti-pill" aria-hidden="true"></i>
-          Medications
+          الأدوية المجدولة
         </div>
         <button class="meds-add-btn" id="medsAddBtn">
           <i class="ti ti-plus" aria-hidden="true"></i>
-          Add Med
+          إضافة دواء
         </button>
       </div>
 
       <!-- Progress bar -->
       <div class="meds-progress-wrap" id="medsProgressWrap">
         <div class="meds-progress-header">
-          <span>Today's progress</span>
-          <span class="meds-progress-count" id="medsProgressCount">0/0 doses taken</span>
+          <span>تقدم اليوم</span>
+          <span class="meds-progress-count" id="medsProgressCount">تم أخذ 0/0 من الجرعات</span>
         </div>
         <div class="meds-progress-track">
           <div class="meds-progress-fill" id="medsProgressFill" style="width:0%"></div>
@@ -2642,10 +2636,7 @@
         <input type="text" id="medNoteInput" placeholder="e.g. for blood pressure, take sitting down..." />
       </div>
 
-      <div class="meds-field">
-        <label>Reminder Contact Phone <span style="font-size:0.72rem;color:var(--text-muted);text-transform:none;letter-spacing:0;">(pre-filled from your profile)</span></label>
-        <input type="tel" id="medPhoneInput" placeholder="+1 234 567 8900" />
-      </div>
+
 
       <div class="meds-modal-btns">
         <button class="meds-btn-cancel" id="medsCancelBtn">Cancel</button>
@@ -2892,10 +2883,10 @@
        MEDICATION REMINDER MODULE
        ================================================================ */
     const DEFAULT_MEDS = [
-      { id: 1, name: 'Metformin', dose: '500mg', form: 'Tablet', doseCount: 2, doses: [{ time: '08:00' }, { time: '20:00' }], food: "Yes — take with meal", urgent: false, note: 'Take with breakfast and dinner', icon: '💊', color: '#0e2a2a', phone: '' },
-      { id: 2, name: 'Lisinopril', dose: '10mg', form: 'Tablet', doseCount: 1, doses: [{ time: '09:00' }], food: "Doesn't matter", urgent: true, note: 'Blood pressure — do not skip', icon: '💙', color: '#1a1a3a', phone: '' },
-      { id: 3, name: 'Vitamin D', dose: '1000 IU', form: 'Capsule', doseCount: 1, doses: [{ time: '12:00' }], food: "Yes — take with meal", urgent: false, note: 'Take with a meal', icon: '🌤️', color: '#2a1a00', phone: '' },
-      { id: 4, name: 'Omega 3', dose: '1g', form: 'Capsule', doseCount: 1, doses: [{ time: '21:00' }], food: "Doesn't matter", urgent: false, note: 'Evening dose', icon: '🐟', color: '#0e1a2a', phone: '' },
+      { id: 1, name: 'Metformin', dose: '500mg', form: 'Tablet', doseCount: 2, doses: [{ time: '08:00' }, { time: '20:00' }], food: "Yes — take with meal", urgent: false, note: 'Take with breakfast and dinner', icon: '💊', color: '#0e2a2a' },
+      { id: 2, name: 'Lisinopril', dose: '10mg', form: 'Tablet', doseCount: 1, doses: [{ time: '09:00' }], food: "Doesn't matter", urgent: true, note: 'Blood pressure — do not skip', icon: '💙', color: '#1a1a3a' },
+      { id: 3, name: 'Vitamin D', dose: '1000 IU', form: 'Capsule', doseCount: 1, doses: [{ time: '12:00' }], food: "Yes — take with meal", urgent: false, note: 'Take with a meal', icon: '🌤️', color: '#2a1a00' },
+      { id: 4, name: 'Omega 3', dose: '1g', form: 'Capsule', doseCount: 1, doses: [{ time: '21:00' }], food: "Doesn't matter", urgent: false, note: 'Evening dose', icon: '🐟', color: '#0e1a2a' },
     ];
 
     const PILL_ICONS = ['💊', '🔵', '🟡', '🟢', '🔴', '🟠', '🟣', '⚪', '🩵', '💛'];
@@ -3125,8 +3116,6 @@
       document.getElementById('medDoseInput').value = '';
       document.getElementById('medNoteInput').value = '';
       document.getElementById('medUrgentInput').value = 'no';
-      // Pre-fill phone from profile
-      document.getElementById('medPhoneInput').value = STATE.currentUser?.mobile || '';
       renderDoseSlots(1);
       document.getElementById('medsModalOverlay').classList.add('open');
     });
@@ -3167,9 +3156,16 @@
       const food = document.getElementById('medFoodInput').value;
       const urgent = document.getElementById('medUrgentInput').value === 'yes';
       const note = document.getElementById('medNoteInput').value.trim();
-      const phone = document.getElementById('medPhoneInput').value.trim();
 
-      if (!name) { alert('Please enter a medication name.'); return; }
+      // Input Validation
+      if (!name) {
+        alert('يرجى إدخال اسم الدواء.');
+        return;
+      }
+      if (!dose) {
+        alert('يرجى إدخال جرعة الدواء.');
+        return;
+      }
 
       // Collect and round dose times to 5-minute intervals
       const doses = [];
@@ -3190,7 +3186,6 @@
         food,
         urgent,
         note,
-        phone,
         icon: PILL_ICONS[idx],
         color: PILL_COLORS[idx],
       };
@@ -3989,8 +3984,22 @@
       e.preventDefault();
       const u = document.getElementById('loginUser').value.trim();
       const p = document.getElementById('loginPass').value;
+
+      // Validation
+      if (!u) {
+        alert('يرجى إدخال اسم المستخدم.');
+        return;
+      }
+      if (!p) {
+        alert('يرجى إدخال كلمة المرور.');
+        return;
+      }
+
       const user = STATE.users[u];
-      if (!user || user.password !== p) { alert('Invalid username or password.'); return; }
+      if (!user || user.password !== p) {
+        alert('اسم المستخدم أو كلمة المرور غير صحيحة.');
+        return;
+      }
       STATE.currentUser = user;
       saveStorage();
       refreshProfileScreen();
@@ -4007,11 +4016,35 @@
       const mob = document.getElementById('regMobile').value.trim();
       const h = document.getElementById('regHistory').value.trim();
 
+      // Required fields check
       if (!u || !p || !n || !a || !g || !mob) {
-        alert('Please fill in all required fields including mobile number.');
+        alert('يرجى ملء جميع الحقول المطلوبة بما في ذلك رقم الموبايل.');
         return;
       }
-      if (STATE.users[u]) { alert('Username already taken. Please choose another.'); return; }
+
+      // Strict Validations
+      if (u.length < 4) {
+        alert('يجب أن يتكون اسم المستخدم من 4 أحرف على الأقل.');
+        return;
+      }
+      if (p.length < 6) {
+        alert('يجب أن تتكون كلمة المرور من 6 أحرف على الأقل.');
+        return;
+      }
+      const ageNum = parseInt(a, 10);
+      if (isNaN(ageNum) || ageNum < 1 || ageNum > 120) {
+        alert('يرجى إدخال عمر صحيح يتراوح بين 1 و 120 عاماً.');
+        return;
+      }
+      const mobileRegex = /^\+?[0-9]{10,15}$/;
+      if (!mobileRegex.test(mob)) {
+        alert('يرجى إدخال رقم هاتف محمول صحيح (يتكون من 10 إلى 15 رقماً).');
+        return;
+      }
+      if (STATE.users[u]) {
+        alert('اسم المستخدم هذا مستخدم بالفعل. يرجى اختيار اسم مستخدم آخر.');
+        return;
+      }
 
       const user = { username: u, password: p, name: n, age: a, gender: g, mobile: mob, history: h };
       
@@ -4076,11 +4109,40 @@
     document.getElementById('editProfileForm').addEventListener('submit', e => {
       e.preventDefault();
       const u = STATE.currentUser;
-      u.name = document.getElementById('editName').value.trim();
-      u.age = document.getElementById('editAge').value;
-      u.gender = document.getElementById('editGender').value;
-      u.mobile = document.getElementById('editMobile').value.trim();
-      u.history = document.getElementById('editHistory').value.trim();
+      const nameVal = document.getElementById('editName').value.trim();
+      const ageVal = document.getElementById('editAge').value;
+      const genderVal = document.getElementById('editGender').value;
+      const mobileVal = document.getElementById('editMobile').value.trim();
+      const historyVal = document.getElementById('editHistory').value.trim();
+
+      // Required fields validation
+      if (!nameVal || !ageVal || !genderVal || !mobileVal) {
+        alert('يرجى ملء جميع الحقول المطلوبة.');
+        return;
+      }
+
+      // Input Validation
+      const ageNum = parseInt(ageVal, 10);
+      if (isNaN(ageNum) || ageNum < 1 || ageNum > 120) {
+        alert('يرجى إدخال عمر صحيح يتراوح بين 1 و 120 عاماً.');
+        return;
+      }
+      const mobileRegex = /^\+?[0-9]{10,15}$/;
+      if (!mobileRegex.test(mobileVal)) {
+        alert('يرجى إدخال رقم هاتف محمول صحيح (يتكون من 10 إلى 15 رقماً).');
+        return;
+      }
+
+      u.name = nameVal;
+      u.age = ageVal;
+      u.gender = genderVal;
+      u.mobile = mobileVal;
+      u.history = historyVal;
+      
+      // DATABASE REQUIRED
+      // Store updated user details in database
+      // HTTP PUT /api/users/profile { name, age, gender, mobile, history }
+      
       STATE.users[u.username] = u;
       saveStorage();
       document.getElementById('editProfileForm').style.display = 'none';

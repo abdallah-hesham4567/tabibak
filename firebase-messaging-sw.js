@@ -27,9 +27,9 @@ messaging.onBackgroundMessage((payload) => {
   console.log('[firebase-messaging-sw.js] Received background message: ', payload);
 
   // Extract notification details from the payload
-  const notificationTitle = payload.notification?.title || 'Medication Reminder';
+  const notificationTitle = payload.notification?.title || 'تذكير بموعد الدواء';
   const notificationOptions = {
-    body: payload.notification?.body || 'It is time to take your scheduled dose.',
+    body: payload.notification?.body || 'حان الوقت لتناول جرعتك الدوائية المجدولة.',
     icon: payload.notification?.icon || 'https://cdn-icons-png.flaticon.com/512/1930/1930985.png', // Fallback icon
     badge: 'https://cdn-icons-png.flaticon.com/512/1930/1930985.png',
     tag: payload.data?.medicationId || 'medication-reminder',
