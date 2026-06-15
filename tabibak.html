@@ -2787,6 +2787,9 @@
        NAVIGATION
        ================================================================ */
     function showTab(tabId) {
+      const hasActiveTriage = STATE.triageSession && STATE.triageSession.chatLog.length > 0;
+      if (tabId === 'landing' && hasActiveTriage) tabId = 'chat';
+
       document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
 
       const screenMap = {
@@ -3331,13 +3334,25 @@
       }
     }
 
-    function askNextQuestion() {
+    function askNextQuestion(prefix) {
       const step = STATE.triageSession.step;
       if (step >= TRIAGE_QUESTIONS.length) { finishTriage(); return; }
       const q = TRIAGE_QUESTIONS[step];
       document.getElementById('categoryBadge').textContent = q.category;
       updateProgress(step, TRIAGE_QUESTIONS.length);
-      showTypingThenAppend(q.q);
+      showTypingThenAppend(prefix ? `${prefix} ${q.q}` : q.q);
+    }
+
+    function getAcknowledgment(text, category) {
+      const lower = text.toLowerCase();
+      switch (category) {
+        case 'Duration': return 'Noted, thanks.';
+        case 'Severity': return 'That helps, thanks.';
+        case 'Medical History': return 'Got it.';
+        case 'History': return 'OK, thanks.';
+        case 'Allergies': return 'Noted.';
+        default: return 'Thanks.';
+      }
     }
 
     function startTriage(initialSymptom, breathingContext = '') {
@@ -3365,6 +3380,67 @@
       setTimeout(askNextQuestion, 600);
     }
 
+    function isVague(text) {
+      const trimmed = text.trim().replace(/[.!?,]+$/, '').toLowerCase();
+      const vagueExact = /^(yes|no|yeah|nope|maybe|perhaps|idk|i don'?t know|i dont know|dunno|not sure|i guess|kind of|sort of|a little|a bit|a lot|some|bad|good|okay|ok|fine|alright|not really|i think so|i don'?t think so|so so|it depends|sometimes|occasionally|rarely|often|always|never|ugh|ow|ouch|painful|hurts|i don'?t remember|can'?t remember|i forget|not much|a few|a while|some time|a couple|for a while)$/i;
+      if (vagueExact.test(trimmed)) return true;
+      const vagueWords = /^(few|some|several|couple|multiple|various|many|lot)$/i;
+      if (vagueWords.test(trimmed)) return true;
+      return false;
+    }
+
+    function validateResponse(text, step) {
+      const q = TRIAGE_QUESTIONS[step];
+      if (!q) return null;
+      const lower = text.toLowerCase();
+
+      if (isVague(text)) {
+        return 'That\'s a bit vague — could you clarify? ' + ({
+          'Duration': 'For example, how many days or weeks have you felt this way?',
+          'Severity': 'For example, what number from 1 to 10 best describes your discomfort?',
+          'Medical History': 'Do you have any known medical conditions or take any medications?',
+          'History': 'Have you felt these symptoms before, or is this the first time?',
+          'Allergies': 'Are you allergic to any medications, foods, or other substances?',
+        })[q.category] || 'Please provide a bit more detail.';
+      }
+
+      switch (q.category) {
+        case 'Duration':
+          const hasNumber = /\d+/.test(lower);
+          const hasSpecificUnit = /(minute|hour|day|week|month|year|ago|yesterday|today)/.test(lower);
+          const hasVagueTime = /\b(while|sometime|awhile)\b/.test(lower);
+          if (hasNumber && !hasSpecificUnit) {
+            const num = lower.match(/\d+/)[0];
+            return `You said ${num} — ${num} what? Days, weeks, or months?`;
+          }
+          if (hasVagueTime || (!hasNumber && !hasSpecificUnit)) {
+            return 'I didn\'t quite catch the duration. Could you tell me how long you\'ve had these symptoms? (e.g., 2 days, a week, since last month)';
+          }
+          break;
+        case 'Severity':
+          if (!/\d/.test(lower)) {
+            return 'Please rate your discomfort on a scale of 1–10 so I can understand how severe it is.';
+          }
+          break;
+        case 'Medical History':
+          if (text.length < 3) {
+            return 'Could you tell me a bit more about any medical conditions or medications you\'re on?';
+          }
+          break;
+        case 'History':
+          if (text.length < 3) {
+            return 'Have you had these symptoms before? A short answer would help me assess your situation.';
+          }
+          break;
+        case 'Allergies':
+          if (text.length < 3) {
+            return 'Do you have any allergies, especially to medications? Please provide a bit more detail.';
+          }
+          break;
+      }
+      return null;
+    }
+
     function handleUserChatInput() {
       const input = document.getElementById('chatInput');
       const text = input.value.trim();
@@ -3372,10 +3448,17 @@
       input.value = '';
       appendMessage('user', text);
       checkRedFlags(text);
+      const feedback = validateResponse(text, STATE.triageSession.step);
+      if (feedback) {
+        setTimeout(() => showTypingThenAppend(feedback), 600);
+        return;
+      }
+      const prevStep = STATE.triageSession.step;
       STATE.triageSession.step++;
       updateProgress(STATE.triageSession.step, TRIAGE_QUESTIONS.length);
+      const ack = getAcknowledgment(text, TRIAGE_QUESTIONS[prevStep]?.category);
       if (STATE.triageSession.step < TRIAGE_QUESTIONS.length) {
-        setTimeout(askNextQuestion, 400);
+        setTimeout(() => askNextQuestion(ack), 400);
       } else {
         setTimeout(finishTriage, 600);
       }
@@ -3478,15 +3561,20 @@
       saveStorage();
     }
 
-    document.getElementById('startTriageBtn').addEventListener('click', () => {
+    document.getElementById('startTriageBtn').addEventListener('click', startTriageFromInput);
+    document.getElementById('symptomInput').addEventListener('keydown', e => {
+      if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); startTriageFromInput(); }
+    });
+
+    function startTriageFromInput() {
       const sym = document.getElementById('symptomInput').value.trim();
       if (!sym) { alert('Please describe your symptoms before starting.'); return; }
       startTriage(sym);
-    });
+    }
 
     document.getElementById('sendBtn').addEventListener('click', handleUserChatInput);
     document.getElementById('chatInput').addEventListener('keydown', e => {
-      if (e.key === 'Enter') handleUserChatInput();
+      if (e.key === 'Enter') { e.preventDefault(); handleUserChatInput(); }
     });
 
     document.getElementById('restartBtn').addEventListener('click', () => {
