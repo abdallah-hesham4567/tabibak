@@ -232,6 +232,99 @@
       border-color: var(--primary);
     }
 
+    .font-size-controls {
+      position: absolute;
+      top: 0;
+      right: 52px;
+      display: flex;
+      gap: 2px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      padding: 3px;
+      box-shadow: var(--shadow);
+    }
+    .font-btn {
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-2);
+      font-weight: 600;
+      transition: all var(--speed);
+      font-family: var(--font-body);
+    }
+    .font-btn:hover { color: var(--primary); }
+    .font-btn.active {
+      background: var(--primary);
+      color: #fff;
+    }
+    .font-btn.s { font-size: 0.75rem; }
+    .font-btn.m { font-size: 0.9rem; }
+    .font-btn.l { font-size: 1.05rem; }
+
+    /* Support FAB */
+    .support-fab {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 999;
+      width: 54px;
+      height: 54px;
+      border-radius: 50%;
+      background: #25D366;
+      border: none;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.25);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.6rem;
+      transition: all var(--speed);
+    }
+    .support-fab:hover {
+      transform: scale(1.1);
+      box-shadow: 0 6px 24px rgba(0,0,0,0.35);
+    }
+    .support-fab img, .support-fab svg {
+      width: 28px;
+      height: 28px;
+    }
+    .support-popup {
+      position: fixed;
+      bottom: 88px;
+      right: 24px;
+      z-index: 998;
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+      padding: 1rem;
+      min-width: 220px;
+      display: none;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    .support-popup.open { display: flex; }
+    .support-popup h4 { margin: 0 0 0.25rem; font-size: 1rem; }
+    .support-popup a {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 0.75rem;
+      border-radius: 10px;
+      text-decoration: none;
+      color: var(--text-1);
+      font-size: 0.9rem;
+      transition: background var(--speed);
+    }
+    .support-popup a:hover { background: var(--primary-glow); }
+
     /* ============================================================
        NAVIGATION
        ============================================================ */
@@ -1907,6 +2000,11 @@
     <!-- Header -->
     <header class="app-header">
       <button class="theme-btn" id="themeBtn" aria-label="Toggle dark/light mode">☀️</button>
+      <div class="font-size-controls">
+        <button class="font-btn s" data-size="small" title="Small font">A</button>
+        <button class="font-btn m active" data-size="medium" title="Medium font">A</button>
+        <button class="font-btn l" data-size="large" title="Large font">A</button>
+      </div>
       <div class="logo">
         <span class="logo-icon">🩺</span>
         <span>Tabibak</span>
@@ -2525,11 +2623,35 @@
         physical assessments, or physician consults. In any medical emergency, contact paramedics directly.</p>
     </footer>
 
+    <!-- Support FAB -->
+    <button class="support-fab" id="supportFab" aria-label="Contact support">
+      <svg viewBox="0 0 24 24" fill="white">
+        <path d="M19.05 4.91A9.82 9.82 0 0 0 12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01zm-7.01 15.24c-1.48 0-2.93-.4-4.2-1.15l-.3-.18-3.12.82.83-3.04-.2-.32a8.26 8.26 0 0 1-1.26-4.38c0-4.54 3.7-8.24 8.24-8.24 2.2 0 4.27.86 5.82 2.42a8.17 8.17 0 0 1 2.41 5.83c.01 4.54-3.69 8.23-8.22 8.23zm4.52-6.16c-.25-.12-1.47-.72-1.7-.8-.23-.09-.39-.13-.56.12-.17.25-.64.8-.78.96-.14.17-.29.19-.54.07-.25-.13-1.06-.39-2.02-1.25-.75-.67-1.25-1.49-1.4-1.74-.14-.25-.02-.38.11-.51.11-.11.25-.29.37-.44.12-.15.17-.25.25-.42.08-.17.04-.31-.02-.43-.06-.12-.56-1.35-.77-1.85-.2-.49-.41-.41-.56-.42-.14-.01-.31-.01-.48-.01-.17 0-.44.06-.67.31-.23.25-.87.85-.87 2.08s.89 2.41 1.02 2.57c.12.17 1.75 2.68 4.25 3.76.59.26 1.06.41 1.42.52.6.18 1.14.16 1.57.1.48-.07 1.47-.6 1.68-1.18.21-.58.21-1.08.15-1.18-.07-.1-.23-.16-.48-.28z"/>
+      </svg>
+    </button>
+    <div class="support-popup" id="supportPopup">
+      <h4>Need help?</h4>
+      <a href="https://wa.me/201234567890" target="_blank" rel="noopener">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="#25D366">
+          <path d="M19.05 4.91A9.82 9.82 0 0 0 12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01zm-7.01 15.24c-1.48 0-2.93-.4-4.2-1.15l-.3-.18-3.12.82.83-3.04-.2-.32a8.26 8.26 0 0 1-1.26-4.38c0-4.54 3.7-8.24 8.24-8.24 2.2 0 4.27.86 5.82 2.42a8.17 8.17 0 0 1 2.41 5.83c.01 4.54-3.69 8.23-8.22 8.23z"/>
+        </svg>
+        WhatsApp Support
+      </a>
+      <a href="https://t.me/Tabibak_2026_bot" target="_blank" rel="noopener">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="#0088cc">
+          <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/>
+        </svg>
+        Telegram Bot
+      </a>
+      <a href="mailto:support@tabibak.app">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+          <polyline points="22,6 12,13 2,6"/>
+        </svg>
+        Email Support
+      </a>
+    </div>
   </div><!-- /app -->
-
-  <!-- ============================================================
-     HISTORY DETAIL MODAL
-     ============================================================ -->
   <div class="modal-overlay" id="historyModal">
     <div class="modal-card glass">
       <button class="modal-close" id="closeModal">×</button>
@@ -2698,6 +2820,7 @@
     const STATE = {
       currentTab: 'landing',
       theme: 'light',
+      fontSize: 'medium',
       currentUser: null,
       users: {},
       sessions: [],
@@ -2752,6 +2875,7 @@
         }));
         localStorage.setItem('tabibak_webhook', STATE.meds.webhookUrl);
         localStorage.setItem('tabibak_tg_bot', STATE.meds.telegramBot);
+        localStorage.setItem('tabibak_fontSize', STATE.fontSize);
         if (STATE.currentUser)
           localStorage.setItem('tabibak_loggedIn', STATE.currentUser.username);
       } catch (e) { }
@@ -2779,6 +2903,8 @@
         }
         if (wh) STATE.meds.webhookUrl = wh;
         if (tb) STATE.meds.telegramBot = tb;
+        const fs = localStorage.getItem('tabibak_fontSize');
+        if (fs) STATE.fontSize = fs;
         if (li && STATE.users[li]) STATE.currentUser = STATE.users[li];
       } catch (e) { }
     }
@@ -2787,6 +2913,9 @@
        NAVIGATION
        ================================================================ */
     function showTab(tabId) {
+      const hasActiveTriage = STATE.triageSession && STATE.triageSession.chatLog.length > 0;
+      if (tabId === 'landing' && hasActiveTriage) tabId = 'chat';
+
       document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
 
       const screenMap = {
@@ -2833,6 +2962,34 @@
       STATE.theme = STATE.theme === 'light' ? 'dark' : 'light';
       document.body.classList.toggle('dark', STATE.theme === 'dark');
       document.getElementById('themeBtn').textContent = STATE.theme === 'dark' ? '🌙' : '☀️';
+    });
+
+    /* ================================================================
+       FONT SIZE TOGGLE
+       ================================================================ */
+    function applyFontSize(size) {
+      STATE.fontSize = size;
+      const sizes = { small: 14, medium: 16, large: 18 };
+      document.documentElement.style.fontSize = sizes[size] + 'px';
+      document.querySelectorAll('.font-btn').forEach(b => {
+        b.classList.toggle('active', b.dataset.size === size);
+      });
+      saveStorage();
+    }
+    document.querySelectorAll('.font-btn').forEach(btn => {
+      btn.addEventListener('click', () => applyFontSize(btn.dataset.size));
+    });
+
+    /* ================================================================
+       SUPPORT FAB
+       ================================================================ */
+    document.getElementById('supportFab').addEventListener('click', () => {
+      document.getElementById('supportPopup').classList.toggle('open');
+    });
+    document.addEventListener('click', e => {
+      const popup = document.getElementById('supportPopup');
+      const fab = document.getElementById('supportFab');
+      if (!popup.contains(e.target) && !fab.contains(e.target)) popup.classList.remove('open');
     });
 
     /* ================================================================
@@ -3331,13 +3488,25 @@
       }
     }
 
-    function askNextQuestion() {
+    function askNextQuestion(prefix) {
       const step = STATE.triageSession.step;
       if (step >= TRIAGE_QUESTIONS.length) { finishTriage(); return; }
       const q = TRIAGE_QUESTIONS[step];
       document.getElementById('categoryBadge').textContent = q.category;
       updateProgress(step, TRIAGE_QUESTIONS.length);
-      showTypingThenAppend(q.q);
+      showTypingThenAppend(prefix ? `${prefix} ${q.q}` : q.q);
+    }
+
+    function getAcknowledgment(text, category) {
+      const lower = text.toLowerCase();
+      switch (category) {
+        case 'Duration': return 'Noted, thanks.';
+        case 'Severity': return 'That helps, thanks.';
+        case 'Medical History': return 'Got it.';
+        case 'History': return 'OK, thanks.';
+        case 'Allergies': return 'Noted.';
+        default: return 'Thanks.';
+      }
     }
 
     function startTriage(initialSymptom, breathingContext = '') {
@@ -3365,6 +3534,67 @@
       setTimeout(askNextQuestion, 600);
     }
 
+    function isVague(text) {
+      const trimmed = text.trim().replace(/[.!?,]+$/, '').toLowerCase();
+      const vagueExact = /^(yes|no|yeah|nope|maybe|perhaps|idk|i don'?t know|i dont know|dunno|not sure|i guess|kind of|sort of|a little|a bit|a lot|some|bad|good|okay|ok|fine|alright|not really|i think so|i don'?t think so|so so|it depends|sometimes|occasionally|rarely|often|always|never|ugh|ow|ouch|painful|hurts|i don'?t remember|can'?t remember|i forget|not much|a few|a while|some time|a couple|for a while)$/i;
+      if (vagueExact.test(trimmed)) return true;
+      const vagueWords = /^(few|some|several|couple|multiple|various|many|lot)$/i;
+      if (vagueWords.test(trimmed)) return true;
+      return false;
+    }
+
+    function validateResponse(text, step) {
+      const q = TRIAGE_QUESTIONS[step];
+      if (!q) return null;
+      const lower = text.toLowerCase();
+
+      if (isVague(text)) {
+        return 'That\'s a bit vague — could you clarify? ' + ({
+          'Duration': 'For example, how many days or weeks have you felt this way?',
+          'Severity': 'For example, what number from 1 to 10 best describes your discomfort?',
+          'Medical History': 'Do you have any known medical conditions or take any medications?',
+          'History': 'Have you felt these symptoms before, or is this the first time?',
+          'Allergies': 'Are you allergic to any medications, foods, or other substances?',
+        })[q.category] || 'Please provide a bit more detail.';
+      }
+
+      switch (q.category) {
+        case 'Duration':
+          const hasNumber = /\d+/.test(lower);
+          const hasSpecificUnit = /(minute|hour|day|week|month|year|ago|yesterday|today)/.test(lower);
+          const hasVagueTime = /\b(while|sometime|awhile)\b/.test(lower);
+          if (hasNumber && !hasSpecificUnit) {
+            const num = lower.match(/\d+/)[0];
+            return `You said ${num} — ${num} what? Days, weeks, or months?`;
+          }
+          if (hasVagueTime || (!hasNumber && !hasSpecificUnit)) {
+            return 'I didn\'t quite catch the duration. Could you tell me how long you\'ve had these symptoms? (e.g., 2 days, a week, since last month)';
+          }
+          break;
+        case 'Severity':
+          if (!/\d/.test(lower)) {
+            return 'Please rate your discomfort on a scale of 1–10 so I can understand how severe it is.';
+          }
+          break;
+        case 'Medical History':
+          if (text.length < 3) {
+            return 'Could you tell me a bit more about any medical conditions or medications you\'re on?';
+          }
+          break;
+        case 'History':
+          if (text.length < 3) {
+            return 'Have you had these symptoms before? A short answer would help me assess your situation.';
+          }
+          break;
+        case 'Allergies':
+          if (text.length < 3) {
+            return 'Do you have any allergies, especially to medications? Please provide a bit more detail.';
+          }
+          break;
+      }
+      return null;
+    }
+
     function handleUserChatInput() {
       const input = document.getElementById('chatInput');
       const text = input.value.trim();
@@ -3372,10 +3602,17 @@
       input.value = '';
       appendMessage('user', text);
       checkRedFlags(text);
+      const feedback = validateResponse(text, STATE.triageSession.step);
+      if (feedback) {
+        setTimeout(() => showTypingThenAppend(feedback), 600);
+        return;
+      }
+      const prevStep = STATE.triageSession.step;
       STATE.triageSession.step++;
       updateProgress(STATE.triageSession.step, TRIAGE_QUESTIONS.length);
+      const ack = getAcknowledgment(text, TRIAGE_QUESTIONS[prevStep]?.category);
       if (STATE.triageSession.step < TRIAGE_QUESTIONS.length) {
-        setTimeout(askNextQuestion, 400);
+        setTimeout(() => askNextQuestion(ack), 400);
       } else {
         setTimeout(finishTriage, 600);
       }
@@ -3478,15 +3715,20 @@
       saveStorage();
     }
 
-    document.getElementById('startTriageBtn').addEventListener('click', () => {
+    document.getElementById('startTriageBtn').addEventListener('click', startTriageFromInput);
+    document.getElementById('symptomInput').addEventListener('keydown', e => {
+      if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); startTriageFromInput(); }
+    });
+
+    function startTriageFromInput() {
       const sym = document.getElementById('symptomInput').value.trim();
       if (!sym) { alert('Please describe your symptoms before starting.'); return; }
       startTriage(sym);
-    });
+    }
 
     document.getElementById('sendBtn').addEventListener('click', handleUserChatInput);
     document.getElementById('chatInput').addEventListener('keydown', e => {
-      if (e.key === 'Enter') handleUserChatInput();
+      if (e.key === 'Enter') { e.preventDefault(); handleUserChatInput(); }
     });
 
     document.getElementById('restartBtn').addEventListener('click', () => {
@@ -4111,6 +4353,7 @@
        INIT
        ================================================================ */
     loadStorage();
+    applyFontSize(STATE.fontSize);
     refreshProfileScreen();
     refreshHistoryScreen();
 
