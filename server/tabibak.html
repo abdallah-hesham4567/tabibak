@@ -5333,7 +5333,7 @@
       if (!p) { alert('يرجى إدخال كلمة المرور.'); return; }
 
       try {
-        const data = await api('POST', '/api/auth/login', { username: u, password: p });
+        const data = await api('POST', '/api/auth/login', { username: u, password: p, timezoneOffset: -new Date().getTimezoneOffset() / 60 });
         setToken(data.token);
         STATE.currentUser = data;
         STATE.sessions = await api('GET', '/api/sessions');
@@ -5377,7 +5377,7 @@
       }
 
       try {
-        const data = await api('POST', '/api/auth/register', { username: u, password: p, name: n, age: a, gender: g, mobile: mob, history: h });
+        const data = await api('POST', '/api/auth/register', { username: u, password: p, name: n, age: a, gender: g, mobile: mob, history: h, timezoneOffset: -new Date().getTimezoneOffset() / 60 });
         setToken(data.token);
         STATE.currentUser = data;
         showNotificationModal();

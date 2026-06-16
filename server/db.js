@@ -94,6 +94,7 @@ async function initSchema() {
   }
   try { await db.execute('ALTER TABLE users ADD COLUMN avatar TEXT DEFAULT \'\''); } catch (e) { }
   try { await db.execute('ALTER TABLE sessions ADD COLUMN images TEXT DEFAULT \'\''); } catch (e) { }
+  try { await db.execute('ALTER TABLE users ADD COLUMN timezoneOffset REAL DEFAULT 0'); } catch (e) { }
 }
 
 module.exports = { getDb };

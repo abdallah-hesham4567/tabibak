@@ -7,7 +7,7 @@ const router = express.Router();
 
 router.post('/register', async (req, res) => {
   try {
-    const { username, password, name, age, gender, mobile, history } = req.body;
+    const { username, password, name, age, gender, mobile, history, timezoneOffset } = req.body;
     if (!username || !password || !name) {
       return res.status(400).json({ error: 'Username, password, and name are required' });
     }
@@ -18,11 +18,11 @@ router.post('/register', async (req, res) => {
     }
     const passwordHash = bcrypt.hashSync(password, 10);
     await db.execute({
-      sql: 'INSERT INTO users (username, passwordHash, name, age, gender, mobile, history) VALUES (?, ?, ?, ?, ?, ?, ?)',
-      args: [username, passwordHash, name, age || null, gender || null, mobile || null, history || ''],
+      sql: 'INSERT INTO users (username, passwordHash, name, age, gender, mobile, history, timezoneOffset) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+      args: [username, passwordHash, name, age || null, gender || null, mobile || null, history || '', timezoneOffset ?? 0],
     });
     const token = generateToken(username);
-    res.status(201).json({ token, username, name });
+    res.status(201).json({ token, username, name, timezoneOffset: timezoneOffset ?? 0 });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Internal server error' });
@@ -31,7 +31,7 @@ router.post('/register', async (req, res) => {
 
 router.post('/login', async (req, res) => {
   try {
-    const { username, password } = req.body;
+    const { username, password, timezoneOffset } = req.body;
     if (!username || !password) {
       return res.status(400).json({ error: 'Username and password are required' });
     }
@@ -41,8 +41,15 @@ router.post('/login', async (req, res) => {
     if (!user || !bcrypt.compareSync(password, user.passwordHash)) {
       return res.status(401).json({ error: 'Invalid username or password' });
     }
+    if (timezoneOffset !== undefined) {
+      await db.execute({
+        sql: 'UPDATE users SET timezoneOffset = ? WHERE username = ?',
+        args: [timezoneOffset, username],
+      });
+    }
     const token = generateToken(username);
     const { passwordHash, ...profile } = user;
+    profile.timezoneOffset = timezoneOffset ?? user.timezoneOffset ?? 0;
     res.json({ token, ...profile });
   } catch (err) {
     console.error(err);
@@ -68,11 +75,11 @@ router.get('/profile', authenticateToken, async (req, res) => {
 
 router.put('/profile', authenticateToken, async (req, res) => {
   try {
-    const { name, age, gender, mobile, history } = req.body;
+    const { name, age, gender, mobile, history, timezoneOffset } = req.body;
     const db = await getDb();
     await db.execute({
-      sql: 'UPDATE users SET name = ?, age = ?, gender = ?, mobile = ?, history = ? WHERE username = ?',
-      args: [name, age || null, gender || null, mobile || null, history || '', req.user.username],
+      sql: 'UPDATE users SET name = ?, age = ?, gender = ?, mobile = ?, history = ?, timezoneOffset = ? WHERE username = ?',
+      args: [name, age || null, gender || null, mobile || null, history || '', timezoneOffset ?? 0, req.user.username],
     });
     res.json({ message: 'Profile updated' });
   } catch (err) {
