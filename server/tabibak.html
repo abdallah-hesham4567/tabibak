@@ -2941,6 +2941,10 @@
       }
     }
   </style>
+
+  <!-- Firebase SDK for FCM push notifications -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-messaging-compat.js"></script>
 </head>
 
 <body>
@@ -4471,6 +4475,7 @@
       const perm = await Notification.requestPermission();
       if (perm === 'granted') {
         startReminderScheduler();
+        requestFcmToken();
         document.getElementById('notificationModal').classList.remove('open');
         alert('✓ تم تفعيل التذكيرات! ستصلك إشعارات قبل 5 دقائق من موعد كل جرعة.');
       } else {
@@ -4531,6 +4536,74 @@
 
       console.log('⏰ Tabibak reminder scheduler started');
     }
+
+    /* ================================================================
+       FCM PUSH NOTIFICATIONS — Firebase Cloud Messaging
+       ================================================================ */
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyAEz3mVDyuZCJZwKlBnDuWd1JARbMAI6S0",
+      authDomain: "tabibak-b4a37.firebaseapp.com",
+      projectId: "tabibak-b4a37",
+      storageBucket: "tabibak-b4a37.firebasestorage.app",
+      messagingSenderId: "130423014476",
+      appId: "1:130423014476:web:03b7cfb841cc48fd1320e9",
+      measurementId: "G-YV2DHXCGDH"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const fcmMessaging = firebase.messaging();
+
+    async function registerFcmServiceWorker() {
+      if (!('Notification' in window) || !('serviceWorker' in navigator)) return;
+      try {
+        const registration = await navigator.serviceWorker.register('/firebase-messaging-sw.js');
+        console.log('FCM service worker registered');
+        return registration;
+      } catch (err) {
+        console.error('FCM service worker registration failed:', err);
+      }
+    }
+
+    async function requestFcmToken() {
+      try {
+        const registration = await registerFcmServiceWorker();
+        const vapidKey = '8Ucn8W54F07Fmc5ec2Kn_bd8RisbdkkmWQHh4SM_K3s';
+        const currentToken = await fcmMessaging.getToken({ vapidKey, serviceWorkerRegistration: registration });
+        if (currentToken) {
+          console.log('FCM token obtained');
+          const token = getToken();
+          if (token) {
+            await api('POST', '/api/notifications/store-token', { fcmToken: currentToken });
+          }
+        }
+      } catch (err) {
+        console.error('FCM getToken failed:', err);
+      }
+    }
+
+    fcmMessaging.onTokenRefresh(async () => {
+      try {
+        const currentToken = await fcmMessaging.getToken({ vapidKey: '8Ucn8W54F07Fmc5ec2Kn_bd8RisbdkkmWQHh4SM_K3s' });
+        if (currentToken) {
+          const token = getToken();
+          if (token) {
+            await api('POST', '/api/notifications/store-token', { fcmToken: currentToken });
+          }
+        }
+      } catch (err) {
+        console.error('FCM token refresh failed:', err);
+      }
+    });
+
+    fcmMessaging.onMessage((payload) => {
+      if (payload.notification) {
+        new Notification(payload.notification.title || 'طبيبك', {
+          body: payload.notification.body || '',
+          icon: 'https://cdn-icons-png.flaticon.com/512/1930/1930985.png',
+        });
+      }
+    });
 
     /* ------ Wire the toggle / enable / test buttons ------ */
     document.getElementById('fcmToggle').addEventListener('click', () => {
@@ -5206,7 +5279,7 @@
         STATE.currentUser = data;
         STATE.sessions = await api('GET', '/api/sessions');
         try { STATE.meds.list = await api('GET', '/api/medications'); } catch (e) { STATE.meds.list = []; }
-        if (Notification.permission === 'granted') startReminderScheduler();
+        if (Notification.permission === 'granted') { startReminderScheduler(); requestFcmToken(); }
         refreshProfileScreen();
         showTab('profile');
       } catch (err) {

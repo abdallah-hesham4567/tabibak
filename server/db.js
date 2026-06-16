@@ -76,6 +76,18 @@ async function initSchema() {
       FOREIGN KEY (username) REFERENCES users(username),
       FOREIGN KEY (medicationId) REFERENCES medications(id)
     )`,
+    `CREATE TABLE IF NOT EXISTS notification_log (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      username TEXT NOT NULL,
+      medicationId TEXT NOT NULL,
+      doseId INTEGER NOT NULL,
+      doseTime TEXT NOT NULL,
+      date TEXT NOT NULL,
+      sentAt TEXT DEFAULT (datetime('now')),
+      FOREIGN KEY (username) REFERENCES users(username),
+      FOREIGN KEY (medicationId) REFERENCES medications(id),
+      FOREIGN KEY (doseId) REFERENCES medication_doses(id)
+    )`,
   ];
   for (const sql of statements) {
     await db.execute(sql);

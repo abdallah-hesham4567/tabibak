@@ -5,6 +5,7 @@ const path = require('path');
 const http = require('http');
 const { Server } = require('socket.io');
 const { authenticateToken } = require('./auth');
+const { startScheduler } = require('./scheduler');
 const authRoutes = require('./routes/auth');
 const medicationRoutes = require('./routes/medications');
 const sessionRoutes = require('./routes/sessions');
@@ -65,4 +66,5 @@ app.get('/', (req, res) => {
 
 server.listen(PORT, () => {
   console.log(`Tabibak server running on http://localhost:${PORT}`);
+  startScheduler();
 });
