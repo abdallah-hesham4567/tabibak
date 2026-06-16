@@ -661,6 +661,16 @@
     .chat-input-row input {
       flex-grow: 1;
     }
+    .chat-img {
+      max-width: 220px;
+      max-height: 200px;
+      border-radius: 12px;
+      margin-top: 6px;
+      display: block;
+    }
+    .msg-user .chat-img {
+      border: 2px solid var(--bubble-user-b);
+    }
     .suggestions {
       display: flex;
       flex-wrap: wrap;
@@ -3128,7 +3138,9 @@
 
       <div class="chat-input-row">
         <input type="text" id="chatInput" placeholder="اكتب ردك هنا..." autocomplete="off" />
+        <button class="btn btn-secondary" id="chatImgBtn" title="إرفاق صورة" style="padding:0.875rem;font-size:1.2rem;">🖼️</button>
         <button class="btn btn-primary" id="sendBtn" style="padding:0.875rem 1.25rem;">إرسال</button>
+        <input type="file" id="chatImgInput" accept="image/*" style="display:none;" />
       </div>
 
     </main>
@@ -3530,7 +3542,12 @@
 
       <div id="profileContainer" style="display:none;width:100%;">
         <div class="profile-header">
-          <div class="avatar">👤</div>
+          <div class="avatar" id="avatarWrap" style="position:relative;cursor:pointer;width:72px;height:72px;">
+            <img id="profileAvatar" src="" alt="avatar" style="width:72px;height:72px;border-radius:50%;object-fit:cover;background:var(--bg-surface);border:2px solid var(--border-strong);display:none;" onerror="this.style.display='none';document.getElementById('avatarPlaceholder').style.display=''" />
+            <div id="avatarPlaceholder" style="width:72px;height:72px;border-radius:50%;background:var(--primary-glow);display:flex;align-items:center;justify-content:center;font-size:2rem;border:2px dashed var(--border-strong);">👤</div>
+            <input type="file" id="avatarInput" accept="image/*" style="display:none;" />
+            <div id="avatarBadge" style="position:absolute;bottom:-2px;right:-2px;background:var(--primary);color:#fff;border-radius:50%;width:24px;height:24px;display:flex;align-items:center;justify-content:center;font-size:14px;border:2px solid var(--bg-page);">📷</div>
+          </div>
           <div>
             <h2 id="profileName">اسم المريض</h2>
             <p id="profileUsername" style="color:var(--text-muted);">@username</p>
@@ -4637,14 +4654,25 @@
       { q: 'هل لديك حساسية من أي شيء، خاصة الأدوية؟', category: 'الحساسية' },
     ];
 
-    function appendMessage(role, text) {
+    function appendMessage(role, text, imgDataUrl) {
       const log = document.getElementById('chatLog');
       const div = document.createElement('div');
       div.className = `msg msg-${role}`;
-      div.textContent = text;
+      if (text) {
+        const p = document.createElement('p');
+        p.textContent = text;
+        div.appendChild(p);
+      }
+      if (imgDataUrl) {
+        const img = document.createElement('img');
+        img.className = 'chat-img';
+        img.src = imgDataUrl;
+        img.alt = 'صورة مرفقة';
+        div.appendChild(img);
+      }
       log.appendChild(div);
       log.scrollTop = log.scrollHeight;
-      STATE.triageSession.chatLog.push({ role, text });
+      STATE.triageSession.chatLog.push({ role, text, image: imgDataUrl || null });
     }
 
     function showSuggestions(chips) {
@@ -4754,12 +4782,12 @@
         setTimeout(askNextQuestion, 600);
       }
 
-    function handleUserChatInput() {
+    function handleUserChatInput(imgDataUrl) {
       const input = document.getElementById('chatInput');
       const text = input.value.trim();
-      if (!text) return;
+      if (!text && !imgDataUrl) return;
       input.value = '';
-      appendMessage('user', text);
+      appendMessage('user', text, imgDataUrl);
       checkRedFlags(text);
       STATE.triageSession.step++;
       updateProgress(STATE.triageSession.step, TRIAGE_QUESTIONS.length);
@@ -4769,6 +4797,22 @@
         setTimeout(finishTriage, 600);
       }
     }
+
+    /* ------ Chat image upload ------ */
+    document.getElementById('chatImgBtn').addEventListener('click', () => {
+      document.getElementById('chatImgInput').click();
+    });
+    document.getElementById('chatImgInput').addEventListener('change', e => {
+      const file = e.target.files[0];
+      if (!file) return;
+      if (file.size > 5 * 1024 * 1024) { alert('الحد الأقصى لحجم الصورة 5 ميجابايت'); return; }
+      const reader = new FileReader();
+      reader.onload = () => {
+        handleUserChatInput(reader.result);
+      };
+      reader.readAsDataURL(file);
+      e.target.value = '';
+    });
 
     function finishTriage() {
       const fullText = STATE.triageSession.chatLog.map(m => m.text).join(' ').toLowerCase();
@@ -5416,8 +5460,39 @@
         document.getElementById('profileGender').textContent = u.gender || '';
         document.getElementById('profileMobile').textContent = u.mobile || 'Not set';
         document.getElementById('profileHistory').textContent = u.history || 'No medical background declared.';
+        if (u.avatar) {
+          const img = document.getElementById('profileAvatar');
+          img.src = u.avatar;
+          img.style.display = '';
+          document.getElementById('avatarPlaceholder').style.display = 'none';
+        } else {
+          document.getElementById('profileAvatar').style.display = 'none';
+          document.getElementById('avatarPlaceholder').style.display = '';
+        }
       }
     }
+
+    /* ------ Avatar upload ------ */
+    document.getElementById('avatarWrap').addEventListener('click', () => {
+      document.getElementById('avatarInput').click();
+    });
+    document.getElementById('avatarInput').addEventListener('change', async e => {
+      const file = e.target.files[0];
+      if (!file) return;
+      if (file.size > 2 * 1024 * 1024) { alert('الحد الأقصى لحجم الصورة 2 ميجابايت'); return; }
+      const reader = new FileReader();
+      reader.onload = async () => {
+        const dataUrl = reader.result;
+        try {
+          await api('PUT', '/api/auth/avatar', { avatar: dataUrl });
+          STATE.currentUser = await api('GET', '/api/auth/profile');
+          refreshProfileScreen();
+        } catch (err) {
+          alert('فشل رفع الصورة');
+        }
+      };
+      reader.readAsDataURL(file);
+    });
 
     /* ================================================================
        HISTORY

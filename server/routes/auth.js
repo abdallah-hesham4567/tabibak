@@ -81,4 +81,19 @@ router.put('/profile', authenticateToken, async (req, res) => {
   }
 });
 
+router.put('/avatar', authenticateToken, async (req, res) => {
+  try {
+    const { avatar } = req.body;
+    const db = await getDb();
+    await db.execute({
+      sql: 'UPDATE users SET avatar = ? WHERE username = ?',
+      args: [avatar || '', req.user.username],
+    });
+    res.json({ message: 'Avatar updated' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
 module.exports = router;

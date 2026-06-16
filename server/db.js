@@ -92,6 +92,8 @@ async function initSchema() {
   for (const sql of statements) {
     await db.execute(sql);
   }
+  try { await db.execute('ALTER TABLE users ADD COLUMN avatar TEXT DEFAULT \'\''); } catch (e) { }
+  try { await db.execute('ALTER TABLE sessions ADD COLUMN images TEXT DEFAULT \'\''); } catch (e) { }
 }
 
 module.exports = { getDb };
