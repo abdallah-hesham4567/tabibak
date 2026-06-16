@@ -2942,9 +2942,6 @@
     }
   </style>
 
-  <!-- Firebase SDK for FCM push notifications -->
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-messaging-compat.js"></script>
 </head>
 
 <body>
@@ -4035,7 +4032,6 @@
         renderMedsScreen();
         refreshNotifSettingsUi();
       }
-      if (tabId === 'pharmacist') refreshPharmacistScreen();
     }
 
     document.querySelectorAll('.nav-btn').forEach(btn => {
@@ -4551,8 +4547,13 @@
       measurementId: "G-YV2DHXCGDH"
     };
 
-    firebase.initializeApp(firebaseConfig);
-    const fcmMessaging = firebase.messaging();
+    let fcmMessaging = null;
+    try {
+      firebase.initializeApp(firebaseConfig);
+      fcmMessaging = firebase.messaging();
+    } catch (e) {
+      console.warn('Firebase init failed (ad-blocker?):', e.message);
+    }
 
     async function registerFcmServiceWorker() {
       if (!('Notification' in window) || !('serviceWorker' in navigator)) return;
@@ -4566,6 +4567,7 @@
     }
 
     async function requestFcmToken() {
+      if (!fcmMessaging) return;
       try {
         const registration = await registerFcmServiceWorker();
         const vapidKey = '8Ucn8W54F07Fmc5ec2Kn_bd8RisbdkkmWQHh4SM_K3s';
@@ -4582,28 +4584,30 @@
       }
     }
 
-    fcmMessaging.onTokenRefresh(async () => {
-      try {
-        const currentToken = await fcmMessaging.getToken({ vapidKey: '8Ucn8W54F07Fmc5ec2Kn_bd8RisbdkkmWQHh4SM_K3s' });
-        if (currentToken) {
-          const token = getToken();
-          if (token) {
-            await api('POST', '/api/notifications/store-token', { fcmToken: currentToken });
+    if (fcmMessaging) {
+      fcmMessaging.onTokenRefresh(async () => {
+        try {
+          const currentToken = await fcmMessaging.getToken({ vapidKey: '8Ucn8W54F07Fmc5ec2Kn_bd8RisbdkkmWQHh4SM_K3s' });
+          if (currentToken) {
+            const token = getToken();
+            if (token) {
+              await api('POST', '/api/notifications/store-token', { fcmToken: currentToken });
+            }
           }
+        } catch (err) {
+          console.error('FCM token refresh failed:', err);
         }
-      } catch (err) {
-        console.error('FCM token refresh failed:', err);
-      }
-    });
+      });
 
-    fcmMessaging.onMessage((payload) => {
-      if (payload.notification) {
-        new Notification(payload.notification.title || 'طبيبك', {
-          body: payload.notification.body || '',
-          icon: 'https://cdn-icons-png.flaticon.com/512/1930/1930985.png',
-        });
-      }
-    });
+      fcmMessaging.onMessage((payload) => {
+        if (payload.notification) {
+          new Notification(payload.notification.title || 'طبيبك', {
+            body: payload.notification.body || '',
+            icon: 'https://cdn-icons-png.flaticon.com/512/1930/1930985.png',
+          });
+        }
+      });
+    }
 
     /* ------ Wire the toggle / enable / test buttons ------ */
     document.getElementById('fcmToggle').addEventListener('click', () => {
@@ -5682,9 +5686,10 @@
       refreshHistoryScreen();
       if (STATE.meds.list.length === 0) renderMedsScreen();
 
-      // Auto-start reminder scheduler if permission was already granted before
+      // Auto-start reminder scheduler + register FCM if permission was already granted
       if (typeof Notification !== 'undefined' && Notification.permission === 'granted') {
         startReminderScheduler();
+        if (STATE.currentUser) requestFcmToken();
       }
 
       // Pre-fill pharmacist phone from localStorage if saved previously
@@ -5702,6 +5707,9 @@
     renderDoseSlots(1);
   </script>
 
+  <!-- Firebase SDK for FCM (loaded non-blocking at the end) -->
+  <script defer src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script defer src="https://www.gstatic.com/firebasejs/9.23.0/firebase-messaging-compat.js"></script>
 </body>
 
 </html>
