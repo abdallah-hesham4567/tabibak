@@ -4553,12 +4553,48 @@
     };
 
     let fcmMessaging = null;
-    try {
-      firebase.initializeApp(firebaseConfig);
-      fcmMessaging = firebase.messaging();
-    } catch (e) {
-      console.warn('Firebase init failed (ad-blocker?):', e.message);
+    let fcmInitAttempted = false;
+
+    async function initFcm() {
+      if (fcmInitAttempted) return;
+      fcmInitAttempted = true;
+      if (typeof firebase === 'undefined') {
+        setTimeout(() => { fcmInitAttempted = false; initFcm(); }, 500);
+        return;
+      }
+      try {
+        firebase.initializeApp(firebaseConfig);
+        fcmMessaging = firebase.messaging();
+        console.log('Firebase initialized for FCM');
+
+        fcmMessaging.onTokenRefresh(async () => {
+          try {
+            const currentToken = await fcmMessaging.getToken({ vapidKey: '8Ucn8W54F07Fmc5ec2Kn_bd8RisbdkkmWQHh4SM_K3s' });
+            if (currentToken) {
+              const token = getToken();
+              if (token) {
+                await api('POST', '/api/notifications/store-token', { fcmToken: currentToken });
+              }
+            }
+          } catch (err) {
+            console.error('FCM token refresh failed:', err);
+          }
+        });
+
+        fcmMessaging.onMessage((payload) => {
+          if (payload.notification) {
+            new Notification(payload.notification.title || 'طبيبك', {
+              body: payload.notification.body || '',
+              icon: 'https://cdn-icons-png.flaticon.com/512/1930/1930985.png',
+            });
+          }
+        });
+      } catch (e) {
+        console.warn('Firebase init failed:', e.message);
+      }
     }
+
+    initFcm();
 
     async function registerFcmServiceWorker() {
       if (!('Notification' in window) || !('serviceWorker' in navigator)) return;
@@ -4572,7 +4608,20 @@
     }
 
     async function requestFcmToken() {
-      if (!fcmMessaging) return;
+      if (typeof firebase === 'undefined') {
+        setTimeout(requestFcmToken, 500);
+        return;
+      }
+      if (!fcmMessaging) {
+        try {
+          firebase.initializeApp(firebaseConfig);
+          fcmMessaging = firebase.messaging();
+        } catch (e) {
+          console.warn('Firebase not ready yet, retrying...');
+          setTimeout(requestFcmToken, 500);
+          return;
+        }
+      }
       try {
         const registration = await registerFcmServiceWorker();
         const vapidKey = '8Ucn8W54F07Fmc5ec2Kn_bd8RisbdkkmWQHh4SM_K3s';
@@ -4587,31 +4636,6 @@
       } catch (err) {
         console.error('FCM getToken failed:', err);
       }
-    }
-
-    if (fcmMessaging) {
-      fcmMessaging.onTokenRefresh(async () => {
-        try {
-          const currentToken = await fcmMessaging.getToken({ vapidKey: '8Ucn8W54F07Fmc5ec2Kn_bd8RisbdkkmWQHh4SM_K3s' });
-          if (currentToken) {
-            const token = getToken();
-            if (token) {
-              await api('POST', '/api/notifications/store-token', { fcmToken: currentToken });
-            }
-          }
-        } catch (err) {
-          console.error('FCM token refresh failed:', err);
-        }
-      });
-
-      fcmMessaging.onMessage((payload) => {
-        if (payload.notification) {
-          new Notification(payload.notification.title || 'طبيبك', {
-            body: payload.notification.body || '',
-            icon: 'https://cdn-icons-png.flaticon.com/512/1930/1930985.png',
-          });
-        }
-      });
     }
 
     /* ------ Wire the toggle / enable / test buttons ------ */
