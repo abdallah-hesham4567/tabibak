@@ -2246,6 +2246,11 @@
       color: var(--text-muted);
     }
 
+    .ti-sunrise { color: #ff9800; }
+    .ti-sun { color: #ffc107; }
+    .ti-moon { color: #6b7280; }
+    .dark .ti-moon { color: #ffffff; }
+
     /* ============================================================
        ADD MEDICATION MODAL (bottom sheet)
        ============================================================ */
@@ -3428,7 +3433,7 @@
       <!-- Browser Push Notification Settings -->
       <div class="fcm-settings-wrap">
         <button class="fcm-toggle-btn" id="fcmToggle" aria-expanded="false">
-          <span>🔔</span>
+          <span><i class="ti ti-bell" style="font-size:1.1rem"></i></span>
           <span>إعدادات تذكيرات الأدوية</span>
           <span class="fcm-arrow">▾</span>
         </button>
@@ -3439,15 +3444,17 @@
           </div>
           <div style="display:flex;gap:0.75rem;align-items:center;flex-wrap:wrap;">
             <button class="btn btn-primary" id="fcmEnableBtn" style="padding:0.7rem 1.5rem;font-size:0.9rem;">
-              🔔 تفعيل إشعارات الأدوية
+              <i class="ti ti-bell-ringing" style="margin-left:6px;"></i>
+              تفعيل إشعارات الأدوية
             </button>
             <button class="btn btn-secondary" id="fcmTestBtn"
               style="padding:0.7rem 1.5rem;font-size:0.9rem;display:none;">
-              🔕 اختبار الإشعار
+              <i class="ti ti-bell-off" style="margin-left:6px;"></i>
+              اختبار الإشعار
             </button>
           </div>
           <p style="font-size:0.8rem;color:var(--text-muted);line-height:1.55;margin-top:0.75rem;">
-            ✅ التذكيرات تعمل مباشرة من المتصفح — لا حاجة لأي خادم أو تطبيق خارجي.
+            <i class="ti ti-checks" style="color:var(--green); font-size:1.3rem;"></i> التذكيرات تعمل مباشرة من المتصفح — لا حاجة لأي خادم أو تطبيق خارجي.
             ستصلك إشعارات قبل <strong>5 دقائق</strong> من موعد كل جرعة. يجب إبقاء التبويب مفتوحاً في المتصفح.
           </p>
         </div>
@@ -4360,9 +4367,12 @@
       const evening = allDoses.filter(d => parseInt(d.dose.time.split(':')[0]) >= 17);
 
       let html = '';
-      if (morning.length) html += renderDoseSection('🌅 جرعات الصباح', morning, taken);
-      if (afternoon.length) html += renderDoseSection('☀️ جرعات الظهر', afternoon, taken);
-      if (evening.length) html += renderDoseSection('🌙 جرعات المساء', evening, taken);
+      if (morning.length)
+      html += renderDoseSection('<span style="font-size:1.2rem"><i class="ti ti-sunrise"></i> جرعات الصباح', morning, taken);
+      if (afternoon.length)
+      html += renderDoseSection('<span style="font-size:1.2rem"><i class="ti ti-sun"></i> جرعات الظهر', afternoon, taken);
+      if (evening.length)
+      html += renderDoseSection('<span style="font-size:1.2rem"><i class="ti ti-moon"></i> جرعات المساء', evening, taken);
 
       if (!allDoses.length) {
         html = `<div class="meds-empty">
@@ -4589,18 +4599,18 @@
       }
 
       if (Notification.permission === 'granted') {
-        statusEl.textContent = '🟢 مفعّلة — التذكيرات نشطة';
+        statusEl.innerHTML = '<i class="ti ti-circle-check "></i> مفعّلة — التذكيرات نشطة';
         statusEl.style.color = 'var(--green)';
         enableBtn.style.display = 'none';
         testBtn.style.display = 'inline-block';
         startReminderScheduler();
       } else if (Notification.permission === 'denied') {
-        statusEl.textContent = '🔴 محجوبة — اسمح بالإشعارات من إعدادات المتصفح';
+        statusEl.innerHTML = '<i class="ti ti-lock"></i> محجوبة — اسمح بالإشعارات من إعدادات المتصفح';
         statusEl.style.color = 'var(--red)';
         enableBtn.disabled = true;
         testBtn.style.display = 'none';
       } else {
-        statusEl.textContent = '🟡 غير مفعّلة — انقر لتفعيل التذكيرات';
+        statusEl.innerHTML = '<i class="ti ti-player-pause"></i> غير مفعّلة — انقر لتفعيل التذكيرات';
         statusEl.style.color = 'var(--orange)';
         enableBtn.disabled = false;
         testBtn.style.display = 'none';
