@@ -37,84 +37,70 @@ function startScheduler() {
       const today = now.toISOString().slice(0, 10);
       const db = await getDb();
 
-      // Get all users with FCM tokens and their timezone offsets
-      const users = await db.execute({
-        sql: `SELECT username, timezoneOffset FROM users WHERE fcmToken IS NOT NULL AND fcmToken != ''`,
+      // Get all upcoming dose rows in one query (include timezoneOffset)
+      const allRows = await db.execute({
+        sql: `
+          SELECT md.id AS doseId, md.time AS doseTime,
+                 m.id AS medicationId, m.name AS medName, m.dose AS medDose,
+                 u.username, u.fcmToken, COALESCE(u.timezoneOffset, 0) AS tzOffset
+          FROM medication_doses md
+          JOIN medications m ON m.id = md.medicationId
+          JOIN users u ON u.username = m.username
+          WHERE u.fcmToken IS NOT NULL
+            AND u.fcmToken != ''
+        `,
       });
-      if (users.rows.length === 0) return;
 
-      // Group users by timezone offset
-      const byOffset = {};
-      for (const u of users.rows) {
-        const offset = u.timezoneOffset ?? 0;
-        if (!byOffset[offset]) byOffset[offset] = [];
-        byOffset[offset].push(u.username);
-      }
+      const targetUtc = new Date(now.getTime() + 5 * 60000);
 
-      for (const [offsetStr, usernames] of Object.entries(byOffset)) {
-        const offset = Number(offsetStr);
-        // Convert UTC target time (now + 5 min) to user's local time
-        const localTarget = new Date(now.getTime() + 5 * 60000 + offset * 3600000);
-        const targetHH = String(localTarget.getHours()).padStart(2, '0');
-        const targetMM = String(localTarget.getMinutes()).padStart(2, '0');
+      for (const row of allRows.rows) {
+        const tz = Number(row.tzOffset);
+        // Convert target UTC time to user's local time
+        const targetLocal = new Date(targetUtc.getTime() + tz * 3600000);
+        const targetHH = String(targetLocal.getHours()).padStart(2, '0');
+        const targetMM = String(targetLocal.getMinutes()).padStart(2, '0');
         const targetTime = `${targetHH}:${targetMM}`;
 
-        const rows = await db.execute({
-          sql: `
-            SELECT md.id AS doseId, md.time AS doseTime,
-                   m.id AS medicationId, m.name AS medName, m.dose AS medDose,
-                   u.username, u.fcmToken
-            FROM medication_doses md
-            JOIN medications m ON m.id = md.medicationId
-            JOIN users u ON u.username = m.username
-            WHERE md.time = ?
-              AND u.fcmToken IS NOT NULL
-              AND u.fcmToken != ''
-              AND u.username IN (${usernames.map(() => '?').join(',')})
-          `,
-          args: [targetTime, ...usernames],
+        if (row.doseTime !== targetTime) continue;
+
+        const alreadySent = await db.execute({
+          sql: 'SELECT id FROM notification_log WHERE username = ? AND medicationId = ? AND doseId = ? AND date = ?',
+          args: [row.username, row.medicationId, row.doseId, today],
         });
 
-        for (const row of rows.rows) {
-          const alreadySent = await db.execute({
-            sql: 'SELECT id FROM notification_log WHERE username = ? AND medicationId = ? AND doseId = ? AND date = ?',
-            args: [row.username, row.medicationId, row.doseId, today],
-          });
+        if (alreadySent.rows.length > 0) continue;
 
-          if (alreadySent.rows.length > 0) continue;
-
-          if (fcmReady && row.fcmToken) {
-            try {
-              await admin.messaging().send({
-                token: row.fcmToken,
-                notification: {
-                  title: 'تذكير بالدواء',
-                  body: `حان موعد ${row.medName} (${row.medDose}) بعد 5 دقائق`,
-                },
-                data: {
-                  medicationId: row.medicationId,
-                  doseTime: row.doseTime,
-                  type: 'medication_reminder',
-                },
+        if (fcmReady && row.fcmToken) {
+          try {
+            await admin.messaging().send({
+              token: row.fcmToken,
+              notification: {
+                title: 'تذكير بالدواء',
+                body: `حان موعد ${row.medName} (${row.medDose}) بعد 5 دقائق`,
+              },
+              data: {
+                medicationId: row.medicationId,
+                doseTime: row.doseTime,
+                type: 'medication_reminder',
+              },
+            });
+            console.log(`FCM sent to ${row.username} for ${row.medName} at ${row.doseTime}`);
+          } catch (err) {
+            console.error(`FCM failed for ${row.username}:`, err.message);
+            if (err.code === 'messaging/invalid-registration-token' || err.code === 'messaging/registration-token-not-registered') {
+              await db.execute({
+                sql: "UPDATE users SET fcmToken = '' WHERE username = ?",
+                args: [row.username],
               });
-              console.log(`FCM sent to ${row.username} for ${row.medName} at ${row.doseTime}`);
-            } catch (err) {
-              console.error(`FCM failed for ${row.username}:`, err.message);
-              if (err.code === 'messaging/invalid-registration-token' || err.code === 'messaging/registration-token-not-registered') {
-                await db.execute({
-                  sql: "UPDATE users SET fcmToken = '' WHERE username = ?",
-                  args: [row.username],
-                });
-              }
-              continue;
             }
+            continue;
           }
-
-          await db.execute({
-            sql: 'INSERT INTO notification_log (username, medicationId, doseId, doseTime, date) VALUES (?, ?, ?, ?, ?)',
-            args: [row.username, row.medicationId, row.doseId, row.doseTime, today],
-          });
         }
+
+        await db.execute({
+          sql: 'INSERT INTO notification_log (username, medicationId, doseId, doseTime, date) VALUES (?, ?, ?, ?, ?)',
+          args: [row.username, row.medicationId, row.doseId, row.doseTime, today],
+        });
       }
     } catch (err) {
       console.error('Scheduler error:', err);
