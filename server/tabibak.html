@@ -254,7 +254,6 @@
       font-size: 2.75rem;
       -webkit-text-fill-color: initial;
     }
-
     .app-subtitle {
       color: var(--text-2);
       font-size: 1.1rem;
@@ -3627,7 +3626,7 @@ c-5.708,0-10.798-2.287-14.546-6.011c-0.87-0.895-1.697-1.857-2.407-2.904c-2.262-3
       <button class="theme-btn" id="themeBtn" aria-label="تبديل الوضع الليلي/النهاري"><i
           class="ti ti-sun theme-icon sun"></i></button>
       <div class="logo">
-        <span class="logo-icon"><!--<svg><use href="#icon-stethoscope"/></svg>-->🩺 </span>
+        <span class="logo-icon">🩺</span>
         <span>طبيبك</span>
       </div>
       <p class="app-subtitle">المساعد الافتراضي الذكي للفحص الطبي وتقييم الحالات</p>
@@ -4045,7 +4044,7 @@ c-5.708,0-10.798-2.287-14.546-6.011c-0.87-0.895-1.697-1.857-2.407-2.904c-2.262-3
 
       <div class="glass">
         <div class="bmi-header">
-          <span class="bmi-header-icon"><svg class="icon" width="32" height="32"> <use href="#icon-scale" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10"/> </svg></span>
+          <span class="bmi-header-icon"><svg class="icon" width="32" height="32"> <use href="#icon-scale" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10"/> </svg></span>
           <div>
             <h2>حاسبة مؤشر كتلة الجسم</h2>
             <p style="color:var(--text-muted);">مؤشر كتلة الجسم وتقييم الصحة العامة</p>
@@ -5709,7 +5708,7 @@ c-5.708,0-10.798-2.287-14.546-6.011c-0.87-0.895-1.697-1.857-2.407-2.904c-2.262-3
     function displayResults(result) {
       const header = document.getElementById('resultsHeader');
       header.className = `results-header glass ${result.level}`;
-      document.getElementById('urgencyBadge').innerHTML = result.level === 'red' ? '<i class=" ti ti-urgent" style="color:var(--red)"></i> طارئ' : result.level === 'orange' ? '<i class=" ti ti-circle-check" style="color:var(--green)"></i> معتدل' : '<i class=" ti ti-alert-triangle" style="color:var(--orange)"></i> خفيف';
+      document.getElementById('urgencyBadge').innerHTML = result.level === 'red' ? '<i class=" ti ti-urgent" style="color:var(--white)"></i> طارئ' : result.level === 'orange' ? '<i class=" ti ti-circle-check" style="color:var(--green)"></i> معتدل' : '<i class=" ti ti-alert-triangle" style="color:var(--orange)"></i> خفيف';
       document.getElementById('conditionTitle').textContent = result.condition;
       document.getElementById('resultsDesc').textContent = result.desc;
 
