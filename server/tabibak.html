@@ -162,7 +162,9 @@
       --med-missed: #ef4444;
       --med-check: #10b981;
     }
-
+    .breath-mute-btn i {
+      color: var(--text-1);
+    }
     *,
     *::before,
     *::after {
@@ -1553,7 +1555,7 @@
       border: 3px solid var(--text-1);
       transform: translateX(-50%);
       transition: left 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-      +
+      
     }
 
     .gauge-labels {
@@ -3460,7 +3462,7 @@ c-5.708,0-10.798-2.287-14.546-6.011c-0.87-0.895-1.697-1.857-2.407-2.904c-2.262-3
       </div>
 
       <div class="red-flag-banner" id="redFlagBanner">
-        <span style="font-size:1.6rem;animation:pulse 1.5s infinite;">🚨</span>
+        <i class="ti ti-urgent" style="color:var(--red);font-size:1.6rem;animation:pulse 1.5s infinite;"></i>
         <div style="flex-grow:1;">
           <h4 style="color:var(--red);margin-bottom:0.15rem;">تحذير: أعراض حرجة</h4>
           <p style="font-size:0.85rem;color:var(--text-2);">لقد أبلغت عن أعراض قد ترتبط بحالات طارئة عالية الخطورة. يرجى
@@ -3476,7 +3478,7 @@ c-5.708,0-10.798-2.287-14.546-6.011c-0.87-0.895-1.697-1.857-2.407-2.904c-2.262-3
       <div class="chat-input-row">
         <input type="text" id="chatInput" placeholder="اكتب ردك هنا..." autocomplete="off" />
         <button class="btn btn-secondary" id="chatImgBtn" title="إرفاق صورة"
-          style="padding:0.875rem;font-size:1.2rem;line-height:1;">🖼️</button>
+          style="padding:0.875rem;font-size:1.2rem;line-height:1;"><i class="ti ti-photo"></i></button>
         <button class="btn btn-primary" id="sendBtn" style="padding:0.875rem 1.25rem;">إرسال</button>
         <input type="file" id="chatImgInput" accept="image/*" style="display:none;" />
       </div>
@@ -3901,7 +3903,7 @@ c-5.708,0-10.798-2.287-14.546-6.011c-0.87-0.895-1.697-1.857-2.407-2.904c-2.262-3
           <div class="avatar" id="avatarWrap" style="cursor:pointer;">
             <img id="profileAvatar" src="" alt=""
               style="display:none;width:100%;height:100%;border-radius:50%;object-fit:cover;" />
-            <span id="avatarPlaceholder">👤</span>
+            <span id="avatarPlaceholder"><i class="ti ti-user-circle" style="font-size:2rem;"></i></span>
           </div>
           <input type="file" id="avatarInput" accept="image/*" style="display:none;" />
           <div>
@@ -4227,7 +4229,7 @@ c-5.708,0-10.798-2.287-14.546-6.011c-0.87-0.895-1.697-1.857-2.407-2.904c-2.262-3
      ============================================================ -->
   <div class="notification-modal-overlay" id="notificationModal">
     <div class="notification-modal-card">
-      <div class="notification-modal-icon">🔔</div>
+      <div class="notification-modal-icon"><i class="ti ti-bell-ringing" style="font-size:3.5rem;color:var(--primary);"></i></div>
       <h2 class="notification-modal-title">فعّل تذكيرات الأدوية</h2>
       <p class="notification-modal-desc">
         لا تفوّت جرعة! فعّل الإشعارات لتصلك تنبيهات قبل <strong>5 دقائق</strong> من موعد كل جرعة مباشرة على جهازك.
@@ -5261,7 +5263,7 @@ c-5.708,0-10.798-2.287-14.546-6.011c-0.87-0.895-1.697-1.857-2.407-2.904c-2.262-3
     function displayResults(result) {
       const header = document.getElementById('resultsHeader');
       header.className = `results-header glass ${result.level}`;
-      document.getElementById('urgencyBadge').textContent = result.level === 'red' ? '🚨 طارئ' : result.level === 'orange' ? '⚠️ معتدل' : '✅ خفيف';
+      document.getElementById('urgencyBadge').innerHTML = result.level === '<i class=" ti ti-urgent" style="color:var(--red)"></i> red' ? ' طارئ' : result.level === 'orange' ? '<i class=" ti ti-circle-check" style="color:var(--green)"></i> معتدل' : '<i class=" ti ti-alert-triangle" style="color:var(--orange)"></i> خفيف';
       document.getElementById('conditionTitle').textContent = result.condition;
       document.getElementById('resultsDesc').textContent = result.desc;
 
@@ -5979,7 +5981,7 @@ c-5.708,0-10.798-2.287-14.546-6.011c-0.87-0.895-1.697-1.857-2.407-2.904c-2.262-3
       const date = new Date(s.date || s.createdAt).toLocaleDateString('en-GB', { day: '2-digit', month: 'long', year: 'numeric' });
 
       const badge = document.getElementById('modalUrgency');
-      badge.textContent = level === 'red' ? '🚨 Emergency' : level === 'orange' ? '⚠️ Moderate' : '✅ Mild';
+      badge.innerHTML = level === 'red' ? '<i class="ti ti-urgent" style="color:var(--red)"></i> Emergency' : level === 'orange' ? '<i class="ti ti-alert-triangle" style="color:var(--orange)"></i> Moderate' : '<i class="ti ti-circle-check" style="color:var(--green)"></i> Mild';
       badge.style.background = level === 'red' ? 'var(--red)' : level === 'orange' ? 'var(--orange)' : 'var(--green)';
       badge.style.color = '#fff';
 
