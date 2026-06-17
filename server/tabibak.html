@@ -2331,6 +2331,10 @@
       color: #ffffff;
     }
 
+    .med-pill-icon i {
+      font-size: 1.4rem;
+      color: var(--primary);
+    }
     /* ============================================================
        ADD MEDICATION MODAL (bottom sheet)
        ============================================================ */
@@ -4494,13 +4498,24 @@ c-5.708,0-10.798-2.287-14.546-6.011c-0.87-0.895-1.697-1.857-2.407-2.904c-2.262-3
        MEDICATION REMINDER MODULE
        ================================================================ */
     const DEFAULT_MEDS = [
-      { id: 1, name: 'ميتفورمين', dose: '500 ملجم', form: 'قرص', doseCount: 2, doses: [{ time: '08:00' }, { time: '20:00' }], food: "نعم — يُؤخذ مع الوجبة", urgent: false, note: 'مع الإفطار والعشاء', icon: '💊', color: '#0e2a2a' },
-      { id: 2, name: 'ليزينوبريل', dose: '10 ملجم', form: 'قرص', doseCount: 1, doses: [{ time: '09:00' }], food: "لا يهم", urgent: true, note: 'ضغط الدم — لا يُفوَّت', icon: '💙', color: '#1a1a3a' },
-      { id: 3, name: 'فيتامين د', dose: '1000 وحدة', form: 'كبسولة', doseCount: 1, doses: [{ time: '12:00' }], food: "نعم — يُؤخذ مع الوجبة", urgent: false, note: 'يُؤخذ مع وجبة', icon: '🌤️', color: '#2a1a00' },
-      { id: 4, name: 'أوميغا 3', dose: '1 جرام', form: 'كبسولة', doseCount: 1, doses: [{ time: '21:00' }], food: "لا يهم", urgent: false, note: 'جرعة المساء', icon: '🐟', color: '#0e1a2a' },
+      { id: 1, name: 'ميتفورمين', dose: '500 ملجم', form: 'قرص', doseCount: 2, doses: [{ time: '08:00' }, { time: '20:00' }], food: "نعم — يُؤخذ مع الوجبة", urgent: false, note: 'مع الإفطار والعشاء', icon: 'ti-pill', color: '#0e2a2a' },
+      { id: 2, name: 'ليزينوبريل', dose: '10 ملجم', form: 'قرص', doseCount: 1, doses: [{ time: '09:00' }], food: "لا يهم", urgent: true, note: 'ضغط الدم — لا يُفوَّت', icon: 'ti-heartbeat', color: '#1a1a3a' },
+      { id: 3, name: 'فيتامين د', dose: '1000 وحدة', form: 'كبسولة', doseCount: 1, doses: [{ time: '12:00' }], food: "نعم — يُؤخذ مع الوجبة", urgent: false, note: 'يُؤخذ مع وجبة', icon: 'ti-sun', color: '#2a1a00' },
+      { id: 4, name: 'أوميغا 3', dose: '1 جرام', form: 'كبسولة', doseCount: 1, doses: [{ time: '21:00' }], food: "لا يهم", urgent: false, note: 'جرعة المساء', icon: 'ti-fish', color: '#0e1a2a' },
     ];
 
-    const PILL_ICONS = ['💊', '🔵', '🟡', '🟢', '🔴', '🟠', '🟣', '⚪', '🩵', '💛'];
+    const FORM_ICONS = {
+      'قرص': 'ti-pill',
+      'كبسولة': 'ti-pill',
+      'شراب': 'ti-droplet',
+      'حقنة': 'ti-vaccine',
+      'قطرات': 'ti-droplet-half-2',
+      'كريم': 'ti-bottle',
+    };
+
+    function getIconForForm(form) {
+      return FORM_ICONS[form] || 'ti-pill';
+    }
     const PILL_COLORS = ['#0e2a2a', '#1a1a3a', '#2a1a00', '#0e1a2a', '#1a2a1a', '#2a0e0e', '#1a0e2a', '#0e1a2a'];
 
     function getTimeLabel(time24) {
@@ -4662,7 +4677,7 @@ c-5.708,0-10.798-2.287-14.546-6.011c-0.87-0.895-1.697-1.857-2.407-2.904c-2.262-3
 
       return `
       <div class="med-card ${done ? 'taken' : ''}">
-        <div class="med-pill-icon" style="background:${med.color || '#0e2a2a'};">${med.icon || '💊'}</div>
+        <div class="med-pill-icon" style="background:${med.color || '#0e2a2a'};"><i class="ti ${med.icon || 'ti-pill'}" aria-hidden="true"></i></div>
         <div class="med-info">
           <div class="med-name">
             ${med.name}
@@ -4778,7 +4793,7 @@ c-5.708,0-10.798-2.287-14.546-6.011c-0.87-0.895-1.697-1.857-2.407-2.904c-2.262-3
         const rawTime = timeInput ? timeInput.value : '08:00';
         doses.push({ time: roundTo5Min(rawTime) });
       }
-      const idx = STATE.meds.list.length % PILL_ICONS.length;
+      const colorIdx = STATE.meds.list.length % PILL_COLORS.length;
       const newMed = {
         id: String(Date.now()),
         name,
@@ -4789,8 +4804,8 @@ c-5.708,0-10.798-2.287-14.546-6.011c-0.87-0.895-1.697-1.857-2.407-2.904c-2.262-3
         food,
         urgent,
         note,
-        icon: PILL_ICONS[idx],
-        color: PILL_COLORS[idx],
+        icon: getIconForForm(form),
+        color: PILL_COLORS[colorIdx],
       };
 
       if (STATE.currentUser) {
