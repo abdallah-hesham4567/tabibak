@@ -1,35 +1,5 @@
 const nodemailer = require('nodemailer');
 
-let transporter = null;
-let directTransporter = null;
-
-function getTransporter() {
-  if (transporter) return transporter;
-
-  const host = process.env.SMTP_HOST;
-  const port = parseInt(process.env.SMTP_PORT || '465');
-  const user = process.env.SMTP_USER;
-  const pass = process.env.SMTP_PASS;
-
-  if (user && pass) {
-    transporter = nodemailer.createTransport({
-      host: host || 'smtp.gmail.com',
-      port,
-      secure: port === 465,
-      auth: { user, pass },
-      connectionTimeout: 10000,
-    });
-  }
-  return transporter;
-}
-
-function getDirectTransporter() {
-  if (!directTransporter) {
-    directTransporter = nodemailer.createTransport({ direct: true });
-  }
-  return directTransporter;
-}
-
 async function sendVerificationCode(email, code) {
   const fromName = process.env.EMAIL_FROM_NAME || 'Tabibak';
   const fromAddr = process.env.EMAIL_FROM_ADDRESS || process.env.SMTP_USER || 'noreply@tabibak.app';
@@ -49,20 +19,34 @@ async function sendVerificationCode(email, code) {
     </div>`,
   };
 
-  if (process.env.SMTP_USER && process.env.SMTP_PASS) {
+  const SMTP_USER = process.env.SMTP_USER;
+  const SMTP_PASS = process.env.SMTP_PASS;
+
+  if (SMTP_USER && SMTP_PASS) {
+    const host = 'smtp.gmail.com';
+    const port = 465;
     try {
-      const t = getTransporter();
-      if (t) {
-        await t.sendMail(mailOptions);
-        return;
-      }
+      const t = nodemailer.createTransport({
+        host,
+        port,
+        secure: true,
+        auth: { user: SMTP_USER, pass: SMTP_PASS },
+        connectionTimeout: 10000,
+      });
+      await t.sendMail(mailOptions);
+      return;
     } catch (e) {
-      console.error('SMTP failed, trying direct delivery:', e.message);
+      console.error('SMTP failed:', e.message);
     }
   }
 
-  const dt = getDirectTransporter();
-  await dt.sendMail(mailOptions);
+  try {
+    const dt = nodemailer.createTransport({ direct: true });
+    await dt.sendMail(mailOptions);
+  } catch (e) {
+    console.error('Direct delivery also failed:', e.message);
+    throw new Error('Could not send email. Please configure SMTP or check server logs for the code.');
+  }
 }
 
 function generateCode() {
