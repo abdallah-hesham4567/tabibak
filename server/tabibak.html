@@ -13,7 +13,7 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css" />
   <script async src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script async src="https://www.gstatic.com/firebasejs/9.23.0/firebase-messaging-compat.js"></script>
-  <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <script src="https://accounts.google.com/gsi/client" defer></script>
 
   <style>
     /* ============================================================
@@ -4724,20 +4724,24 @@ c-5.708,0-10.798-2.287-14.546-6.011c-0.87-0.895-1.697-1.857-2.407-2.904c-2.262-3
        GOLE SIGN-IN
        ================================================================ */
     let googleClientId = '';
+    let googleInitAttempted = false;
 
     async function loadGoogleClientId() {
       try {
         const res = await fetch('/api/config/google-client-id');
         const data = await res.json();
         googleClientId = data.clientId;
-        if (googleClientId && typeof google !== 'undefined' && google.accounts) {
-          renderGoogleButton();
-        }
+        if (googleClientId) tryRenderGoogleButton();
       } catch (e) { /* Google auth not configured */ }
     }
 
-    function renderGoogleButton() {
-      if (!googleClientId) return;
+    function tryRenderGoogleButton() {
+      if (!googleClientId || googleInitAttempted) return;
+      if (typeof google === 'undefined' || !google.accounts) {
+        setTimeout(tryRenderGoogleButton, 300);
+        return;
+      }
+      googleInitAttempted = true;
       google.accounts.id.initialize({
         client_id: googleClientId,
         callback: handleGoogleCredential,
