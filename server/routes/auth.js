@@ -85,20 +85,14 @@ router.post('/google', async (req, res) => {
 
     if (existing.rows.length > 0) {
       const user = existing.rows[0];
-      const code = generateCode();
-      const expires = new Date(Date.now() + 10 * 60 * 1000).toISOString();
       await db.execute({
-        sql: 'UPDATE users SET verificationCode = ?, verificationCodeExpires = ? WHERE username = ?',
-        args: [code, expires, user.username],
+        sql: 'UPDATE users SET emailVerified = 1 WHERE username = ?',
+        args: [user.username],
       });
-      try {
-        console.log(`Verification code for ${email}: ${code}`);
-        await sendVerificationCode(email, code);
-      } catch (e) {
-        console.error('Failed to send verification email:', e.message);
-        return res.status(500).json({ error: 'Failed to send verification code: ' + e.message });
-      }
-      return res.json({ needsVerification: true, email, username: user.username });
+      const token = generateToken(user.username);
+      const { passwordHash, verificationCode, verificationCodeExpires, ...profile } = user;
+      profile.emailVerified = 1;
+      return res.json({ token, ...profile });
     }
 
     let baseUsername = email.split('@')[0].replace(/[^a-zA-Z0-9_]/g, '_');
@@ -116,26 +110,12 @@ router.post('/google', async (req, res) => {
 
     const passwordHash = bcrypt.hashSync(googleId, 10);
     await db.execute({
-      sql: 'INSERT INTO users (username, passwordHash, name, email, googleId, emailVerified) VALUES (?, ?, ?, ?, ?, 0)',
+      sql: 'INSERT INTO users (username, passwordHash, name, email, googleId, emailVerified) VALUES (?, ?, ?, ?, ?, 1)',
       args: [username, passwordHash, name || email.split('@')[0], email, googleId],
     });
 
-    const code = generateCode();
-    const expires = new Date(Date.now() + 10 * 60 * 1000).toISOString();
-    await db.execute({
-      sql: 'UPDATE users SET verificationCode = ?, verificationCodeExpires = ? WHERE username = ?',
-      args: [code, expires, username],
-    });
-
-    try {
-      console.log(`Verification code for ${email}: ${code}`);
-      await sendVerificationCode(email, code);
-    } catch (e) {
-      console.error('Failed to send verification email:', e.message);
-      return res.status(500).json({ error: 'Failed to send verification code: ' + e.message });
-    }
-
-    res.json({ needsVerification: true, email, username });
+    const token = generateToken(username);
+    res.json({ token, username, name: name || email.split('@')[0], email, emailVerified: 1 });
   } catch (err) {
     console.error('Google login error:', err);
     res.status(401).json({ error: 'Invalid Google credential' });

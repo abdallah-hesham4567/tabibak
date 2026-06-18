@@ -4755,13 +4755,13 @@ c-5.708,0-10.798-2.287-14.546-6.011c-0.87-0.895-1.697-1.857-2.407-2.904c-2.262-3
     async function handleGoogleCredentialResponse(response) {
       try {
         const data = await api('POST', '/api/auth/google', { credential: response.credential });
-        if (data.needsVerification) {
-          STATE.pendingGoogleUser = data;
-          document.getElementById('verificationDesc').textContent = `لقد أرسلنا رمز تحقق إلى ${data.email}. يرجى إدخاله أدناه.`;
-          document.getElementById('verificationCodeInput').value = '';
-          document.getElementById('verificationError').style.display = 'none';
-          document.getElementById('verificationModal').classList.add('open');
-        }
+        setToken(data.token);
+        STATE.currentUser = data;
+        STATE.sessions = await api('GET', '/api/sessions');
+        try { STATE.meds.list = await api('GET', '/api/medications'); } catch (e) { STATE.meds.list = []; }
+        if (Notification.permission === 'granted') { startReminderScheduler(); requestFcmToken(); }
+        refreshProfileScreen();
+        showTab('profile');
       } catch (err) {
         alert(err.message || 'فشل تسجيل الدخول عبر Google');
       }
