@@ -14,8 +14,10 @@ function getTransporter() {
     transporter = nodemailer.createTransport({
       host,
       port,
-      secure: port === 465,
+      secure: false,
+      requireTLS: true,
       auth: { user, pass },
+      connectionTimeout: 15000,
     });
   } else {
     console.warn('SMTP not configured — email sending will fail. Set SMTP_HOST, SMTP_USER, SMTP_PASS.');
@@ -30,6 +32,9 @@ function getTransporter() {
 
 async function sendVerificationCode(email, code) {
   const t = getTransporter();
+  if (!process.env.SMTP_HOST) {
+    throw new Error('SMTP_HOST not configured');
+  }
   const fromName = process.env.EMAIL_FROM_NAME || 'Tabibak';
   const fromAddr = process.env.EMAIL_FROM_ADDRESS || process.env.SMTP_USER || 'noreply@tabibak.app';
 

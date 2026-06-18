@@ -95,7 +95,7 @@ router.post('/google', async (req, res) => {
         await sendVerificationCode(email, code);
       } catch (e) {
         console.error('Failed to send verification email:', e.message);
-        return res.status(500).json({ error: 'Failed to send verification code. Check SMTP config.' });
+        return res.status(500).json({ error: 'Failed to send verification code: ' + e.message });
       }
       return res.json({ needsVerification: true, email, username: user.username });
     }
@@ -130,7 +130,7 @@ router.post('/google', async (req, res) => {
       await sendVerificationCode(email, code);
     } catch (e) {
       console.error('Failed to send verification email:', e.message);
-      return res.status(500).json({ error: 'Failed to send verification code. Check SMTP config.' });
+      return res.status(500).json({ error: 'Failed to send verification code: ' + e.message });
     }
 
     res.json({ needsVerification: true, email, username });
