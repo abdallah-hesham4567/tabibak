@@ -92,6 +92,7 @@ router.post('/google', async (req, res) => {
         args: [code, expires, user.username],
       });
       try {
+        console.log(`Verification code for ${email}: ${code}`);
         await sendVerificationCode(email, code);
       } catch (e) {
         console.error('Failed to send verification email:', e.message);
@@ -127,6 +128,7 @@ router.post('/google', async (req, res) => {
     });
 
     try {
+      console.log(`Verification code for ${email}: ${code}`);
       await sendVerificationCode(email, code);
     } catch (e) {
       console.error('Failed to send verification email:', e.message);

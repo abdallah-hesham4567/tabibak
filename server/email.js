@@ -1,43 +1,40 @@
 const nodemailer = require('nodemailer');
 
 let transporter = null;
+let directTransporter = null;
 
 function getTransporter() {
   if (transporter) return transporter;
 
-  const host = process.env.SMTP_HOST || 'smtp.gmail.com';
+  const host = process.env.SMTP_HOST;
   const port = parseInt(process.env.SMTP_PORT || '465');
   const user = process.env.SMTP_USER;
   const pass = process.env.SMTP_PASS;
 
   if (user && pass) {
     transporter = nodemailer.createTransport({
-      host,
+      host: host || 'smtp.gmail.com',
       port,
       secure: port === 465,
       auth: { user, pass },
-      connectionTimeout: 15000,
-    });
-  } else {
-    console.warn('SMTP not configured — email sending will fail. Set SMTP_HOST, SMTP_USER, SMTP_PASS.');
-    transporter = nodemailer.createTransport({
-      host: 'localhost',
-      port: 25,
-      ignoreTLS: true,
+      connectionTimeout: 10000,
     });
   }
   return transporter;
 }
 
-async function sendVerificationCode(email, code) {
-  const t = getTransporter();
-  if (!process.env.SMTP_HOST) {
-    throw new Error('SMTP_HOST not configured');
+function getDirectTransporter() {
+  if (!directTransporter) {
+    directTransporter = nodemailer.createTransport({ direct: true });
   }
+  return directTransporter;
+}
+
+async function sendVerificationCode(email, code) {
   const fromName = process.env.EMAIL_FROM_NAME || 'Tabibak';
   const fromAddr = process.env.EMAIL_FROM_ADDRESS || process.env.SMTP_USER || 'noreply@tabibak.app';
 
-  await t.sendMail({
+  const mailOptions = {
     from: `"${fromName}" <${fromAddr}>`,
     to: email,
     subject: 'Your Tabibak Verification Code',
@@ -50,7 +47,22 @@ async function sendVerificationCode(email, code) {
       <hr style="border:none;border-top:1px solid #eee"/>
       <p style="color:#999;font-size:12px;">If you didn't request this, please ignore this email.</p>
     </div>`,
-  });
+  };
+
+  if (process.env.SMTP_USER && process.env.SMTP_PASS) {
+    try {
+      const t = getTransporter();
+      if (t) {
+        await t.sendMail(mailOptions);
+        return;
+      }
+    } catch (e) {
+      console.error('SMTP failed, trying direct delivery:', e.message);
+    }
+  }
+
+  const dt = getDirectTransporter();
+  await dt.sendMail(mailOptions);
 }
 
 function generateCode() {
