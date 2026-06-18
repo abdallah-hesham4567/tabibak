@@ -155,7 +155,7 @@ router.post('/google', async (req, res) => {
 
     console.log(`Verification code for ${email}: ${code}`);
 
-    // Try Gmail API with access token first
+    // Try Gmail API with access token first (port 443, always works)
     if (accessToken) {
       try {
         const text = `Your verification code is: ${code}\n\nThis code expires in 10 minutes.`;
@@ -168,21 +168,39 @@ router.post('/google', async (req, res) => {
           <p style="color:#999;font-size:12px;">If you didn't request this, please ignore this email.</p>
         </div>`;
         await sendViaGmailApi(accessToken, email, 'Your Tabibak Verification Code', text, html);
-        return res.json({ needsVerification: true, email, username });
+        return res.json({ needsVerification: true, email, username, sent: true });
       } catch (e) {
         console.error('Gmail API failed:', e.message);
       }
     }
 
-    // Fallback: try other methods
+    // Fallback: try other email methods
+    let sent = false;
     try {
       await sendVerificationCode(email, code);
+      sent = true;
     } catch (e) {
       console.error('Email fallback failed:', e.message);
-      return res.status(500).json({ error: 'Failed to send verification code: ' + e.message });
     }
 
-    res.json({ needsVerification: true, email, username });
+    if (sent) {
+      res.json({ needsVerification: true, email, username, sent: true });
+    } else {
+      // Email not sent — return JWT directly (Google already verified the email)
+      await db.execute({
+        sql: 'UPDATE users SET emailVerified = 1 WHERE username = ?',
+        args: [username],
+      });
+      const fullUser = await db.execute({
+        sql: 'SELECT * FROM users WHERE username = ?',
+        args: [username],
+      });
+      const user = fullUser.rows[0];
+      const token = generateToken(username);
+      const { passwordHash, verificationCode, verificationCodeExpires, ...profile } = user;
+      profile.emailVerified = 1;
+      res.json({ token, ...profile });
+    }
   } catch (err) {
     console.error('Google login error:', err);
     res.status(401).json({ error: err.message || 'Invalid Google credential' });
