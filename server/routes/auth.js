@@ -85,14 +85,15 @@ router.post('/google', async (req, res) => {
 
     if (existing.rows.length > 0) {
       const user = existing.rows[0];
+      const code = generateCode();
+      const expires = new Date(Date.now() + 10 * 60 * 1000).toISOString();
       await db.execute({
-        sql: 'UPDATE users SET emailVerified = 1 WHERE username = ?',
-        args: [user.username],
+        sql: 'UPDATE users SET verificationCode = ?, verificationCodeExpires = ? WHERE username = ?',
+        args: [code, expires, user.username],
       });
-      const token = generateToken(user.username);
-      const { passwordHash, verificationCode, verificationCodeExpires, ...profile } = user;
-      profile.emailVerified = 1;
-      return res.json({ token, ...profile });
+      console.log(`Verification code for ${email}: ${code}`);
+      await sendVerificationCode(email, code);
+      return res.json({ needsVerification: true, email, username: user.username });
     }
 
     let baseUsername = email.split('@')[0].replace(/[^a-zA-Z0-9_]/g, '_');
@@ -110,15 +111,23 @@ router.post('/google', async (req, res) => {
 
     const passwordHash = bcrypt.hashSync(googleId, 10);
     await db.execute({
-      sql: 'INSERT INTO users (username, passwordHash, name, email, googleId, emailVerified) VALUES (?, ?, ?, ?, ?, 1)',
+      sql: 'INSERT INTO users (username, passwordHash, name, email, googleId, emailVerified) VALUES (?, ?, ?, ?, ?, 0)',
       args: [username, passwordHash, name || email.split('@')[0], email, googleId],
     });
 
-    const token = generateToken(username);
-    res.json({ token, username, name: name || email.split('@')[0], email, emailVerified: 1 });
+    const code = generateCode();
+    const expires = new Date(Date.now() + 10 * 60 * 1000).toISOString();
+    await db.execute({
+      sql: 'UPDATE users SET verificationCode = ?, verificationCodeExpires = ? WHERE username = ?',
+      args: [code, expires, username],
+    });
+
+    console.log(`Verification code for ${email}: ${code}`);
+    await sendVerificationCode(email, code);
+    res.json({ needsVerification: true, email, username });
   } catch (err) {
     console.error('Google login error:', err);
-    res.status(401).json({ error: 'Invalid Google credential' });
+    res.status(401).json({ error: err.message || 'Invalid Google credential' });
   }
 });
 
