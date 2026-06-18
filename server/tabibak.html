@@ -322,29 +322,34 @@
       transform: scale(1.08);
     }
 
-     .app-nav {
+    .app-nav {
       display: flex;
-      justify-content: center;
-      gap: clamp(0rem, 10vw, 7rem);
-      padding: 0.45rem clamp(0.5rem, 3vw, 2rem);
+      justify-content: space-between;
+      gap: 0;
+      padding: 0.45rem 0;
       background: var(--bg-surface);
       border-bottom: 1px solid var(--border);
-      flex-wrap: wrap;
+      overflow-x: auto;
+      white-space: nowrap;
       width: 100%;
+      -webkit-overflow-scrolling: touch;
     }
 
     .nav-btn {
       background: transparent;
       border: none;
       color: var(--text-2);
-      padding: 0.55rem 1.5rem;
+      padding: 0.55rem 0.5rem;
       font-family: var(--font-heading);
       font-weight: 600;
       font-size: 0.88rem;
-      border-radius: 10px;
+      border-radius: 0;
       cursor: pointer;
       display: flex;
       align-items: center;
+      justify-content: center;
+      flex: 1;
+      min-width: 0;
       gap: 0.4rem;
       transition: all var(--speed);
       white-space: nowrap;
@@ -371,7 +376,7 @@
       color: var(--btn-text);
       box-shadow: 0 4px 12px var(--primary-glow);
     }
-    
+
 
     /* ============================================================
        SCREENS
@@ -585,6 +590,7 @@
       border-color: var(--primary);
       transform: translateY(-2px);
     }
+
     .landing-headline {
       text-align: right;
       padding: 0.5rem 0 1rem;
@@ -603,6 +609,7 @@
       color: var(--text-2);
       font-size: 0.95rem;
     }
+
     /* ============================================================
        CHAT SCREEN
        ============================================================ */
@@ -3282,34 +3289,42 @@
       .app {
         padding: 1rem 1rem 2rem;
       }
+
       .glass {
         padding: 1.75rem;
       }
+
       .app-subtitle {
         display: none;
       }
+
       .header-top-bar {
         padding: 0.6rem 1rem;
       }
+
       .header-brand {
         font-size: 1.35rem;
       }
+
       .app-nav {
         justify-content: center;
         padding: 0.35rem 0.5rem;
       }
+
       .nav-btn {
         padding: 0.5rem 0.6rem;
         font-size: 0.78rem;
         flex: 1;
         justify-content: center;
       }
+
       .nav-btn .nav-label {
         display: none;
       }
+
       .app-nav {
         gap: 0;
-        padding: 0.35rem 0.25rem;
+        padding: 0.35rem 0;
         justify-content: space-between;
       }
 
@@ -3509,7 +3524,247 @@
       50% {
         transform: translateY(-8px);
       }
-    }
+
+      /* Password field container and toggle styling */
+      .password-wrapper {
+        position: relative;
+        width: 100%;
+      }
+
+      .password-wrapper input {
+        padding-left: 3rem;
+        /* Leave room for toggle button on the left */
+      }
+
+      .password-toggle {
+        position: absolute;
+        left: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        background: none;
+        border: none;
+        color: var(--text-2);
+        cursor: pointer;
+        font-size: 1.25rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0.25rem;
+        transition: color var(--speed);
+        z-index: 10;
+      }
+
+      .password-toggle:hover {
+        color: var(--primary);
+      }
+
+      .password-constraints {
+        font-size: 0.8rem;
+        color: var(--text-muted);
+        margin-top: 0.25rem;
+        line-height: 1.4;
+        display: flex;
+        flex-direction: column;
+        gap: 0.2rem;
+      }
+
+      .constraint-item {
+        display: flex;
+        align-items: center;
+        gap: 0.3rem;
+        transition: color var(--speed);
+      }
+
+      .constraint-item.valid {
+        color: var(--green);
+      }
+
+      .constraint-item.invalid {
+        color: var(--red);
+      }
+
+      /* Medical test screen styles */
+      .medical-test-header {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+      }
+
+      .medical-test-header h2 {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .upload-zone {
+        border: 2px dashed var(--primary);
+        border-radius: var(--r-md);
+        padding: 3.5rem 2rem;
+        text-align: center;
+        cursor: pointer;
+        background: rgba(43, 108, 176, 0.03);
+        transition: all var(--speed);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 1.25rem;
+      }
+
+      .upload-zone:hover,
+      .upload-zone.dragover {
+        border-color: var(--secondary);
+        background: var(--primary-glow-strong);
+        transform: translateY(-2px);
+      }
+
+      .upload-zone i {
+        font-size: 4.5rem !important;
+        color: var(--primary) !important;
+        background: var(--primary-glow);
+        width: 110px;
+        height: 110px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all var(--speed);
+        margin-bottom: 0.5rem;
+      }
+
+      .upload-zone:hover i {
+        background: var(--primary);
+        color: #fff !important;
+      }
+
+      .image-preview-wrapper {
+        margin-top: 1.5rem;
+        position: relative;
+        border-radius: var(--r-md);
+        overflow: hidden;
+        border: 1px solid var(--border);
+        max-height: 350px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background: #000;
+      }
+
+      .image-preview-wrapper img {
+        max-width: 100%;
+        max-height: 350px;
+        object-fit: contain;
+      }
+
+      .clear-image-btn {
+        background: var(--red-bg);
+        color: var(--red);
+        border: 1px solid var(--red-border);
+        border-radius: 14px;
+        padding: 0.9rem 1.5rem;
+        font-family: var(--font-heading);
+        font-weight: 600;
+        font-size: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        cursor: pointer;
+        transition: all var(--speed);
+      }
+
+      .clear-image-btn:hover {
+        background: var(--red);
+        color: #fff;
+        transform: translateY(-2px);
+      }
+
+      .medical-results-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        border-bottom: 1px solid var(--border);
+        padding-bottom: 1rem;
+        margin-bottom: 1.5rem;
+        flex-wrap: wrap;
+        gap: 1rem;
+      }
+
+      .medical-status-badge {
+        padding: 0.4rem 1rem;
+        border-radius: 20px;
+        font-size: 0.88rem;
+        font-weight: 700;
+        color: #fff;
+      }
+
+      .medical-status-badge.green {
+        background-color: var(--green);
+      }
+
+      .medical-status-badge.orange {
+        background-color: var(--orange);
+      }
+
+      .medical-status-badge.red {
+        background-color: var(--red);
+      }
+
+      .analysis-text-block {
+        background: var(--bubble-bot);
+        border: 1px solid var(--bubble-bot-border);
+        padding: 1.5rem;
+        border-radius: var(--r-md);
+        margin-bottom: 1.5rem;
+        line-height: 1.7;
+      }
+
+      .advice-cards-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 1rem;
+      }
+
+      @media (min-width: 600px) {
+        .advice-cards-grid {
+          grid-template-columns: 1fr 1fr;
+        }
+      }
+
+      .advice-card {
+        background: var(--bg-surface);
+        border: 1px solid var(--border);
+        border-radius: var(--r-md);
+        padding: 1.25rem;
+        display: flex;
+        gap: 1rem;
+        align-items: flex-start;
+        box-shadow: var(--shadow-sm);
+      }
+
+      .advice-card-icon {
+        font-size: 1.5rem;
+        color: var(--primary);
+        background: var(--primary-glow);
+        width: 42px;
+        height: 42px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+      }
+
+      .advice-card-content h4 {
+        font-size: 1rem;
+        font-weight: 700;
+        margin-bottom: 0.25rem;
+      }
+
+      .advice-card-content p {
+        font-size: 0.9rem;
+        color: var(--text-2);
+        line-height: 1.5;
+      }
   </style>
 
 </head>
@@ -3724,51 +3979,65 @@ c-5.708,0-10.798-2.287-14.546-6.011c-0.87-0.895-1.697-1.857-2.407-2.904c-2.262-3
 
 
   <!-- Header -->
-    <header class="app-header">
-      <div class="header-top-bar">
-        <div class="header-brand">
-          <span class="logo-icon">🩺</span>
-          <span class="logo-text">طبيبك</span>
-        </div>
-        <div class="header-top-right">
-          <p class="app-subtitle">المساعد الافتراضي الذكي للفحص الطبي وتقييم الحالات</p>
-          <button class="theme-btn" id="themeBtn" aria-label="تبديل الوضع الليلي/النهاري">
-            <i class="ti ti-sun theme-icon sun"></i>
-          </button>
-          <button class="account-btn" id="accountNavBtn" aria-label="الحساب">
-            <i class="ti ti-user-circle"></i>
-          </button>
-        </div>
+  <header class="app-header">
+    <div class="header-top-bar">
+      <div class="header-brand">
+        <span class="logo-icon">🩺</span>
+        <span class="logo-text">طبيبك</span>
       </div>
-    </header>
+      <div class="header-top-right">
+        <p class="app-subtitle">المساعد الافتراضي الذكي للفحص الطبي وتقييم الحالات</p>
+        <button class="theme-btn" id="themeBtn" aria-label="تبديل الوضع الليلي/النهاري">
+          <i class="ti ti-sun theme-icon sun"></i>
+        </button>
+        <button class="account-btn" id="accountNavBtn" aria-label="الحساب">
+          <i class="ti ti-user-circle"></i>
+        </button>
+      </div>
+    </div>
+  </header>
 
   <!-- Navigation -->
-   <nav class="app-nav">
-      <button class="nav-btn active" data-tab="landing">
-        <svg><use href="#icon-triage" /></svg>
-        <span class="nav-label">الفحص الطبي</span>
-      </button>
-      <button class="nav-btn" data-tab="meds">
-        <i class="ti ti-pill"></i>
-        <span class="nav-label">الأدوية</span>
-      </button>
-      <button class="nav-btn" data-tab="history">
-        <svg><use href="#icon-history" /></svg>
-        <span class="nav-label">السجل</span>
-      </button>
-      <button class="nav-btn" data-tab="food">
-        <svg><use href="#icon-food" /></svg>
-        <span class="nav-label">التغذية</span>
-      </button>
-      <button class="nav-btn" data-tab="bmi">
-        <svg><use href="#icon-bmi" /></svg>
-        <span class="nav-label">كتلة الجسم</span>
-      </button>
-      <button class="nav-btn" data-tab="pharmacist">
-        <svg><use href="#icon-pharmacist" /></svg>
-        <span class="nav-label">الصيدلي</span>
-      </button>
-    </nav>
+  <nav class="app-nav">
+    <button class="nav-btn active" data-tab="landing">
+      <svg>
+        <use href="#icon-triage" />
+      </svg>
+      <span class="nav-label">الفحص الطبي</span>
+    </button>
+    <button class="nav-btn" data-tab="meds">
+      <i class="ti ti-pill"></i>
+      <span class="nav-label">الأدوية</span>
+    </button>
+    <button class="nav-btn" data-tab="history">
+      <svg>
+        <use href="#icon-history" />
+      </svg>
+      <span class="nav-label">السجل</span>
+    </button>
+    <button class="nav-btn" data-tab="food">
+      <svg>
+        <use href="#icon-food" />
+      </svg>
+      <span class="nav-label">التغذية</span>
+    </button>
+    <button class="nav-btn" data-tab="medical-test">
+      <i class="ti ti-report-medical"></i>
+      <span class="nav-label">التحاليل الطبية</span>
+    </button>
+    <button class="nav-btn" data-tab="bmi">
+      <svg>
+        <use href="#icon-bmi" />
+      </svg>
+      <span class="nav-label">كتلة الجسم</span>
+    </button>
+    <button class="nav-btn" data-tab="pharmacist">
+      <svg>
+        <use href="#icon-pharmacist" />
+      </svg>
+      <span class="nav-label">الصيدلي</span>
+    </button>
+  </nav>
 
 
   <div class="app">
@@ -4135,6 +4404,95 @@ c-5.708,0-10.798-2.287-14.546-6.011c-0.87-0.895-1.697-1.857-2.407-2.904c-2.262-3
     </main>
 
     <!-- ============================================================
+       SCREEN 5B — MEDICAL TEST ANALYZER
+       ============================================================ -->
+    <main id="screen-medical-test" class="screen glass">
+
+      <div class="medical-test-header">
+        <div class="pharm-icon"><i class="ti ti-report-medical"></i></div>
+        <div>
+          <h2>تحليل التحاليل الطبية</h2>
+          <p style="color:var(--text-muted);">ارفع صورة التحليل الطبي وسيقوم المساعد الذكي بشرح النتائج وتقديم توصيات
+            مخصصة باللغة العربية.</p>
+        </div>
+      </div>
+
+      <div id="medicalTestUploader">
+        <input type="file" id="medicalTestInput" accept="image/*" style="display:none;" />
+        <div class="upload-zone" id="medicalTestUploadZone">
+          <i class="ti ti-cloud-upload"></i>
+          <h3>اسحب وأفلت صورة التحليل هنا</h3>
+          <p style="color:var(--text-muted);font-size:0.9rem;">أو اضغط لاختيار صورة من جهازك (يدعم JPG، PNG، GIF حتى 5
+            ميجابايت)</p>
+        </div>
+
+        <div class="image-preview-wrapper" id="medicalTestPreviewContainer" style="display:none;">
+          <img id="medicalTestPreviewImage" src="" alt="معاينة التحليل الطبي" />
+        </div>
+
+        <div style="display:flex;gap:1rem;margin-top:1.5rem;width:100%;flex-wrap:wrap;align-items:stretch;">
+          <button class="btn btn-primary" id="medicalTestAnalyzeBtn" style="flex:2;min-width:220px;" disabled>
+            <i class="ti ti-wand"></i> تحليل التحليل الطبي بالذكاء الاصطناعي
+          </button>
+          <button class="btn btn-secondary" id="medicalTestUploadBtn" style="flex:1;min-width:160px;display:flex;align-items:center;justify-content:center;gap:0.5rem;" title="رفع صورة التحليل">
+            <i class="ti ti-cloud-upload" style="font-size:1.8rem !important;color:var(--primary);"></i>
+            <span>رفع الصورة</span>
+          </button>
+          <button class="clear-image-btn" id="medicalTestClearBtn" style="display:none;flex:1;min-width:160px;" title="إزالة الصورة">
+            <i class="ti ti-trash"></i>
+            <span>حذف الصورة</span>
+          </button>
+        </div>
+      </div>
+
+      <div id="medicalTestLoading" style="display:none;" class="food-loading">
+        <div class="pulse-ring-wrap">
+          <div class="pulse-ring"></div>
+          <span class="pulse-emoji"><i class="ti ti-report-medical"
+              style="font-size:1.5rem;color:var(--primary);"></i></span>
+        </div>
+        <p style="color:var(--text-2);margin-top:1rem;">جاري قراءة الصورة وتحليل القيم الطبية بدقة...</p>
+      </div>
+
+      <div id="medicalTestResults" style="display:none;">
+        <div class="medical-results-header">
+          <h3>التقرير التحليلي المخصص للتحاليل</h3>
+          <span class="medical-status-badge" id="medicalTestStatusBadge">—</span>
+        </div>
+
+        <!-- Detected Test Name -->
+        <div
+          style="margin-bottom:1rem;display:flex;align-items:center;gap:0.5rem;font-weight:700;color:var(--primary);">
+          <i class="ti ti-tag"></i> نوع التحليل المكتشف: <span id="medicalTestDetectedName">—</span>
+        </div>
+
+        <!-- Clinical Explanation -->
+        <div class="analysis-text-block">
+          <h4 style="margin-bottom:0.5rem;color:var(--text-1);font-weight:700;"><i class="ti ti-notes"></i> الشرح
+            والترجمة باللغة العربية:</h4>
+          <p id="medicalTestAnalysisText"></p>
+        </div>
+
+        <!-- Advices -->
+        <div>
+          <h4 style="margin-bottom:0.75rem;color:var(--text-1);font-weight:700;"><i class="ti ti-bulb"
+              style="color:var(--yellow)"></i> نصائح وإرشادات طبية:</h4>
+          <div class="advice-cards-grid" id="medicalTestAdvicesGrid"></div>
+        </div>
+
+        <button class="btn btn-secondary" id="medicalTestResetBtn" style="margin-top:2rem;width:100%;">↩ تحليل مستند طبي
+          آخر</button>
+      </div>
+
+      <div id="medicalTestError" style="display:none;" class="food-error">
+        <span><i class="ti ti-alert-triangle"></i></span>
+        <p id="medicalTestErrorMsg">حدث خطأ أثناء تحليل الصورة. يرجى التحقق من جودة الصورة أو مفتاح API والمحاولة
+          مجدداً.</p>
+      </div>
+
+    </main>
+
+    <!-- ============================================================
        SCREEN 6 — BMI CALCULATOR
        ============================================================ -->
     <main id="screen-bmi" class="screen">
@@ -4252,7 +4610,39 @@ c-5.708,0-10.798-2.287-14.546-6.011c-0.87-0.895-1.697-1.857-2.407-2.904c-2.262-3
             </div>
             <div class="form-group">
               <label for="regPass">كلمة المرور *</label>
-              <input type="password" id="regPass" placeholder="كلمة المرور..." autocomplete="new-password" />
+              <div class="password-wrapper">
+                <input type="password" id="regPass" placeholder="كلمة المرور..." autocomplete="new-password" />
+                <button type="button" class="password-toggle" id="toggleRegPass" aria-label="عرض كلمة المرور">
+                  <i class="ti ti-eye"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="regConfirmPass">تأكيد كلمة المرور *</label>
+              <div class="password-wrapper">
+                <input type="password" id="regConfirmPass" placeholder="تأكيد كلمة المرور..."
+                  autocomplete="new-password" />
+                <button type="button" class="password-toggle" id="toggleRegConfirmPass" aria-label="عرض كلمة المرور">
+                  <i class="ti ti-eye"></i>
+                </button>
+              </div>
+            </div>
+            <div class="form-group">
+              <label style="font-size:0.875rem;">شروط كلمة المرور:</label>
+              <div class="password-constraints">
+                <span class="constraint-item invalid" id="conLength"><i class="ti ti-circle-x"></i> 8 أحرف على
+                  الأقل</span>
+                <span class="constraint-item invalid" id="conUpper"><i class="ti ti-circle-x"></i> حرف كبير واحد على
+                  الأقل (A-Z)</span>
+                <span class="constraint-item invalid" id="conLower"><i class="ti ti-circle-x"></i> حرف صغير واحد على
+                  الأقل (a-z)</span>
+                <span class="constraint-item invalid" id="conDigit"><i class="ti ti-circle-x"></i> رقم واحد على الأقل
+                  (0-9)</span>
+                <span class="constraint-item invalid" id="conSpecial"><i class="ti ti-circle-x"></i> رمز خاص واحد على
+                  الأقل (!@#$%^&...)</span>
+              </div>
             </div>
           </div>
           <div class="form-group">
@@ -4741,6 +5131,10 @@ c-5.708,0-10.798-2.287-14.546-6.011c-0.87-0.895-1.697-1.857-2.407-2.904c-2.262-3
         apiKey: '', // loaded from backend config dynamically to prevent git leaks
         selectedMood: '',
       },
+      medicalTest: {
+        apiKey: '',
+        selectedImage: null, // base64 string
+      },
       bmi: null,
       meds: {
         list: [],
@@ -4885,6 +5279,7 @@ c-5.708,0-10.798-2.287-14.546-6.011c-0.87-0.895-1.697-1.857-2.407-2.904c-2.262-3
         results: 'screen-results',
         meds: 'screen-meds',
         food: 'screen-food',
+        'medical-test': 'screen-medical-test',
         bmi: 'screen-bmi',
         pharmacist: 'screen-pharmacist',
         profile: 'screen-profile',
@@ -6464,6 +6859,233 @@ ${hasContext ? userContext : 'لا تتوفر معلومات صحية سابقة
     // API key is set in STATE.food.apiKey — no user UI needed
 
     /* ================================================================
+       MEDICAL TEST ANALYZER
+       ================================================================ */
+    async function getMedicalTestRecsFromAI(base64Image, apiKey) {
+      const promptText = `يرجى قراءة وتحليل صورة التحليل الطبي المرفقة، ثم تقديم استجابة بصيغة JSON صالحة 100% تحتوي على الحقول التالية بالضبط:
+{
+  "badge": "عنوان قصير لنوع الفحص أو التحليل المكتشف (مثال: صورة دم كاملة CBC، وظائف كبد، إلخ)",
+  "status": "طبيعي أو غير طبيعي / يحتاج متابعة أو مراجعة طبية عاجلة",
+  "statusClass": "green (للطبيعي)، orange (للمتوسط/متابعة)، red (للحالات غير الطبيعية/طارئة) - اختر واحدة فقط تطابق الحالة",
+  "analysis": "شرح تفصيلي، علمي ومبسط باللغة العربية الفصحى للنتائج والقيم الواردة في التحليل وتفسيرها بلغة واضحة للمريض.",
+  "advices": [
+    {
+      "title": "عنوان النصيحة 1",
+      "desc": "شرح النصيحة 1 بالتفصيل ومبرراتها الطبية بأسلوب هادئ وواضح"
+    },
+    {
+      "title": "عنوان النصيحة 2",
+      "desc": "شرح النصيحة 2 بالتفصيل ومبرراتها الطبية بأسلوب هادئ وواضح"
+    },
+    {
+      "title": "عنوان النصيحة 3",
+      "desc": "شرح النصيحة 3 بالتفصيل ومبرراتها الطبية بأسلوب هادئ وواضح"
+    }
+  ]
+}`;
+
+      const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${apiKey}`,
+        },
+        body: JSON.stringify({
+          model: 'llama-3.2-11b-vision-preview',
+          temperature: 0.3,
+          max_tokens: 1500,
+          messages: [
+            {
+              role: 'system',
+              content: 'أنت أخصائي تحاليل طبية خبير واستشاري سريري. أجب دائماً بـ JSON فقط متطابق مع الهيكل المطلوب دون أي علامات markdown أو نصوص خارج الهيكل.'
+            },
+            {
+              role: 'user',
+              content: [
+                {
+                  type: 'text',
+                  text: promptText
+                },
+                {
+                  type: 'image_url',
+                  image_url: {
+                    url: base64Image
+                  }
+                }
+              ]
+            }
+          ]
+        })
+      });
+
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        const msg = err.error?.message || 'فشل الاتصال بخدمة التحليل';
+        throw new Error(msg);
+      }
+
+      const data = await res.json();
+      const raw = data.choices?.[0]?.message?.content;
+      if (!raw) throw new Error('لم يرد خادم الذكاء الاصطناعي بأي نتائج');
+      
+      let clean = raw.replace(/```json|```/g, '').trim();
+      const startIdx = clean.indexOf('{');
+      const endIdx = clean.lastIndexOf('}');
+      if (startIdx !== -1 && endIdx !== -1) {
+        clean = clean.substring(startIdx, endIdx + 1);
+      }
+      return JSON.parse(clean);
+    }
+
+    const uploadZone = document.getElementById('medicalTestUploadZone');
+    const medicalInput = document.getElementById('medicalTestInput');
+    const previewContainer = document.getElementById('medicalTestPreviewContainer');
+    const previewImg = document.getElementById('medicalTestPreviewImage');
+    const clearImageBtn = document.getElementById('medicalTestClearBtn');
+    const analyzeBtn = document.getElementById('medicalTestAnalyzeBtn');
+    const uploadBtn = document.getElementById('medicalTestUploadBtn');
+
+    if (uploadBtn) {
+      uploadBtn.addEventListener('click', () => medicalInput.click());
+    }
+
+    if (uploadZone) {
+      uploadZone.addEventListener('click', () => medicalInput.click());
+
+      uploadZone.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        uploadZone.classList.add('dragover');
+      });
+
+      uploadZone.addEventListener('dragleave', () => {
+        uploadZone.classList.remove('dragover');
+      });
+
+      uploadZone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        uploadZone.classList.remove('dragover');
+        if (e.dataTransfer.files.length > 0) {
+          handleMedicalImageSelect(e.dataTransfer.files[0]);
+        }
+      });
+    }
+
+    if (medicalInput) {
+      medicalInput.addEventListener('change', (e) => {
+        if (e.target.files.length > 0) {
+          handleMedicalImageSelect(e.target.files[0]);
+        }
+      });
+    }
+
+    if (clearImageBtn) {
+      clearImageBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        resetMedicalTestImage();
+      });
+    }
+
+    function handleMedicalImageSelect(file) {
+      if (!file) return;
+      if (file.size > 5 * 1024 * 1024) {
+        alert('حجم الملف كبير جداً. الحد الأقصى المسموح به هو 5 ميجابايت.');
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = () => {
+        STATE.medicalTest.selectedImage = reader.result;
+        previewImg.src = reader.result;
+        previewContainer.style.display = '';
+        uploadZone.style.display = 'none';
+        analyzeBtn.disabled = false;
+        if (clearImageBtn) clearImageBtn.style.display = 'inline-flex';
+        if (uploadBtn) uploadBtn.style.display = 'none';
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function resetMedicalTestImage() {
+      STATE.medicalTest.selectedImage = null;
+      previewImg.src = '';
+      previewContainer.style.display = 'none';
+      uploadZone.style.display = '';
+      analyzeBtn.disabled = true;
+      medicalInput.value = '';
+      if (clearImageBtn) clearImageBtn.style.display = 'none';
+      if (uploadBtn) uploadBtn.style.display = 'inline-flex';
+    }
+
+    const analyzeBtnEl = document.getElementById('medicalTestAnalyzeBtn');
+    if (analyzeBtnEl) {
+      analyzeBtnEl.addEventListener('click', async () => {
+        if (!STATE.medicalTest.selectedImage) {
+          alert('يرجى تحميل صورة التحليل أولاً.');
+          return;
+        }
+
+        const apiKey = STATE.medicalTest.apiKey;
+        if (!apiKey) {
+          alert('عذراً، لم يتم العثور على مفتاح Groq API لتشغيل التحليل بالذكاء الاصطناعي.');
+          return;
+        }
+
+        const loadingEl = document.getElementById('medicalTestLoading');
+        const resultsEl = document.getElementById('medicalTestResults');
+        const uploaderEl = document.getElementById('medicalTestUploader');
+        const errorEl = document.getElementById('medicalTestError');
+        const errorMsgEl = document.getElementById('medicalTestErrorMsg');
+
+        uploaderEl.style.display = 'none';
+        resultsEl.style.display = 'none';
+        errorEl.style.display = 'none';
+        loadingEl.style.display = '';
+
+        try {
+          const resultData = await getMedicalTestRecsFromAI(STATE.medicalTest.selectedImage, apiKey);
+
+          document.getElementById('medicalTestDetectedName').textContent = resultData.badge || 'غير محدد';
+
+          const statusBadge = document.getElementById('medicalTestStatusBadge');
+          statusBadge.textContent = resultData.status || 'مكتمل';
+          statusBadge.className = `medical-status-badge ${resultData.statusClass || 'green'}`;
+
+          document.getElementById('medicalTestAnalysisText').textContent = resultData.analysis || 'لا يوجد تحليل مفصل.';
+
+          const advicesGrid = document.getElementById('medicalTestAdvicesGrid');
+          advicesGrid.innerHTML = (resultData.advices || []).map(adv => `
+            <div class="advice-card">
+              <div class="advice-card-icon"><i class="ti ti-bulb"></i></div>
+              <div class="advice-card-content">
+                <h4>${adv.title}</h4>
+                <p>${adv.desc}</p>
+              </div>
+            </div>
+          `).join('');
+
+          resultsEl.style.display = '';
+        } catch (error) {
+          console.error("Analysis error:", error);
+          errorMsgEl.textContent = `فشل تحليل المستند الطبي: ${error.message || 'خطأ غير معروف'}. يرجى التأكد من جودة الصورة والمحاولة مرة أخرى.`;
+          errorEl.style.display = '';
+          uploaderEl.style.display = '';
+        } finally {
+          loadingEl.style.display = 'none';
+        }
+      });
+    }
+
+    const resetBtnEl = document.getElementById('medicalTestResetBtn');
+    if (resetBtnEl) {
+      resetBtnEl.addEventListener('click', () => {
+        document.getElementById('medicalTestResults').style.display = 'none';
+        document.getElementById('medicalTestError').style.display = 'none';
+        resetMedicalTestImage();
+        document.getElementById('medicalTestUploader').style.display = '';
+      });
+    }
+
+    /* ================================================================
        AUTH
        ================================================================ */
     document.querySelectorAll('.auth-tab').forEach(tab => {
@@ -6502,26 +7124,84 @@ ${hasContext ? userContext : 'لا تتوفر معلومات صحية سابقة
       }
     });
 
+    // Live validation for password constraints
+    const regPassInput = document.getElementById('regPass');
+    const regConfirmPassInput = document.getElementById('regConfirmPass');
+
+    function checkPasswordConstraints() {
+      const p = regPassInput.value;
+      const constraints = {
+        conLength: p.length >= 8,
+        conUpper: /[A-Z]/.test(p),
+        conLower: /[a-z]/.test(p),
+        conDigit: /\d/.test(p),
+        conSpecial: /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(p)
+      };
+
+      for (const [id, isValid] of Object.entries(constraints)) {
+        const el = document.getElementById(id);
+        if (el) {
+          const iconClass = isValid ? 'ti-circle-check' : 'ti-circle-x';
+          const text = id === 'conLength' ? ' 8 أحرف على الأقل'
+            : id === 'conUpper' ? ' حرف كبير واحد على الأقل (A-Z)'
+              : id === 'conLower' ? ' حرف صغير واحد على الأقل (a-z)'
+                : id === 'conDigit' ? ' رقم واحد على الأقل (0-9)'
+                  : ' رمز خاص واحد على الأقل (!@#$%^&...)';
+          el.className = `constraint-item ${isValid ? 'valid' : 'invalid'}`;
+          el.innerHTML = `<i class="ti ${iconClass}"></i>${text}`;
+        }
+      }
+      return Object.values(constraints).every(Boolean);
+    }
+
+    if (regPassInput) {
+      regPassInput.addEventListener('input', checkPasswordConstraints);
+    }
+
+    // Toggle password visibility
+    function setupPasswordToggle(inputId, toggleId) {
+      const input = document.getElementById(inputId);
+      const toggle = document.getElementById(toggleId);
+      if (input && toggle) {
+        toggle.addEventListener('click', () => {
+          const isPass = input.type === 'password';
+          input.type = isPass ? 'text' : 'password';
+          const icon = toggle.querySelector('i');
+          if (icon) {
+            icon.className = isPass ? 'ti ti-eye-off' : 'ti ti-eye';
+          }
+        });
+      }
+    }
+
+    setupPasswordToggle('regPass', 'toggleRegPass');
+    setupPasswordToggle('regConfirmPass', 'toggleRegConfirmPass');
+
     document.getElementById('registerForm').addEventListener('submit', async e => {
       e.preventDefault();
       const u = document.getElementById('regUser').value.trim();
       const p = document.getElementById('regPass').value;
+      const cp = document.getElementById('regConfirmPass').value;
       const n = document.getElementById('regName').value.trim();
       const a = document.getElementById('regAge').value;
       const g = document.getElementById('regGender').value;
       const mob = document.getElementById('regMobile').value.trim();
       const h = document.getElementById('regHistory').value.trim();
 
-      if (!u || !p || !n || !a || !g || !mob) {
-        alert('يرجى ملء جميع الحقول المطلوبة بما في ذلك رقم الموبايل.');
+      if (!u || !p || !cp || !n || !a || !g || !mob) {
+        alert('يرجى ملء جميع الحقول المطلوبة بما في ذلك رقم الموبايل وتأكيد كلمة المرور.');
         return;
       }
       if (u.length < 4) {
         alert('يجب أن يتكون اسم المستخدم من 4 أحرف على الأقل.');
         return;
       }
-      if (p.length < 6) {
-        alert('يجب أن تتكون كلمة المرور من 6 أحرف على الأقل.');
+      if (!checkPasswordConstraints()) {
+        alert('يجب أن تفي كلمة المرور بجميع الشروط الأمنية المحددة.');
+        return;
+      }
+      if (p !== cp) {
+        alert('كلمتا المرور غير متطابقتين.');
         return;
       }
       const ageNum = parseInt(a, 10);
@@ -6957,6 +7637,7 @@ ${hasContext ? userContext : 'لا تتوفر معلومات صحية سابقة
         const data = await res.json();
         if (data.key) {
           STATE.food.apiKey = data.key;
+          STATE.medicalTest.apiKey = data.key;
         }
       } catch (e) {
         console.error("Failed to load Groq API key from server", e);

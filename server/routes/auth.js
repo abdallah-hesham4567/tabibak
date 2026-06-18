@@ -11,6 +11,11 @@ router.post('/register', async (req, res) => {
     if (!username || !password || !name) {
       return res.status(400).json({ error: 'Username, password, and name are required' });
     }
+    // Strong password regex check
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]).{8,}$/;
+    if (!passwordRegex.test(password)) {
+      return res.status(400).json({ error: 'Password must be at least 8 characters long, contain at least one lowercase letter, one uppercase letter, one number, and one special character.' });
+    }
     const db = await getDb();
     const existing = await db.execute({ sql: 'SELECT username FROM users WHERE username = ?', args: [username] });
     if (existing.rows.length > 0) {
