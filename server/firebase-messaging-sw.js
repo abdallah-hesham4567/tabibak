@@ -16,9 +16,9 @@ firebase.initializeApp(firebaseConfig);
 const messaging = firebase.messaging();
 
 messaging.onBackgroundMessage((payload) => {
-  const notificationTitle = payload.notification?.title || 'تذكير بموعد الدواء';
+  const notificationTitle = payload.data?.title || 'تذكير بموعد الدواء';
   const notificationOptions = {
-    body: payload.notification?.body || 'حان الوقت لتناول جرعتك الدوائية المجدولة.',
+    body: payload.data?.body || 'حان الوقت لتناول جرعتك الدوائية المجدولة.',
     icon: 'https://cdn-icons-png.flaticon.com/512/1930/1930985.png',
     badge: 'https://cdn-icons-png.flaticon.com/512/1930/1930985.png',
     tag: payload.data?.medicationId || 'medication-reminder',

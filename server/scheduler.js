@@ -73,11 +73,9 @@ function startScheduler() {
           try {
             await admin.messaging().send({
               token: row.fcmToken,
-              notification: {
+              data: {
                 title: 'تذكير بالدواء',
                 body: `حان موعد ${row.medName} (${row.medDose}) بعد 5 دقائق`,
-              },
-              data: {
                 medicationId: row.medicationId,
                 doseTime: row.doseTime,
                 type: 'medication_reminder',

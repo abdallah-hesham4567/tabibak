@@ -5514,9 +5514,9 @@ c-5.708,0-10.798-2.287-14.546-6.011c-0.87-0.895-1.697-1.857-2.407-2.904c-2.262-3
         });
 
         fcmMessaging.onMessage((payload) => {
-          if (payload.notification) {
-            new Notification(payload.notification.title || 'طبيبك', {
-              body: payload.notification.body || '',
+          if (payload.data) {
+            new Notification(payload.data.title || 'طبيبك', {
+              body: payload.data.body || '',
               icon: 'https://cdn-icons-png.flaticon.com/512/1930/1930985.png',
             });
           }
