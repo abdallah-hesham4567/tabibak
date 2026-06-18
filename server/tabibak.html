@@ -5070,11 +5070,7 @@ c-5.708,0-10.798-2.287-14.546-6.011c-0.87-0.895-1.697-1.857-2.407-2.904c-2.262-3
     }
 
     function roundTo5Min(timeStr) {
-      const [h, m] = timeStr.split(':').map(Number);
-      const rounded = Math.round(m / 5) * 5;
-      const finalM = rounded >= 60 ? 0 : rounded;
-      const finalH = rounded >= 60 ? (h + 1) % 24 : h;
-      return `${String(finalH).padStart(2, '0')}:${String(finalM).padStart(2, '0')}`;
+      return timeStr;
     }
 
     function renderMedsScreen() {
@@ -5277,7 +5273,7 @@ c-5.708,0-10.798-2.287-14.546-6.011c-0.87-0.895-1.697-1.857-2.407-2.904c-2.262-3
         row.className = 'dose-slot-row';
         row.innerHTML = `
           <span class="dose-slot-label">الجرعة ${i + 1}</span>
-          <input type="time" id="doseTime_${i}" step="300" value="${getDefaultDoseTime(i, count)}" />
+          <input type="time" id="doseTime_${i}" step="60" value="${getDefaultDoseTime(i, count)}" />
         `;
         container.appendChild(row);
       }
