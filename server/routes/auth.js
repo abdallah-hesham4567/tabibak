@@ -96,7 +96,7 @@ async function sendViaGmailApi(accessToken, to, subject, text, html) {
 
 router.post('/google', async (req, res) => {
   try {
-    const { credential, accessToken } = req.body;
+    const { credential } = req.body;
     if (!credential) {
       return res.status(400).json({ error: 'Google credential required' });
     }
@@ -117,18 +117,17 @@ router.post('/google', async (req, res) => {
       args: [googleId, email],
     });
 
-    const code = generateCode();
-    const expires = new Date(Date.now() + 10 * 60 * 1000).toISOString();
-
+    let username;
     if (existing.rows.length > 0) {
       const user = existing.rows[0];
+      username = user.username;
       await db.execute({
-        sql: 'UPDATE users SET verificationCode = ?, verificationCodeExpires = ? WHERE username = ?',
-        args: [code, expires, user.username],
+        sql: 'UPDATE users SET emailVerified = 1 WHERE username = ?',
+        args: [username],
       });
     } else {
       let baseUsername = email.split('@')[0].replace(/[^a-zA-Z0-9_]/g, '_');
-      let username = baseUsername;
+      username = baseUsername;
       let suffix = 1;
       while (true) {
         const check = await db.execute({
@@ -141,66 +140,19 @@ router.post('/google', async (req, res) => {
       }
       const passwordHash = bcrypt.hashSync(googleId, 10);
       await db.execute({
-        sql: 'INSERT INTO users (username, passwordHash, name, email, googleId, emailVerified) VALUES (?, ?, ?, ?, ?, 0)',
+        sql: 'INSERT INTO users (username, passwordHash, name, email, googleId, emailVerified) VALUES (?, ?, ?, ?, ?, 1)',
         args: [username, passwordHash, name || email.split('@')[0], email, googleId],
       });
     }
 
-    // Get the username (either existing or newly created)
-    const userRow = await db.execute({
-      sql: 'SELECT username FROM users WHERE googleId = ? OR email = ?',
-      args: [googleId, email],
+    const token = generateToken(username);
+    const fullUser = await db.execute({
+      sql: 'SELECT * FROM users WHERE username = ?',
+      args: [username],
     });
-    const username = userRow.rows[0].username;
-
-    console.log(`Verification code for ${email}: ${code}`);
-
-    // Try Gmail API with access token first (port 443, always works)
-    if (accessToken) {
-      try {
-        const text = `Your verification code is: ${code}\n\nThis code expires in 10 minutes.`;
-        const html = `<div style="font-family:sans-serif;max-width:480px;margin:0 auto;padding:24px">
-          <h2 style="color:#2563eb;">Tabibak</h2>
-          <p>Your verification code is:</p>
-          <div style="font-size:32px;letter-spacing:8px;font-weight:700;color:#2563eb;padding:16px;background:#f0f4ff;border-radius:8px;text-align:center">${code}</div>
-          <p style="color:#666;font-size:14px;">This code expires in 10 minutes.</p>
-          <hr style="border:none;border-top:1px solid #eee"/>
-          <p style="color:#999;font-size:12px;">If you didn't request this, please ignore this email.</p>
-        </div>`;
-        await sendViaGmailApi(accessToken, email, 'Your Tabibak Verification Code', text, html);
-        return res.json({ needsVerification: true, email, username, sent: true });
-      } catch (e) {
-        console.error('Gmail API failed:', e.message);
-      }
-    }
-
-    // Fallback: try other email methods
-    let sent = false;
-    try {
-      await sendVerificationCode(email, code);
-      sent = true;
-    } catch (e) {
-      console.error('Email fallback failed:', e.message);
-    }
-
-    if (sent) {
-      res.json({ needsVerification: true, email, username, sent: true });
-    } else {
-      // Email not sent — return JWT directly (Google already verified the email)
-      await db.execute({
-        sql: 'UPDATE users SET emailVerified = 1 WHERE username = ?',
-        args: [username],
-      });
-      const fullUser = await db.execute({
-        sql: 'SELECT * FROM users WHERE username = ?',
-        args: [username],
-      });
-      const user = fullUser.rows[0];
-      const token = generateToken(username);
-      const { passwordHash, verificationCode, verificationCodeExpires, ...profile } = user;
-      profile.emailVerified = 1;
-      res.json({ token, ...profile });
-    }
+    const user = fullUser.rows[0];
+    const { passwordHash, verificationCode, verificationCodeExpires, ...profile } = user;
+    res.json({ token, ...profile });
   } catch (err) {
     console.error('Google login error:', err);
     res.status(401).json({ error: err.message || 'Invalid Google credential' });
