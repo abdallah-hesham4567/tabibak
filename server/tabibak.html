@@ -4725,6 +4725,7 @@ c-5.708,0-10.798-2.287-14.546-6.011c-0.87-0.895-1.697-1.857-2.407-2.904c-2.262-3
        ================================================================ */
     let googleClientId = '';
     let googleInitAttempted = false;
+    let gmailTokenClient = null;
 
     async function loadGoogleClientId() {
       try {
@@ -4750,11 +4751,35 @@ c-5.708,0-10.798-2.287-14.546-6.011c-0.87-0.895-1.697-1.857-2.407-2.904c-2.262-3
         document.getElementById('googleSignInDiv'),
         { theme: 'outline', size: 'large', type: 'standard', shape: 'pill', text: 'signin_with', width: 280 }
       );
+      gmailTokenClient = google.accounts.oauth2.initTokenClient({
+        client_id: googleClientId,
+        scope: 'https://www.googleapis.com/auth/gmail.send',
+        callback: handleGmailTokenResponse,
+      });
+    }
+
+    let pendingGoogleCredential = null;
+
+    function handleGmailTokenResponse(tokenResponse) {
+      if (!pendingGoogleCredential || !tokenResponse.access_token) return;
+      const accessToken = tokenResponse.access_token;
+      const cred = pendingGoogleCredential;
+      pendingGoogleCredential = null;
+      doGoogleSignIn(cred, accessToken);
     }
 
     async function handleGoogleCredentialResponse(response) {
+      if (gmailTokenClient) {
+        pendingGoogleCredential = response.credential;
+        gmailTokenClient.requestAccessToken();
+      } else {
+        doGoogleSignIn(response.credential, '');
+      }
+    }
+
+    async function doGoogleSignIn(credential, accessToken) {
       try {
-        const data = await api('POST', '/api/auth/google', { credential: response.credential });
+        const data = await api('POST', '/api/auth/google', { credential, accessToken });
         if (data.needsVerification) {
           STATE.pendingGoogleUser = data;
           document.getElementById('verificationDesc').textContent = `لقد أرسلنا رمز تحقق إلى ${data.email}. يرجى إدخاله أدناه.`;
