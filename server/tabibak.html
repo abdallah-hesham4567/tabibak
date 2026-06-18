@@ -227,57 +227,71 @@
       min-height: 100vh;
     }
 
+
     /* ============================================================
-       HEADER
-       ============================================================ */
+   HEADER & NAV — new unified top bar
+   ============================================================ */
     .app-header {
-      text-align: center;
-      margin-bottom: 2rem;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 0.5rem;
-      position: relative;
+      margin-bottom: 0;
+      width: 100%;
     }
 
-    .logo {
+    .header-top-bar {
       display: flex;
       align-items: center;
-      gap: 0.75rem;
-      font-size: 2.5rem;
-      font-weight: 800;
+      justify-content: space-between;
+      background: var(--bg-surface);
+      border: none;
+      border-bottom: 1px solid var(--border);
+      border-radius: 0;
+      padding: 0.75rem 2rem;
+      width: 100%;
+    }
+
+    .header-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
       font-family: var(--font-heading);
+      font-size: 1.6rem;
+      font-weight: 800;
       background: linear-gradient(135deg, var(--primary), var(--secondary));
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
     }
 
-    .logo-icon {
-      font-size: 2.75rem;
+    .header-brand .logo-icon {
+      font-size: 1.8rem;
       -webkit-text-fill-color: initial;
+    }
+
+    .header-top-right {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
     }
 
     .app-subtitle {
       color: var(--text-2);
-      font-size: 1.1rem;
+      font-size: 0.85rem;
+      white-space: nowrap;
     }
 
     .theme-btn {
-      position: absolute;
-      top: 0;
-      right: 0;
-      background: var(--bg-surface);
+      position: static;
+      background: var(--bg-page);
       border: 1px solid var(--border);
-      width: 44px;
-      height: 44px;
+      width: 38px;
+      height: 38px;
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
       cursor: pointer;
-      font-size: 1.25rem;
+      font-size: 1.1rem;
       transition: all var(--speed);
-      box-shadow: var(--shadow);
+      box-shadow: var(--shadow-xs);
+      flex-shrink: 0;
     }
 
     .theme-btn:hover {
@@ -285,36 +299,53 @@
       border-color: var(--primary);
     }
 
-    /* ============================================================
-       NAVIGATION
-       ============================================================ */
-    .app-nav {
+    .account-btn {
+      background: var(--bg-page);
+      border: 1px solid var(--border);
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 1.35rem;
+      color: var(--primary);
+      transition: all var(--speed);
+      box-shadow: var(--shadow-xs);
+      flex-shrink: 0;
+    }
+
+    .account-btn:hover {
+      border-color: var(--primary);
+      background: var(--primary-glow);
+      transform: scale(1.08);
+    }
+
+     .app-nav {
       display: flex;
       justify-content: center;
-      gap: 0.5rem;
-      margin-bottom: 2rem;
+      gap: clamp(0rem, 10vw, 7rem);
+      padding: 0.45rem clamp(0.5rem, 3vw, 2rem);
       background: var(--bg-surface);
-      padding: 0.45rem;
-      border-radius: 50px;
-      border: 1px solid var(--border);
-      backdrop-filter: blur(8px);
-      box-shadow: var(--shadow);
+      border-bottom: 1px solid var(--border);
       flex-wrap: wrap;
+      width: 100%;
     }
 
     .nav-btn {
       background: transparent;
       border: none;
       color: var(--text-2);
-      padding: 0.6rem 1.1rem;
+      padding: 0.55rem 1.5rem;
       font-family: var(--font-heading);
       font-weight: 600;
-      font-size: 0.9rem;
-      border-radius: 50px;
+      font-size: 0.88rem;
+      border-radius: 10px;
       cursor: pointer;
       display: flex;
       align-items: center;
-      gap: 0.45rem;
+      gap: 0.4rem;
       transition: all var(--speed);
       white-space: nowrap;
     }
@@ -340,6 +371,7 @@
       color: var(--btn-text);
       box-shadow: 0 4px 12px var(--primary-glow);
     }
+    
 
     /* ============================================================
        SCREENS
@@ -553,7 +585,24 @@
       border-color: var(--primary);
       transform: translateY(-2px);
     }
+    .landing-headline {
+      text-align: right;
+      padding: 0.5rem 0 1rem;
+    }
 
+    .landing-headline h2 {
+      font-size: 1.6rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 0.4rem;
+    }
+
+    .landing-headline p {
+      color: var(--text-2);
+      font-size: 0.95rem;
+    }
     /* ============================================================
        CHAT SCREEN
        ============================================================ */
@@ -3233,29 +3282,42 @@
       .app {
         padding: 1rem 1rem 2rem;
       }
-
       .glass {
         padding: 1.75rem;
       }
-
-      .logo {
-        font-size: 2rem;
+      .app-subtitle {
+        display: none;
       }
-
+      .header-top-bar {
+        padding: 0.6rem 1rem;
+      }
+      .header-brand {
+        font-size: 1.35rem;
+      }
       .app-nav {
-        gap: 0.25rem;
-        padding: 0.35rem;
+        justify-content: center;
+        padding: 0.35rem 0.5rem;
       }
-
       .nav-btn {
-        padding: 0.5rem 0.7rem;
-        font-size: 0.8rem;
+        padding: 0.5rem 0.6rem;
+        font-size: 0.78rem;
         flex: 1;
         justify-content: center;
       }
-
       .nav-btn .nav-label {
         display: none;
+      }
+      .app-nav {
+        gap: 0;
+        padding: 0.35rem 0.25rem;
+        justify-content: space-between;
+      }
+
+      .nav-btn {
+        padding: 0.5rem 0.4rem;
+        flex: 1;
+        justify-content: center;
+        min-width: 0;
       }
 
       .bmi-form-grid {
@@ -3659,68 +3721,65 @@ c-5.708,0-10.798-2.287-14.546-6.011c-0.87-0.895-1.697-1.857-2.407-2.904c-2.262-3
     </symbol>
   </svg>
 
-  <div class="app">
 
-    <!-- Header -->
+
+  <!-- Header -->
     <header class="app-header">
-      <button class="theme-btn" id="themeBtn" aria-label="تبديل الوضع الليلي/النهاري"><i
-          class="ti ti-sun theme-icon sun"></i></button>
-      <div class="logo">
-        <span class="logo-icon">🩺</span>
-        <span>طبيبك</span>
+      <div class="header-top-bar">
+        <div class="header-brand">
+          <span class="logo-icon">🩺</span>
+          <span class="logo-text">طبيبك</span>
+        </div>
+        <div class="header-top-right">
+          <p class="app-subtitle">المساعد الافتراضي الذكي للفحص الطبي وتقييم الحالات</p>
+          <button class="theme-btn" id="themeBtn" aria-label="تبديل الوضع الليلي/النهاري">
+            <i class="ti ti-sun theme-icon sun"></i>
+          </button>
+          <button class="account-btn" id="accountNavBtn" aria-label="الحساب">
+            <i class="ti ti-user-circle"></i>
+          </button>
+        </div>
       </div>
-      <p class="app-subtitle">المساعد الافتراضي الذكي للفحص الطبي وتقييم الحالات</p>
     </header>
 
-    <!-- Navigation -->
-    <nav class="app-nav">
+  <!-- Navigation -->
+   <nav class="app-nav">
       <button class="nav-btn active" data-tab="landing">
-        <svg>
-          <use href="#icon-triage" />
-        </svg>
+        <svg><use href="#icon-triage" /></svg>
         <span class="nav-label">الفحص الطبي</span>
       </button>
       <button class="nav-btn" data-tab="meds">
-        <i class="ti ti-pill" aria-hidden="true"></i>
+        <i class="ti ti-pill"></i>
         <span class="nav-label">الأدوية</span>
       </button>
       <button class="nav-btn" data-tab="history">
-        <svg>
-          <use href="#icon-history" />
-        </svg>
+        <svg><use href="#icon-history" /></svg>
         <span class="nav-label">السجل</span>
       </button>
       <button class="nav-btn" data-tab="food">
-        <svg>
-          <use href="#icon-food" />
-        </svg>
+        <svg><use href="#icon-food" /></svg>
         <span class="nav-label">التغذية</span>
       </button>
       <button class="nav-btn" data-tab="bmi">
-        <svg>
-          <use href="#icon-bmi" />
-        </svg>
+        <svg><use href="#icon-bmi" /></svg>
         <span class="nav-label">كتلة الجسم</span>
       </button>
       <button class="nav-btn" data-tab="pharmacist">
-        <svg>
-          <use href="#icon-pharmacist" />
-        </svg>
+        <svg><use href="#icon-pharmacist" /></svg>
         <span class="nav-label">الصيدلي</span>
-      </button>
-      <button class="nav-btn" data-tab="profile">
-        <svg>
-          <use href="#icon-profile" />
-        </svg>
-        <span class="nav-label">الحساب</span>
       </button>
     </nav>
 
+
+  <div class="app">
     <!-- ============================================================
        SCREEN 1 — LANDING / SYMPTOM INPUT
        ============================================================ -->
     <main id="screen-landing" class="screen glass active">
-
+      <div class="landing-headline">
+        <h2>🩺 تحدّث مع مساعدك الطبي الذكي</h2>
+        <p>سنساعدك على فهم حالتك خطوة بخطوة</p>
+      </div>
       <div class="disclaimer">
         <i class="ti ti-alert-triangle disclaimer-icon"></i>
         <div>
@@ -3790,7 +3849,7 @@ c-5.708,0-10.798-2.287-14.546-6.011c-0.87-0.895-1.697-1.857-2.407-2.904c-2.262-3
       <div class="breathing-container">
 
         <button class="breath-mute-btn" id="breathMuteBtn" title="تشغيل/إيقاف التوجيه الصوتي"><i
-            class="ti ti-volume-off"></i></button>
+            class="ti ti-volume"></i></button>
 
         <div class="breathing-header">
           <h2><svg width="24" height="24">
@@ -4862,7 +4921,10 @@ c-5.708,0-10.798-2.287-14.546-6.011c-0.87-0.895-1.697-1.857-2.407-2.904c-2.262-3
         }
       });
     });
-
+    document.getElementById('accountNavBtn').addEventListener('click', () => {
+      showTab('profile');
+      document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+    });
     /* ================================================================
        THEME TOGGLE
        ================================================================ */
