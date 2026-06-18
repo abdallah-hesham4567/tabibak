@@ -3,8 +3,6 @@ const bcrypt = require('bcryptjs');
 const { OAuth2Client } = require('google-auth-library');
 const { getDb } = require('../db');
 const { generateToken, authenticateToken } = require('../auth');
-const { sendVerificationCode, generateCode } = require('../email');
-
 const router = express.Router();
 const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
@@ -59,40 +57,6 @@ router.post('/login', async (req, res) => {
     res.status(500).json({ error: 'Internal server error' });
   }
 });
-
-async function sendViaGmailApi(accessToken, to, subject, text, html) {
-  const boundary = '----=_Part_' + Date.now();
-  const raw = [
-    `From: Tabibak <${to}>`,
-    `To: ${to}`,
-    `Subject: ${subject}`,
-    `MIME-Version: 1.0`,
-    `Content-Type: multipart/alternative; boundary="${boundary}"`,
-    '',
-    `--${boundary}`,
-    `Content-Type: text/plain; charset="UTF-8"`,
-    '',
-    text,
-    `--${boundary}`,
-    `Content-Type: text/html; charset="UTF-8"`,
-    '',
-    html,
-    `--${boundary}--`,
-  ].join('\r\n');
-  const encoded = Buffer.from(raw).toString('base64url');
-  const res = await fetch('https://gmail.googleapis.com/gmail/v1/users/me/messages/send', {
-    method: 'POST',
-    headers: {
-      'Authorization': 'Bearer ' + accessToken,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ raw: encoded }),
-  });
-  if (!res.ok) {
-    const errText = await res.text();
-    throw new Error('Gmail API error: ' + errText);
-  }
-}
 
 router.post('/google', async (req, res) => {
   try {
