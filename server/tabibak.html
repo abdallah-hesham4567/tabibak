@@ -3460,7 +3460,7 @@
       <div class="welcome-logo-container">
         <div class="welcome-logo-glow"></div>
         <div class="welcome-logo-icon">
-          <i class="ti ti-activity"></i>
+          <i class="ti ti-stethoscope"></i>
         </div>
       </div>
       <div id="welcomeTextContainer" class="welcome-text-container"></div>
@@ -3769,9 +3769,6 @@ c-5.708,0-10.798-2.287-14.546-6.011c-0.87-0.895-1.697-1.857-2.407-2.904c-2.262-3
           <p style="font-size:0.85rem;color:var(--text-2);">لقد أبلغت عن أعراض قد ترتبط بحالات طارئة عالية الخطورة. يرجى
             الاتصال بالطوارئ فوراً إذا كنت تشعر بالخطر.</p>
         </div>
-        <button class="btn btn-secondary"
-          style="color:var(--red);border-color:var(--red-border);padding:0.5rem 1rem;font-size:0.85rem;">دليل
-          الطوارئ</button>
       </div>
 
       <div class="chat-log" id="chatLog"></div>
@@ -5859,7 +5856,6 @@ c-5.708,0-10.798-2.287-14.546-6.011c-0.87-0.895-1.697-1.857-2.407-2.904c-2.262-3
       warmUpAudio();
       document.getElementById('breathStartWrap').style.display = 'none';
       document.getElementById('circleWrapperEl').style.display = '';
-      speakPhase('تقييم التنفس. استعد.');
       setTimeout(runBreathingCycle, 1500);
     });
     function runBreathingCycle() {
@@ -6431,7 +6427,12 @@ ${hasContext ? userContext : 'لا تتوفر معلومات صحية سابقة
         STATE.currentUser = data;
         STATE.sessions = await api('GET', '/api/sessions');
         try { STATE.meds.list = await api('GET', '/api/medications'); } catch (e) { STATE.meds.list = []; }
-        if (Notification.permission === 'granted') { startReminderScheduler(); requestFcmToken(); }
+        if (Notification.permission === 'granted') {
+          startReminderScheduler();
+          requestFcmToken();
+        } else if (Notification.permission !== 'denied') {
+          showNotificationModal();
+        }
         refreshProfileScreen();
         showTab('profile');
       } catch (err) {
@@ -6549,7 +6550,7 @@ ${hasContext ? userContext : 'لا تتوفر معلومات صحية سابقة
       }
 
       try {
-        await api('PUT', '/api/auth/profile', { name: nameVal, age: ageVal, gender: genderVal, mobile: mobileVal, history: historyVal });
+        await api('PUT', '/api/auth/profile', { name: nameVal, age: ageVal, gender: genderVal, mobile: mobileVal, history: historyVal, timezoneOffset: -new Date().getTimezoneOffset() / 60 });
         STATE.currentUser = await api('GET', '/api/auth/profile');
         document.getElementById('editProfileForm').style.display = 'none';
         refreshProfileScreen();
@@ -6747,7 +6748,23 @@ ${hasContext ? userContext : 'لا تتوفر معلومات صحية سابقة
     const PHARMACY_PHONE_DEFAULT = '201009537600';
 
     function buildWaUrl(phone, message) {
-      const clean = phone.replace(/[\s\-\+\(\)]/g, '');
+      let clean = phone.replace(/[\s\-\+\(\)]/g, '');
+      if (clean.startsWith('00')) {
+        clean = clean.slice(2);
+      }
+      if (clean.startsWith('01') && clean.length === 11) {
+        clean = '20' + clean.slice(1);
+      } else if (clean.startsWith('05') && clean.length === 10) {
+        clean = '966' + clean.slice(1);
+      } else if (clean.startsWith('0') && !clean.startsWith('00')) {
+        let countryCode = '20';
+        if (STATE.currentUser && STATE.currentUser.mobile) {
+          const userMobile = STATE.currentUser.mobile.replace(/[\s\-\+\(\)]/g, '');
+          if (userMobile.startsWith('966')) countryCode = '966';
+          else if (userMobile.startsWith('20')) countryCode = '20';
+        }
+        clean = countryCode + clean.slice(1);
+      }
       return `https://wa.me/${clean}?text=${encodeURIComponent(message)}`;
     }
 
@@ -6810,8 +6827,11 @@ ${hasContext ? userContext : 'لا تتوفر معلومات صحية سابقة
     }
 
     function getPharmPhone() {
+      const el = document.getElementById('pharmPhone');
+      if (el && el.value.trim()) {
+        return el.value.trim();
+      }
       return localStorage.getItem('tabibak_pharm_phone')
-        || document.getElementById('pharmPhone').value.trim()
         || PHARMACY_PHONE_DEFAULT;
     }
 

@@ -78,8 +78,8 @@ router.put('/profile', authenticateToken, async (req, res) => {
     const { name, age, gender, mobile, history, timezoneOffset } = req.body;
     const db = await getDb();
     await db.execute({
-      sql: 'UPDATE users SET name = ?, age = ?, gender = ?, mobile = ?, history = ?, timezoneOffset = ? WHERE username = ?',
-      args: [name, age || null, gender || null, mobile || null, history || '', timezoneOffset ?? 0, req.user.username],
+      sql: 'UPDATE users SET name = ?, age = ?, gender = ?, mobile = ?, history = ?, timezoneOffset = COALESCE(?, timezoneOffset) WHERE username = ?',
+      args: [name, age || null, gender || null, mobile || null, history || '', timezoneOffset !== undefined ? timezoneOffset : null, req.user.username],
     });
     res.json({ message: 'Profile updated' });
   } catch (err) {
