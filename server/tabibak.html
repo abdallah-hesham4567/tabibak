@@ -7435,28 +7435,16 @@ ${hasContext ? userContext : 'لا تتوفر معلومات صحية سابقة
     /* ================================================================
        MEDICAL TEST ANALYZER
        ================================================================ */
-    async function getMedicalTestRecsFromAI(base64Image, apiKey) {
-      const promptText = `يرجى قراءة وتحليل صورة التحليل الطبي المرفقة، ثم تقديم استجابة بصيغة JSON صالحة 100% تحتوي على الحقول التالية بالضبط:
+    async function extractValuesFromImage(base64Image, apiKey) {
+      const extractionPrompt = `أنت قارئ تقارير طبية دقيق. مهمتك فقط قراءة واستخراج القيم من صورة التقرير الطبي بدقة تامة.
+أعد JSON array فقط (بدون markdown أو نصوص خارج الهيكل)، كل عنصر يحتوي على:
 {
-  "badge": "عنوان قصير لنوع الفحص أو التحليل المكتشف (مثال: صورة دم كاملة CBC، وظائف كبد، إلخ)",
-  "status": "طبيعي أو غير طبيعي / يحتاج متابعة أو مراجعة طبية عاجلة",
-  "statusClass": "green (للطبيعي)، orange (للمتوسط/متابعة)، red (للحالات غير الطبيعية/طارئة) - اختر واحدة فقط تطابق الحالة",
-  "analysis": "شرح تفصيلي، علمي ومبسط باللغة العربية الفصحى للنتائج والقيم الواردة في التحليل وتفسيرها بلغة واضحة للمريض.",
-  "advices": [
-    {
-      "title": "عنوان النصيحة 1",
-      "desc": "شرح النصيحة 1 بالتفصيل ومبرراتها الطبية بأسلوب هادئ وواضح"
-    },
-    {
-      "title": "عنوان النصيحة 2",
-      "desc": "شرح النصيحة 2 بالتفصيل ومبرراتها الطبية بأسلوب هادئ وواضح"
-    },
-    {
-      "title": "عنوان النصيحة 3",
-      "desc": "شرح النصيحة 3 بالتفصيل ومبرراتها الطبية بأسلوب هادئ وواضح"
-    }
-  ]
-}`;
+  "name": "اسم الاختبار",
+  "value": "القيمة الرقمية",
+  "unit": "وحدة القياس",
+  "normalRange": "النطاق الطبيعي"
+}
+اقرأ جميع القيم في جميع الجداول. لا تحلل النتائج. فقط استخرج.`;
 
       const fallbackModels = ['meta-llama/llama-4-scout-17b-16e-instruct'];
       let lastError;
@@ -7464,58 +7452,142 @@ ${hasContext ? userContext : 'لا تتوفر معلومات صحية سابقة
         try {
           const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
             method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${apiKey}`,
-            },
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKey}` },
             body: JSON.stringify({
-              model,
-              temperature: 0.3,
-              max_tokens: 1500,
-              messages: [
-                {
-                  role: 'user',
-                  content: [
-                    {
-                      type: 'text',
-                      text: 'أنت أخصائي تحاليل طبية خبير واستشاري سريري. أجب دائماً بـ JSON فقط متطابق مع الهيكل المطلوب دون أي علامات markdown أو نصوص خارج الهيكل.\n\n' + promptText
-                    },
-                    {
-                      type: 'image_url',
-                      image_url: {
-                        url: base64Image
-                  }
-                }
-              ]
+              model, temperature: 0.2, max_tokens: 2000,
+              messages: [{
+                role: 'user',
+                content: [
+                  { type: 'text', text: extractionPrompt },
+                  { type: 'image_url', image_url: { url: base64Image } }
+                ]
+              }]
+            })
+          });
+          if (!res.ok) {
+            const err = await res.json().catch(() => ({}));
+            const msg = err.error?.message || '';
+            if (msg.includes('decommissioned') || msg.includes('deprecated')) {
+              lastError = new Error(msg); continue;
             }
-          ]
+            throw new Error(msg || 'فشل استخراج القيم');
+          }
+          const data = await res.json();
+          const raw = data.choices?.[0]?.message?.content;
+          if (!raw) throw new Error('لم يرد خادم الاستخراج');
+          let clean = raw.replace(/```json|```/g, '').trim();
+          const startIdx = clean.indexOf('[');
+          const endIdx = clean.lastIndexOf(']');
+          if (startIdx !== -1 && endIdx !== -1) clean = clean.substring(startIdx, endIdx + 1);
+          return JSON.parse(clean);
+        } catch (e) { lastError = e; }
+      }
+      throw lastError || new Error('فشلت جميع محاولات الاستخراج');
+    }
+
+    async function analyzeExtractedValues(values, apiKey) {
+      const valuesText = values.map((v, i) =>
+        `${i + 1}. ${v.name}: ${v.value} ${v.unit || ''} (الطبيعي: ${v.normalRange || '—'})`
+      ).join('\n');
+
+      const analysisPrompt = `أنت أخصائي تحاليل طبية خبير واستشاري سريري.
+إليك القيم المستخرجة من تقرير التحاليل الطبية:
+
+${valuesText}
+
+أجب بصيغة JSON صالحة 100% فقط بدون أي نصوص خارجها:
+{
+  "badge": "عنوان قصير لنوع الفحص أو التحليل المكتشف",
+  "status": "طبيعي أو غير طبيعي / يحتاج متابعة أو مراجعة طبية عاجلة",
+  "statusClass": "green أو orange أو red",
+  "analysis": "شرح تفصيلي بالعربية لكل قيمة غير طبيعية وتفسيرها السريري",
+  "advices": [{ "title": "عنوان", "desc": "شرح" }]
+}`;
+
+      const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKey}` },
+        body: JSON.stringify({
+          model: 'llama-3.3-70b-versatile',
+          temperature: 0.3,
+          max_tokens: 2000,
+          messages: [{ role: 'system', content: 'أنت أخصائي تحاليل طبية خبير. أجب بـ JSON فقط.' }, { role: 'user', content: analysisPrompt }]
         })
       });
-
       if (!res.ok) {
         const err = await res.json().catch(() => ({}));
-        const msg = err.error?.message || '';
-        if (msg.includes('decommissioned') || msg.includes('deprecated')) {
-          lastError = new Error(msg);
-          continue;
-        }
-        throw new Error(msg || 'فشل الاتصال بخدمة التحليل');
+        throw new Error(err.error?.message || 'فشل تحليل القيم');
       }
-
       const data = await res.json();
       const raw = data.choices?.[0]?.message?.content;
-      if (!raw) throw new Error('لم يرد خادم الذكاء الاصطناعي بأي نتائج');
-
+      if (!raw) throw new Error('لم يرد خادم التحليل');
       let clean = raw.replace(/```json|```/g, '').trim();
       const startIdx = clean.indexOf('{');
       const endIdx = clean.lastIndexOf('}');
-      if (startIdx !== -1 && endIdx !== -1) {
-        clean = clean.substring(startIdx, endIdx + 1);
-      }
+      if (startIdx !== -1 && endIdx !== -1) clean = clean.substring(startIdx, endIdx + 1);
       return JSON.parse(clean);
-        } catch (e) {
-          lastError = e;
-        }
+    }
+
+    async function getMedicalTestRecsFromAI(base64Image, apiKey) {
+      // Step 1: extract raw values from image
+      let extracted;
+      try {
+        extracted = await extractValuesFromImage(base64Image, apiKey);
+      } catch (e) {
+        console.warn('Extraction failed, falling back to single-pass:', e.message);
+      }
+      // Step 2: if extraction succeeded, analyze textually; else fall back to one-shot vision
+      if (extracted && Array.isArray(extracted) && extracted.length > 0) {
+        return await analyzeExtractedValues(extracted, apiKey);
+      }
+      // Fallback: original single-pass approach
+      const promptText = `يرجى قراءة وتحليل صورة التحليل الطبي المرفقة، ثم تقديم استجابة بصيغة JSON صالحة 100% تحتوي على الحقول التالية بالضبط:
+{
+  "badge": "عنوان قصير لنوع الفحص أو التحليل المكتشف (مثال: صورة دم كاملة CBC، وظائف كبد، إلخ)",
+  "status": "طبيعي أو غير طبيعي / يحتاج متابعة أو مراجعة طبية عاجلة",
+  "statusClass": "green (للطبيعي)، orange (للمتوسط/متابعة)، red (للحالات غير الطبيعية/طارئة) - اختر واحدة فقط تطابق الحالة",
+  "analysis": "شرح تفصيلي، علمي ومبسط باللغة العربية الفصحى للنتائج والقيم الواردة في التحليل وتفسيرها بلغة واضحة للمريض.",
+  "advices": [
+    { "title": "عنوان النصيحة 1", "desc": "شرح النصيحة 1" },
+    { "title": "عنوان النصيحة 2", "desc": "شرح النصيحة 2" },
+    { "title": "عنوان النصيحة 3", "desc": "شرح النصيحة 3" }
+  ]
+}`;
+      const fallbackModels = ['meta-llama/llama-4-scout-17b-16e-instruct'];
+      let lastError;
+      for (const model of ['llama-3.2-90b-vision-preview', ...fallbackModels]) {
+        try {
+          const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKey}` },
+            body: JSON.stringify({
+              model, temperature: 0.3, max_tokens: 1500,
+              messages: [{
+                role: 'user',
+                content: [
+                  { type: 'text', text: 'أنت أخصائي تحاليل طبية خبير واستشاري سريري. أجب دائماً بـ JSON فقط متطابق مع الهيكل المطلوب دون أي علامات markdown أو نصوص خارج الهيكل.\n\n' + promptText },
+                  { type: 'image_url', image_url: { url: base64Image } }
+                ]
+              }]
+            })
+          });
+          if (!res.ok) {
+            const err = await res.json().catch(() => ({}));
+            const msg = err.error?.message || '';
+            if (msg.includes('decommissioned') || msg.includes('deprecated')) {
+              lastError = new Error(msg); continue;
+            }
+            throw new Error(msg || 'فشل الاتصال بخدمة التحليل');
+          }
+          const data = await res.json();
+          const raw = data.choices?.[0]?.message?.content;
+          if (!raw) throw new Error('لم يرد خادم الذكاء الاصطناعي بأي نتائج');
+          let clean = raw.replace(/```json|```/g, '').trim();
+          const startIdx = clean.indexOf('{');
+          const endIdx = clean.lastIndexOf('}');
+          if (startIdx !== -1 && endIdx !== -1) clean = clean.substring(startIdx, endIdx + 1);
+          return JSON.parse(clean);
+        } catch (e) { lastError = e; }
       }
       throw lastError || new Error('فشلت جميع المحاولات');
     }
