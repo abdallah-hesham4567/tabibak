@@ -5388,6 +5388,7 @@ c-5.708,0-10.798-2.287-14.546-6.011c-0.87-0.895-1.697-1.857-2.407-2.904c-2.262-3
       currentTab: 'landing',
       theme: 'light',
       currentUser: null,
+      apiKeys: [],
       sessions: [],
       triageSession: {
         symptom: '',
@@ -5414,7 +5415,7 @@ c-5.708,0-10.798-2.287-14.546-6.011c-0.87-0.895-1.697-1.857-2.407-2.904c-2.262-3
       },
       medicalTest: {
         apiKey: '',
-        fallbackApiKey: '',
+        apiKeys: [],
         selectedImage: null, // base64 string
         selectedFileIsPdf: false,
         selectedFileName: '',
@@ -7394,7 +7395,7 @@ ${hasContext ? userContext : 'لا تتوفر معلومات صحية سابقة
       try {
         let data;
         if (STATE.food.apiKey) {
-          data = await withFallbackKey(getFoodRecsFromAI, STATE.food.apiKey, STATE.medicalTest?.fallbackApiKey, mood);
+          data = await withFallbackKey(getFoodRecsFromAI, STATE.food.apiKey, STATE.apiKeys, mood);
         } else {
           await new Promise(r => setTimeout(r, 700));
           data = FOOD_FALLBACK[mood] || FOOD_FALLBACK['default'];
@@ -7436,15 +7437,18 @@ ${hasContext ? userContext : 'لا تتوفر معلومات صحية سابقة
 
     // API key is set in STATE.food.apiKey — no user UI needed
 
-    async function withFallbackKey(fn, apiKey, fallbackKey, ...args) {
-      try {
-        return await fn(...args, apiKey);
-      } catch (e) {
-        if (fallbackKey && (e.message?.includes('Rate limit') || e.message?.includes('rate_limit'))) {
-          return await fn(...args, fallbackKey);
+    async function withFallbackKey(fn, apiKey, allKeys, ...args) {
+      const keys = [apiKey, ...(allKeys || []).filter(k => k !== apiKey)];
+      let lastError;
+      for (const key of keys) {
+        try {
+          return await fn(...args, key);
+        } catch (e) {
+          if (!e.message?.includes('Rate limit') && !e.message?.includes('rate_limit')) throw e;
+          lastError = e;
         }
-        throw e;
       }
+      throw lastError;
     }
 
     /* ================================================================
@@ -7856,18 +7860,18 @@ ${pdfText}`;
         loadingEl.style.display = '';
 
         try {
-          const fallbackKey = STATE.medicalTest.fallbackApiKey;
+          const fallbackKeys = STATE.apiKeys || [];
           let resultData;
           if (STATE.medicalTest.selectedFileIsPdf && STATE.medicalTest.extractedText) {
             // PDF with extracted text → text-only analysis (no vision)
-            resultData = await withFallbackKey(analyzePdfText, apiKey, fallbackKey, STATE.medicalTest.extractedText);
+            resultData = await withFallbackKey(analyzePdfText, apiKey, fallbackKeys, STATE.medicalTest.extractedText);
           } else {
             let imageToSend = STATE.medicalTest.selectedImage;
             if (STATE.medicalTest.selectedFileIsPdf) {
               imageToSend = await convertPdfToImage(imageToSend);
               if (!imageToSend) throw new Error('تعذر تحويل PDF إلى صورة');
             }
-            resultData = await withFallbackKey(getMedicalTestRecsFromAI, apiKey, fallbackKey, imageToSend);
+            resultData = await withFallbackKey(getMedicalTestRecsFromAI, apiKey, fallbackKeys, imageToSend);
           }
 
           document.getElementById('medicalTestDetectedName').textContent = resultData.badge || 'غير محدد';
@@ -8461,12 +8465,10 @@ ${pdfText}`;
       try {
         const res = await fetch('/api/config/groq-key');
         const data = await res.json();
-        if (data.key) {
-          STATE.food.apiKey = data.key;
-          STATE.medicalTest.apiKey = data.key;
-        }
-        if (data.fallbackKey) {
-          STATE.medicalTest.fallbackApiKey = data.fallbackKey;
+        if (data.keys && data.keys.length > 0) {
+          STATE.apiKeys = data.keys;
+          STATE.food.apiKey = data.keys[0];
+          STATE.medicalTest.apiKey = data.keys[0];
         }
       } catch (e) {
         console.error("Failed to load Groq API key from server", e);
