@@ -68,7 +68,13 @@ app.get('/api/config/google-client-id', (req, res) => {
 });
 
 // Serve static frontend files
-app.use(express.static(__dirname));
+app.use(express.static(__dirname, {
+  setHeaders(res, path) {
+    if (path.endsWith('.html')) {
+      res.set('Cache-Control', 'no-cache, no-store, must-revalidate');
+    }
+  },
+}));
 
 // Serve tabibak.html for root path
 app.get('/', (req, res) => {
