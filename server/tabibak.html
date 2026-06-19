@@ -56,7 +56,7 @@
       --primary-dark: #1e4e8c;
       --primary-light: #dbeafe;
       --primary-glow: rgba(43, 108, 176, 0.08);
-      --primary-glow-strong: rgba(43, 108, 176, 0.18);
+      --primary-glow-strong: rgba(43, 108, 176, 0.07);
 
       --secondary: #4299e1;
       --secondary-glow: rgba(66, 153, 225, 0.08);
@@ -71,7 +71,7 @@
       --shadow: 0 8px 24px rgba(43, 108, 176, 0.07), 0 2px 6px rgba(0, 0, 0, 0.04);
       --shadow-md: 0 12px 32px rgba(43, 108, 176, 0.10), 0 2px 8px rgba(0, 0, 0, 0.05);
       --shadow-lg: 0 20px 50px rgba(43, 108, 176, 0.12), 0 4px 12px rgba(0, 0, 0, 0.07);
-      --shadow-colored: 0 8px 24px rgba(43, 108, 176, 0.22);
+      --shadow-colored: 0 2px 6px rgba(43, 108, 176, 0.10);
       /* Status colors */
       --red: #dc2626;
       --red-bg: #fef2f2;
@@ -91,8 +91,8 @@
       /* Meds */
       --med-bg: rgba(255, 255, 255, 0.90);
       --med-card-bg: #f8fffe;
-      --med-border: rgba(13, 148, 136, 0.12);
-      --med-taken: rgba(13, 148, 136, 0.05);
+      --med-border: rgba(43, 108, 176, 0.12);
+      --med-taken: rgba(43, 108, 176, 0.05);
       --med-streak: #d97706;
       --med-missed: #dc2626;
       --med-check: #059669;
@@ -219,7 +219,7 @@
        LAYOUT
        ============================================================ */
     .app {
-      max-width: 900px;
+      max-width: 1140px;
       width: 100%;
       margin: 0 auto;
       padding: 2rem 1rem 3rem;
@@ -256,9 +256,7 @@
       font-family: var(--font-heading);
       font-size: 1.6rem;
       font-weight: 800;
-      background: linear-gradient(135deg, var(--primary), var(--secondary));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
+      color: var(--primary);
     }
 
     .header-brand .logo-icon {
@@ -460,7 +458,7 @@
     body.dark select {
       appearance: none;
       cursor: pointer;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%230d9488' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%232b6cb0' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
       background-repeat: no-repeat;
       background-position: right 1.25rem center;
       background-size: 1.2rem;
@@ -600,10 +598,20 @@
     .landing-headline h2 {
       font-size: 1.6rem;
       font-weight: 800;
-      background: linear-gradient(135deg, var(--primary), var(--secondary));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
+      color: var(--text-1);
       margin-bottom: 0.4rem;
+      position: relative;
+      padding-bottom: 0.6rem;
+    }
+    .landing-headline h2::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      width: 44px;
+      height: 3px;
+      background: var(--primary);
+      border-radius: 2px;
     }
 
     .landing-headline p {
@@ -857,7 +865,7 @@
     .cycle-badge {
       display: inline-block;
       background: var(--primary-glow);
-      border: 1px solid rgba(13, 148, 136, 0.2);
+      border: 1px solid rgba(43, 108, 176, 0.2);
       padding: 0.3rem 1rem;
       border-radius: 20px;
       font-size: 0.85rem;
@@ -915,33 +923,32 @@
       width: 180px;
       height: 180px;
       border-radius: 50%;
-      background: radial-gradient(circle, rgba(13, 148, 136, 0.12), rgba(14, 165, 233, 0.06));
       border: 2.5px solid var(--primary);
       display: flex;
       align-items: center;
       justify-content: center;
       transition: transform 4s ease-in-out, border-color 0.5s, box-shadow 0.5s;
-      box-shadow: 0 0 30px rgba(13, 148, 136, 0.15);
       position: relative;
-      z-index: 2;
+      box-shadow: 0 0 30px rgba(43, 108, 176, 0.15);
+      background: radial-gradient(circle, rgba(43, 108, 176, 0.12), rgba(66, 153, 225, 0.06));
     }
 
     .breath-circle.inhale {
       transform: scale(1.35);
       border-color: var(--secondary);
-      box-shadow: 0 0 50px rgba(14, 165, 233, 0.35);
+      box-shadow: 0 0 50px rgba(43, 108, 176, 0.1);
     }
 
     .breath-circle.hold {
       transform: scale(1.35);
       border-color: var(--primary);
-      box-shadow: 0 0 40px rgba(13, 148, 136, 0.3);
+      box-shadow: 0 0 40px rgba(43, 108, 176, 0.3);
     }
 
     .breath-circle.exhale {
       transform: scale(1.0);
       border-color: var(--primary);
-      box-shadow: 0 0 20px rgba(13, 148, 136, 0.1);
+      box-shadow: 0 0 20px rgba(43, 108, 176, 0.1);
     }
 
     .breath-inner {
@@ -973,7 +980,7 @@
       width: 210px;
       height: 210px;
       border-radius: 50%;
-      border: 1.5px solid rgba(13, 148, 136, 0.2);
+      border: 1.5px solid rgba(43, 108, 176, 0.2);
       animation: ringPulse 3s ease-in-out infinite;
       z-index: 1;
     }
@@ -1092,7 +1099,7 @@
       align-items: center;
       justify-content: center;
       gap: 2px;
-      box-shadow: 0 4px 20px rgba(13, 148, 136, 0.2);
+      box-shadow: 0 4px 20px rgba(43, 108, 176, 0.2);
     }
 
     .score-circle.green {
@@ -1373,7 +1380,7 @@
 
     .food-condition-badge {
       background: var(--primary-glow);
-      border: 1px solid rgba(13, 148, 136, 0.2);
+      border: 1px solid rgba(43, 108, 176, 0.2);
       padding: 0.3rem 0.9rem;
       border-radius: 20px;
       font-size: 0.8rem;
@@ -1640,7 +1647,7 @@
     .bmi-unit-badge {
       display: inline-block;
       background: var(--primary-glow);
-      border: 1px solid rgba(13, 148, 136, 0.2);
+      border: 1px solid rgba(43, 108, 176, 0.2);
       padding: 0.1rem 0.5rem;
       border-radius: 8px;
       font-size: 0.72rem;
@@ -1958,6 +1965,25 @@
     /* ============================================================
        HISTORY SCREEN
        ============================================================ */
+    @media (min-width: 760px) {
+    .history-card {
+        padding: 0.85rem 1.4rem;
+      }
+      .hc-info {
+        display: grid;
+        grid-template-columns: 2fr 1fr 2fr;
+        align-items: center;
+        gap: 1rem;
+      }
+      .hc-title,
+      .hc-meta,
+      .hc-symptom {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+    }
+    
     .text-center-panel {
       text-align: center;
       padding: 3.5rem 2.5rem;
@@ -2187,6 +2213,20 @@
     #screen-meds {
       gap: 1rem;
       overflow: hidden;
+    }
+    #medsListContainer {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 0.75rem;
+    }
+
+    @media (min-width: 760px) {
+      #medsListContainer {
+        grid-template-columns: 1fr 1fr;
+      }
+      .meds-section-label {
+        grid-column: 1 / -1; /* "جرعات الصباح" etc. spans the full row */
+      }
     }
 
     .meds-header {
@@ -3014,13 +3054,25 @@
       border-bottom: 1px solid var(--border);
     }
 
-    .pharm-icon {
+    /* .pharm-icon {
       font-size: 2.5rem;
       width: 68px;
       height: 68px;
       background: var(--green-bg);
       border: 2px solid var(--green-border);
       border-radius: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    } */
+     .pharm-icon {
+      font-size: 1.8rem;
+      width: auto;
+      height: auto;
+      background: none;
+      border: none;
+      color: var(--green);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -3055,6 +3107,7 @@
       gap: 1rem;
       align-items: flex-start;
       transition: all var(--speed);
+      border-right: 3px solid var(--green);
     }
 
     .pharm-option-card:hover {
@@ -3760,9 +3813,10 @@
         gap: 1rem;
         align-items: flex-start;
         box-shadow: var(--shadow-sm);
+        border-right: 3px solid var(--primary);
       }
 
-      .advice-card-icon {
+      /* .advice-card-icon {
         font-size: 1.5rem;
         color: var(--primary);
         background: var(--primary-glow);
@@ -3773,7 +3827,15 @@
         align-items: center;
         justify-content: center;
         flex-shrink: 0;
-      }
+      } */
+      .advice-card-icon {
+      font-size: 1.3rem;
+      color: var(--primary);
+      background: none;
+      width: auto;
+      height: auto;
+      flex-shrink: 0;
+    }
 
       .advice-card-content h4 {
         font-size: 1rem;
@@ -4041,9 +4103,9 @@ c-5.708,0-10.798-2.287-14.546-6.011c-0.87-0.895-1.697-1.857-2.407-2.904c-2.262-3
       </svg>
       <span class="nav-label">الفحص الطبي</span>
     </button>
-    <button class="nav-btn" data-tab="meds">
-      <i class="ti ti-pill"></i>
-      <span class="nav-label">الأدوية</span>
+    <button class="nav-btn" data-tab="medical-test">
+      <i class="ti ti-report-medical"></i>
+      <span class="nav-label">التحاليل الطبية</span>
     </button>
     <button class="nav-btn" data-tab="history">
       <svg>
@@ -4051,15 +4113,15 @@ c-5.708,0-10.798-2.287-14.546-6.011c-0.87-0.895-1.697-1.857-2.407-2.904c-2.262-3
       </svg>
       <span class="nav-label">السجل</span>
     </button>
+    <button class="nav-btn" data-tab="meds">
+      <i class="ti ti-pill"></i>
+      <span class="nav-label">الأدوية</span>
+    </button>
     <button class="nav-btn" data-tab="food">
       <svg>
         <use href="#icon-food" />
       </svg>
       <span class="nav-label">التغذية</span>
-    </button>
-    <button class="nav-btn" data-tab="medical-test">
-      <i class="ti ti-report-medical"></i>
-      <span class="nav-label">التحاليل الطبية</span>
     </button>
     <button class="nav-btn" data-tab="bmi">
       <svg>
@@ -4259,7 +4321,7 @@ c-5.708,0-10.798-2.287-14.546-6.011c-0.87-0.895-1.697-1.857-2.407-2.904c-2.262-3
 
       <div class="meds-header">
         <div class="meds-title">
-          <i class="ti ti-pill" aria-hidden="true"></i>
+          <i class="ti ti-pill" aria-hidden="true" style="color: #1e4e8c;"></i>
           الأدوية المجدولة
         </div>
         <button class="meds-add-btn" id="medsAddBtn">
@@ -4446,9 +4508,11 @@ c-5.708,0-10.798-2.287-14.546-6.011c-0.87-0.895-1.697-1.857-2.407-2.904c-2.262-3
     <main id="screen-medical-test" class="screen glass">
 
       <div class="medical-test-header">
-        <div class="pharm-icon"><i class="ti ti-report-medical"></i></div>
         <div>
-          <h2>تحليل التحاليل الطبية</h2>
+          <h2>          <i class="ti ti-report-medical" style="color:#1e4e8c;"></i>
+            تحليل التحاليل الطبية
+            
+          </h2>
           <p style="color:var(--text-muted);">ارفع صورة التحليل الطبي وسيقوم المساعد الذكي بشرح النتائج وتقديم توصيات
             مخصصة باللغة العربية.</p>
         </div>
@@ -4554,7 +4618,7 @@ c-5.708,0-10.798-2.287-14.546-6.011c-0.87-0.895-1.697-1.857-2.407-2.904c-2.262-3
       <div class="glass">
         <div class="bmi-header">
           <span class="bmi-header-icon"><svg class="icon" width="32" height="32">
-              <use href="#icon-scale" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+              <use href="#icon-scale" fill="none" stroke="#1e4e8c" stroke-width="2" stroke-linecap="round"
                 stroke-linejoin="round" stroke-miterlimit="10" />
             </svg></span>
           <div>
@@ -4810,7 +4874,7 @@ c-5.708,0-10.798-2.287-14.546-6.011c-0.87-0.895-1.697-1.857-2.407-2.904c-2.262-3
     <main id="screen-history" class="screen">
 
       <div id="historyLoggedOut" class="glass text-center-panel">
-        <i class="ti ti-shield-lock panel-icon"></i>
+        <i class="ti ti-shield-lock panel-icon" style="color: #1e4e8c;"></i>
         <h3>السجل الطبي الآمن</h3>
         <p>سجّل الدخول أو أنشئ حساباً لعرض وحفظ تقييماتك الطبية.</p>
         <button class="btn btn-primary" id="historyAuthBtn" style="margin-top:1rem;">انتقل إلى تسجيل الدخول</button>
@@ -4838,7 +4902,7 @@ c-5.708,0-10.798-2.287-14.546-6.011c-0.87-0.895-1.697-1.857-2.407-2.904c-2.262-3
     <main id="screen-pharmacist" class="screen glass">
 
       <div class="pharm-header">
-        <div class="pharm-icon"><i class="ti ti-pill"></i></div>
+        <div class="pharm-icon"><i class="ti ti-pill" style="color: #1e4e8c";></i></div>
         <div>
           <h2>استشر الصيدلي</h2>
           <p class="pharm-subtitle">تواصل مع صيدلي عبر واتساب للحصول على المشورة الدوائية</p>
@@ -6746,7 +6810,7 @@ c-5.708,0-10.798-2.287-14.546-6.011c-0.87-0.895-1.697-1.857-2.407-2.904c-2.262-3
     function displayResults(result) {
       const header = document.getElementById('resultsHeader');
       header.className = `results-header glass ${result.level}`;
-      document.getElementById('urgencyBadge').innerHTML = result.level === 'red' ? '<i class=" ti ti-urgent" style="color:var(--white)"></i> طارئ' : result.level === 'orange' ? '<i class=" ti ti-circle-check" style="color:var(--green)"></i> معتدل' : '<i class=" ti ti-alert-triangle" style="color:var(--orange)"></i> خفيف';
+      document.getElementById('urgencyBadge').innerHTML = result.level === 'red' ? '<i class=" ti ti-urgent" style="color:var(--white)"></i> طارئ' : result.level === 'orange' ? '<i class=" ti ti-alert-triangle" style="color:var(--white)"></i> معتدل' : '<i class=" ti ti-circle-check" style="color:var(--white)"></i> خفيف';
       document.getElementById('conditionTitle').textContent = result.condition;
       document.getElementById('resultsDesc').textContent = result.desc;
 
@@ -8455,7 +8519,7 @@ ${pdfText}`;
       const date = new Date(s.date || s.createdAt).toLocaleDateString('en-GB', { day: '2-digit', month: 'long', year: 'numeric' });
 
       const badge = document.getElementById('modalUrgency');
-      badge.innerHTML = level === 'red' ? '<i class="ti ti-urgent" style="color:var(--red)"></i> طارئ' : level === 'orange' ? '<i class="ti ti-alert-triangle" style="color:var(--orange)"></i> معتدل' : '<i class="ti ti-circle-check" style="color:var(--green)"></i> خفيف';
+      badge.innerHTML = level === 'red' ? '<i class="ti ti-urgent" style="color:var(--white)"></i> طارئ' : level === 'orange' ? '<i class="ti ti-alert-triangle" style="color:var(--white)"></i> معتدل' : '<i class="ti ti-circle-check" style="color:var(--white)"></i> خفيف';
       badge.style.background = level === 'red' ? 'var(--red)' : level === 'orange' ? 'var(--orange)' : 'var(--green)';
       badge.style.color = '#fff';
 
