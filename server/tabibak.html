@@ -7458,28 +7458,32 @@ ${hasContext ? userContext : 'لا تتوفر معلومات صحية سابقة
   ]
 }`;
 
-      const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${apiKey}`,
-        },
-        body: JSON.stringify({
-          model: 'llama-3.2-90b-vision-preview', // 90b is better for complex medical reasoning
-          temperature: 0.3,
-          max_tokens: 1500,
-          messages: [
-            {
-              role: 'user',
-              content: [
+      const fallbackModels = ['meta-llama/llama-4-scout-17b-16e-instruct'];
+      let lastError;
+      for (const model of ['llama-3.2-90b-vision-preview', ...fallbackModels]) {
+        try {
+          const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${apiKey}`,
+            },
+            body: JSON.stringify({
+              model,
+              temperature: 0.3,
+              max_tokens: 1500,
+              messages: [
                 {
-                  type: 'text',
-                  text: 'أنت أخصائي تحاليل طبية خبير واستشاري سريري. أجب دائماً بـ JSON فقط متطابق مع الهيكل المطلوب دون أي علامات markdown أو نصوص خارج الهيكل.\n\n' + promptText
-                },
-                {
-                  type: 'image_url',
-                  image_url: {
-                    url: base64Image
+                  role: 'user',
+                  content: [
+                    {
+                      type: 'text',
+                      text: 'أنت أخصائي تحاليل طبية خبير واستشاري سريري. أجب دائماً بـ JSON فقط متطابق مع الهيكل المطلوب دون أي علامات markdown أو نصوص خارج الهيكل.\n\n' + promptText
+                    },
+                    {
+                      type: 'image_url',
+                      image_url: {
+                        url: base64Image
                   }
                 }
               ]
@@ -7490,8 +7494,12 @@ ${hasContext ? userContext : 'لا تتوفر معلومات صحية سابقة
 
       if (!res.ok) {
         const err = await res.json().catch(() => ({}));
-        const msg = err.error?.message || 'فشل الاتصال بخدمة التحليل';
-        throw new Error(msg);
+        const msg = err.error?.message || '';
+        if (msg.includes('decommissioned') || msg.includes('deprecated')) {
+          lastError = new Error(msg);
+          continue;
+        }
+        throw new Error(msg || 'فشل الاتصال بخدمة التحليل');
       }
 
       const data = await res.json();
@@ -7505,7 +7513,11 @@ ${hasContext ? userContext : 'لا تتوفر معلومات صحية سابقة
         clean = clean.substring(startIdx, endIdx + 1);
       }
       return JSON.parse(clean);
-    }
+        } catch (e) {
+          lastError = e;
+        }
+      }
+      throw lastError || new Error('فشلت جميع المحاولات');
 
     async function convertPdfToImage(pdfDataUrl) {
       try {
