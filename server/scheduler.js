@@ -4,6 +4,7 @@ const { getMessaging } = require('firebase-admin/messaging');
 const { getDb } = require('./db');
 
 let schedulerStarted = false;
+let fcmApp = null;
 
 function startScheduler() {
   if (schedulerStarted) return;
@@ -20,11 +21,10 @@ function startScheduler() {
   let fcmReady = false;
   if (serviceAccount.projectId && serviceAccount.clientEmail && serviceAccount.privateKey) {
     try {
-      let app;
-      if (admin.apps && admin.apps.length === 0) {
-        app = admin.initializeApp({ credential: admin.cert(serviceAccount) });
+      if (!admin.apps || admin.apps.length === 0) {
+        fcmApp = admin.initializeApp({ credential: admin.cert(serviceAccount) });
       } else {
-        app = admin.apps[0];
+        fcmApp = admin.apps[0];
       }
       fcmReady = true;
       console.log('Firebase Admin initialized for push notifications');
@@ -32,12 +32,10 @@ function startScheduler() {
       console.error('Firebase Admin init failed:', err.message);
     }
   } else {
-    // IMPORTANT: if you see this on every boot, push notifications can NEVER
-    // be delivered while the tab is closed, no matter what the client does.
-    // Set FIREBASE_PROJECT_ID, FIREBASE_CLIENT_EMAIL, FIREBASE_PRIVATE_KEY
-    // in Railway -> Variables using the values from your service account JSON.
-    console.warn('[scheduler] Firebase credentials not set — push notifications are DISABLED. ' +
-      'Reminders will only work while a browser tab is open.');
+    console.warn(
+      '[scheduler] Firebase credentials not set — push notifications are DISABLED. ' +
+      'Set FIREBASE_PROJECT_ID, FIREBASE_CLIENT_EMAIL, FIREBASE_PRIVATE_KEY in Railway Variables.'
+    );
   }
 
   cron.schedule('* * * * *', async () => {
@@ -46,7 +44,6 @@ function startScheduler() {
       const today = now.toISOString().slice(0, 10);
       const db = await getDb();
 
-      // Get all users with FCM tokens for timezone-aware comparison
       const sql = `
         SELECT md.id AS doseId, md.time AS doseTime,
                m.id AS medicationId, m.name AS medName, m.dose AS medDose,
@@ -60,77 +57,80 @@ function startScheduler() {
       const allRows = await db.execute(sql);
 
       const targetUtc = new Date(now.getTime() + 5 * 60000);
+      let matchedCount = 0, sentCount = 0, alreadySentCount = 0, failCount = 0;
 
       for (const row of allRows.rows) {
         const tz = Number(row.tzOffset);
-        // Convert target UTC time to user's local time
         const targetLocal = new Date(targetUtc.getTime() + tz * 3600000);
         const targetHH = String(targetLocal.getUTCHours()).padStart(2, '0');
         const targetMM = String(targetLocal.getUTCMinutes()).padStart(2, '0');
         const targetTime = `${targetHH}:${targetMM}`;
 
         if (row.doseTime !== targetTime) continue;
+        matchedCount++;
 
         const alreadySent = await db.execute({
           sql: 'SELECT id FROM notification_log WHERE username = ? AND medicationId = ? AND doseId = ? AND date = ?',
           args: [row.username, row.medicationId, row.doseId, today],
         });
+        if (alreadySent.rows.length > 0) { alreadySentCount++; continue; }
 
-        if (alreadySent.rows.length > 0) continue;
-
-        if (!fcmReady) {
-          // Firebase isn't configured at all — don't pretend we tried.
-          // Skip without writing to notification_log so a retry is still
-          // possible once credentials are fixed (within the 5-minute window).
+        if (!fcmReady || !fcmApp || !row.fcmToken) {
+          failCount++;
           continue;
         }
 
-        if (!row.fcmToken) {
-          // Shouldn't happen given the WHERE clause above, but guard anyway.
-          continue;
-        }
-
-        let sendSucceeded = false;
         try {
-          await getMessaging(app).send({
+          await getMessaging(fcmApp).send({
             token: row.fcmToken,
+            notification: {
+              title: 'تذكير بالدواء',
+              body: `حان موعد ${row.medName} (${row.medDose}) بعد 5 دقائق`,
+            },
             data: {
               title: 'تذكير بالدواء',
               body: `حان موعد ${row.medName} (${row.medDose}) بعد 5 دقائق`,
-              medicationId: row.medicationId,
-              doseTime: row.doseTime,
+              medicationId: String(row.medicationId),
+              doseTime: String(row.doseTime),
               type: 'medication_reminder',
             },
           });
-          console.log(`FCM sent to ${row.username} for ${row.medName} at ${row.doseTime}`);
-          sendSucceeded = true;
-        } catch (err) {
-          console.error(`FCM failed for ${row.username}:`, err.message);
-          if (err.code === 'messaging/invalid-registration-token' || err.code === 'messaging/registration-token-not-registered') {
-            await db.execute({
-              sql: "UPDATE users SET fcmToken = '' WHERE username = ?",
-              args: [row.username],
-            });
-          }
-          // Do NOT write to notification_log on failure — this lets the
-          // next cron tick (still within the 5-minute window) retry instead
-          // of silently treating the dose as "handled" forever.
-          continue;
-        }
+          console.log(`[scheduler] FCM sent to ${row.username} for ${row.medName} at ${row.doseTime}`);
+          sentCount++;
 
-        if (sendSucceeded) {
           await db.execute({
             sql: 'INSERT INTO notification_log (username, medicationId, doseId, doseTime, date) VALUES (?, ?, ?, ?, ?)',
             args: [row.username, row.medicationId, row.doseId, row.doseTime, today],
           });
+        } catch (err) {
+          failCount++;
+          console.error(`[scheduler] FCM failed for ${row.username}:`, err.message);
+
+          if (
+            err.code === 'messaging/invalid-registration-token' ||
+            err.code === 'messaging/registration-token-not-registered'
+          ) {
+            await db.execute({
+              sql: "UPDATE users SET fcmToken = '' WHERE username = ?",
+              args: [row.username],
+            });
+            console.log(`[scheduler] Cleared stale FCM token for ${row.username}`);
+          }
         }
       }
+
+      console.log(
+        `[scheduler] Tick: ${allRows.rows.length} users with tokens, ` +
+        `${matchedCount} matched, ${sentCount} sent, ` +
+        `${alreadySentCount} already sent, ${failCount} failed`
+      );
     } catch (err) {
       console.error('Scheduler error:', err);
     }
   });
 
   console.log('Notification scheduler started (every minute)');
+  return fcmApp;
 }
 
-module.exports = { startScheduler };
+module.exports = { startScheduler, fcmApp: () => fcmApp };

@@ -47,6 +47,28 @@ messaging.onBackgroundMessage((payload) => {
   return self.registration.showNotification(notificationTitle, notificationOptions);
 });
 
+// Native push event fallback — some environments don't reliably fire
+// onBackgroundMessage for data-only payloads. This ensures the
+// notification is always shown when a push arrives.
+self.addEventListener('push', (event) => {
+  if (event.data) {
+    try {
+      const payload = event.data.json();
+      const title = payload.data?.title || payload.notification?.title || 'تذكير بموعد الدواء';
+      const options = {
+        body: payload.data?.body || payload.notification?.body || 'حان الوقت لتناول جرعتك الدوائية المجدولة.',
+        icon: 'https://cdn-icons-png.flaticon.com/512/1930/1930985.png',
+        badge: 'https://cdn-icons-png.flaticon.com/512/1930/1930985.png',
+        tag: payload.data?.medicationId || 'medication-reminder',
+        renotify: true,
+        requireInteraction: true,
+        data: payload.data || {},
+      };
+      event.waitUntil(self.registration.showNotification(title, options));
+    } catch (_) { /* ignore malformed pushes */ }
+  }
+});
+
 // Handle user clicking the notification — open/focus the app and navigate to medications
 self.addEventListener('notificationclick', (event) => {
   event.notification.close();
@@ -55,16 +77,17 @@ self.addEventListener('notificationclick', (event) => {
 
   event.waitUntil(
     clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clientList) => {
-      // If the app is already open, focus it and tell it to show the meds screen
+      // If the app is already open (any URL matching the app), focus it
+      const appUrl = self.location.origin;
       for (const client of clientList) {
-        if (client.url.includes('tabibak.html') && 'focus' in client) {
+        if (client.url.startsWith(appUrl) && 'focus' in client) {
           client.postMessage({ action: 'showMeds', medicationId });
           return client.focus();
         }
       }
       // Otherwise open the app in a new window
       if (clients.openWindow) {
-        return clients.openWindow('/tabibak.html');
+        return clients.openWindow('/');
       }
     })
   );

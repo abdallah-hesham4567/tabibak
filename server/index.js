@@ -75,7 +75,9 @@ app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'tabibak.html'));
 });
 
+const schedulerFcmApp = startScheduler();
+app.set('fcmApp', schedulerFcmApp);
+
 server.listen(PORT, () => {
   console.log(`Tabibak server running on http://localhost:${PORT}`);
-  startScheduler();
 });
