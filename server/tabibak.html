@@ -11,8 +11,9 @@
   <link rel="stylesheet"
     href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600&family=Outfit:wght@400;500;600;700;800&display=swap" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css" />
-  <script async src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-  <script async src="https://www.gstatic.com/firebasejs/9.23.0/firebase-messaging-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-messaging-compat.js"></script>
+  <script src="https://accounts.google.com/gsi/client" defer></script>
 
   <style>
     /* ============================================================
@@ -761,6 +762,26 @@
       border-radius: 10px;
       margin-top: 6px;
       display: block;
+    }
+
+    .chat-file-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 0.75rem;
+      margin-top: 6px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      text-decoration: none;
+      color: var(--text);
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: all var(--speed);
+    }
+    .chat-file-link:hover {
+      border-color: var(--primary);
+      background: var(--primary-glow-strong);
     }
 
     .suggestions {
@@ -4118,10 +4139,10 @@ c-5.708,0-10.798-2.287-14.546-6.011c-0.87-0.895-1.697-1.857-2.407-2.904c-2.262-3
 
       <div class="chat-input-row">
         <input type="text" id="chatInput" placeholder="اكتب ردك هنا..." autocomplete="off" />
-        <button class="btn btn-secondary" id="chatImgBtn" title="إرفاق صورة"
-          style="padding:0.875rem;font-size:1.2rem;line-height:1;"><i class="ti ti-photo"></i></button>
+        <button class="btn btn-secondary" id="chatImgBtn" title="إرفاق صورة أو PDF"
+          style="padding:0.875rem;font-size:1.2rem;line-height:1;"><i class="ti ti-file"></i></button>
         <button class="btn btn-primary" id="sendBtn" style="padding:0.875rem 1.25rem;">إرسال</button>
-        <input type="file" id="chatImgInput" accept="image/*" style="display:none;" />
+        <input type="file" id="chatImgInput" accept="image/*,.pdf" style="display:none;" />
       </div>
 
     </main>
@@ -4308,6 +4329,7 @@ c-5.708,0-10.798-2.287-14.546-6.011c-0.87-0.895-1.697-1.857-2.407-2.904c-2.262-3
               اختبار الإشعار
             </button>
           </div>
+          <div id="fcmServerStatus" style="font-size:0.8rem;color:var(--text-muted);line-height:1.55;margin-top:0.5rem;display:none;"></div>
           <p style="font-size:0.8rem;color:var(--text-muted);line-height:1.55;margin-top:0.75rem;">
             <i class="ti ti-checks" style="color:var(--green); font-size:1.3rem;"></i> التذكيرات تعمل مباشرة من المتصفح
             — لا حاجة لأي خادم أو تطبيق خارجي.
@@ -4433,16 +4455,20 @@ c-5.708,0-10.798-2.287-14.546-6.011c-0.87-0.895-1.697-1.857-2.407-2.904c-2.262-3
       </div>
 
       <div id="medicalTestUploader">
-        <input type="file" id="medicalTestInput" accept="image/*" style="display:none;" />
+        <input type="file" id="medicalTestInput" accept="image/*,.pdf" style="display:none;" />
         <div class="upload-zone" id="medicalTestUploadZone">
           <i class="ti ti-cloud-upload"></i>
           <h3>اسحب وأفلت صورة التحليل هنا</h3>
-          <p style="color:var(--text-muted);font-size:0.9rem;">أو اضغط لاختيار صورة من جهازك (يدعم JPG، PNG، GIF حتى 5
-            ميجابايت)</p>
+          <p style="color:var(--text-muted);font-size:0.9rem;">أو اضغط لاختيار ملف من جهازك (يدعم JPG، PNG، GIF، PDF
+            حتى 5 ميجابايت)</p>
         </div>
 
         <div class="image-preview-wrapper" id="medicalTestPreviewContainer" style="display:none;">
           <img id="medicalTestPreviewImage" src="" alt="معاينة التحليل الطبي" />
+          <div id="medicalTestPdfPreview" style="display:none;text-align:center;padding:2rem;">
+            <i class="ti ti-file-text" style="font-size:4rem;color:var(--primary);"></i>
+            <p id="medicalTestPdfName" style="margin-top:0.5rem;font-weight:600;"></p>
+          </div>
         </div>
 
         <div style="display:flex;gap:1rem;margin-top:1.5rem;width:100%;flex-wrap:wrap;align-items:stretch;">
@@ -4617,6 +4643,10 @@ c-5.708,0-10.798-2.287-14.546-6.011c-0.87-0.895-1.697-1.857-2.407-2.904c-2.262-3
             <input type="password" id="loginPass" placeholder="أدخل كلمة المرور..." autocomplete="current-password" />
           </div>
           <button type="submit" class="btn btn-primary">تسجيل الدخول</button>
+          <div style="margin-top:16px;text-align:center;">
+            <div style="color:var(--text-muted);font-size:0.85rem;margin-bottom:10px;">أو</div>
+            <div id="googleSignInDiv" style="display:flex;justify-content:center;"></div>
+          </div>
         </form>
 
         <form class="auth-form" id="registerForm">
@@ -5257,6 +5287,28 @@ c-5.708,0-10.798-2.287-14.546-6.011c-0.87-0.895-1.697-1.857-2.407-2.904c-2.262-3
     </div>
   </div>
 
+  <!-- ============================================================
+     VERIFICATION CODE MODAL
+     ============================================================ -->
+  <div class="notification-modal-overlay" id="verificationModal">
+    <div class="notification-modal-card">
+      <div class="notification-modal-icon"><i class="ti ti-mail" style="font-size:3.5rem;color:var(--primary);"></i></div>
+      <h2 class="notification-modal-title">تحقق من بريدك الإلكتروني</h2>
+      <p class="notification-modal-desc" id="verificationDesc">لقد أرسلنا رمز تحقق إلى بريدك الإلكتروني. يرجى إدخاله أدناه.</p>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:12px;width:100%;margin:16px 0;">
+        <input type="text" id="verificationCodeInput" placeholder="أدخل رمز التحقق..." maxlength="6" style="width:200px;padding:12px 16px;font-size:1.4rem;text-align:center;letter-spacing:6px;border:2px solid var(--border);border-radius:12px;background:var(--bg-card);color:var(--text);direction:ltr;" />
+        <div id="verificationError" style="color:var(--red);font-size:0.85rem;display:none;"></div>
+      </div>
+      <button id="verifyCodeBtn" class="notification-perm-btn" style="margin-bottom:8px;">
+        <i class="ti ti-check"></i>
+        <span>تحقق</span>
+      </button>
+      <button class="btn btn-secondary" id="verificationModalClose" style="width:100%;">
+        إلغاء
+      </button>
+    </div>
+  </div>
+
   <!-- ================================================================
      JAVASCRIPT
      ================================================================ -->
@@ -5405,6 +5457,101 @@ c-5.708,0-10.798-2.287-14.546-6.011c-0.87-0.895-1.697-1.857-2.407-2.904c-2.262-3
         }
       } catch (e) { }
     }
+
+    /* ================================================================
+       GOLE SIGN-IN
+       ================================================================ */
+    let googleClientId = '';
+    let googleInitAttempted = false;
+
+    async function loadGoogleClientId() {
+      try {
+        const res = await fetch('/api/config/google-client-id');
+        const data = await res.json();
+        googleClientId = data.clientId;
+        if (googleClientId) tryRenderGoogleButton();
+      } catch (e) { /* Google auth not configured */ }
+    }
+
+    function tryRenderGoogleButton() {
+      if (!googleClientId || googleInitAttempted) return;
+      if (typeof google === 'undefined' || !google.accounts) {
+        setTimeout(tryRenderGoogleButton, 300);
+        return;
+      }
+      googleInitAttempted = true;
+      google.accounts.id.initialize({
+        client_id: googleClientId,
+        callback: handleGoogleCredentialResponse,
+      });
+      google.accounts.id.renderButton(
+        document.getElementById('googleSignInDiv'),
+        { theme: 'outline', size: 'large', type: 'standard', shape: 'pill', text: 'signin_with', width: 280 }
+      );
+    }
+
+    async function handleGoogleCredentialResponse(response) {
+      try {
+        const data = await api('POST', '/api/auth/google', { credential: response.credential });
+        if (data.token) {
+          setToken(data.token);
+          STATE.currentUser = data;
+          STATE.sessions = await api('GET', '/api/sessions');
+          try { STATE.meds.list = await api('GET', '/api/medications'); } catch (e) { STATE.meds.list = []; }
+          if (Notification.permission === 'granted') { startReminderScheduler(); requestFcmToken(); }
+          refreshProfileScreen();
+          showTab('profile');
+        } else if (data.needsVerification) {
+          STATE.pendingGoogleUser = data;
+          document.getElementById('verificationDesc').textContent = `لقد أرسلنا رمز تحقق إلى ${data.email}. يرجى إدخاله أدناه.`;
+          document.getElementById('verificationCodeInput').value = '';
+          document.getElementById('verificationError').style.display = 'none';
+          document.getElementById('verificationModal').classList.add('open');
+        }
+      } catch (err) {
+        alert(err.message || 'فشل تسجيل الدخول عبر Google');
+      }
+    }
+
+    /* ================================================================
+       VERIFICATION CODE
+       ================================================================ */
+    document.getElementById('verifyCodeBtn').addEventListener('click', async () => {
+      const code = document.getElementById('verificationCodeInput').value.trim();
+      const user = STATE.pendingGoogleUser;
+      if (!code || code.length !== 6) {
+        document.getElementById('verificationError').textContent = 'يرجى إدخال رمز التحقق المكون من 6 أرقام.';
+        document.getElementById('verificationError').style.display = '';
+        return;
+      }
+      try {
+        const data = await api('POST', '/api/auth/verify-code', { username: user.username, code });
+        setToken(data.token);
+        STATE.currentUser = data;
+        STATE.sessions = await api('GET', '/api/sessions');
+        try { STATE.meds.list = await api('GET', '/api/medications'); } catch (e) { STATE.meds.list = []; }
+        if (Notification.permission === 'granted') { startReminderScheduler(); requestFcmToken(); }
+        document.getElementById('verificationModal').classList.remove('open');
+        STATE.pendingGoogleUser = null;
+        refreshProfileScreen();
+        showTab('profile');
+      } catch (err) {
+        document.getElementById('verificationError').textContent = err.message || 'رمز التحقق غير صحيح أو منتهي الصلاحية.';
+        document.getElementById('verificationError').style.display = '';
+      }
+    });
+
+    document.getElementById('verificationModalClose').addEventListener('click', () => {
+      document.getElementById('verificationModal').classList.remove('open');
+      STATE.pendingGoogleUser = null;
+    });
+
+    document.getElementById('verificationModal').addEventListener('click', e => {
+      if (e.target === document.getElementById('verificationModal')) {
+        document.getElementById('verificationModal').classList.remove('open');
+        STATE.pendingGoogleUser = null;
+      }
+    });
 
     function updateFoodContextBar() {
       const bar = document.getElementById('foodUserContextBar');
@@ -5665,11 +5812,7 @@ c-5.708,0-10.798-2.287-14.546-6.011c-0.87-0.895-1.697-1.857-2.407-2.904c-2.262-3
     }
 
     function roundTo5Min(timeStr) {
-      const [h, m] = timeStr.split(':').map(Number);
-      const rounded = Math.round(m / 5) * 5;
-      const finalM = rounded >= 60 ? 0 : rounded;
-      const finalH = rounded >= 60 ? (h + 1) % 24 : h;
-      return `${String(finalH).padStart(2, '0')}:${String(finalM).padStart(2, '0')}`;
+      return timeStr;
     }
 
     function renderMedsScreen() {
@@ -5874,7 +6017,7 @@ c-5.708,0-10.798-2.287-14.546-6.011c-0.87-0.895-1.697-1.857-2.407-2.904c-2.262-3
         row.className = 'dose-slot-row';
         row.innerHTML = `
           <span class="dose-slot-label">الجرعة ${i + 1}</span>
-          <input type="time" id="doseTime_${i}" step="300" value="${getDefaultDoseTime(i, count)}" />
+          <input type="time" id="doseTime_${i}" step="60" value="${getDefaultDoseTime(i, count)}" />
         `;
         container.appendChild(row);
       }
@@ -6091,7 +6234,7 @@ c-5.708,0-10.798-2.287-14.546-6.011c-0.87-0.895-1.697-1.857-2.407-2.904c-2.262-3
     async function initFcm() {
       if (fcmInitAttempted) return;
       fcmInitAttempted = true;
-      if (typeof firebase === 'undefined') {
+      if (typeof firebase === 'undefined' || typeof firebase.messaging !== 'function') {
         setTimeout(() => { fcmInitAttempted = false; initFcm(); }, 500);
         return;
       }
@@ -6100,24 +6243,28 @@ c-5.708,0-10.798-2.287-14.546-6.011c-0.87-0.895-1.697-1.857-2.407-2.904c-2.262-3
         fcmMessaging = firebase.messaging();
         console.log('Firebase initialized for FCM');
 
-        fcmMessaging.onTokenRefresh(async () => {
-          try {
-            const currentToken = await fcmMessaging.getToken({ vapidKey: '8Ucn8W54F07Fmc5ec2Kn_bd8RisbdkkmWQHh4SM_K3s' });
-            if (currentToken) {
-              const token = getToken();
-              if (token) {
-                await api('POST', '/api/notifications/store-token', { fcmToken: currentToken });
+        try {
+          fcmMessaging.onTokenRefresh(async () => {
+            try {
+              const currentToken = await fcmMessaging.getToken();
+              if (currentToken) {
+                const token = getToken();
+                if (token) {
+                  await api('POST', '/api/notifications/store-token', { fcmToken: currentToken, timezoneOffset: -new Date().getTimezoneOffset() / 60 });
+                }
               }
+            } catch (err) {
+              console.error('FCM token refresh failed:', err);
             }
-          } catch (err) {
-            console.error('FCM token refresh failed:', err);
-          }
-        });
+          });
+        } catch (e) {
+          console.warn('onTokenRefresh not supported:', e.message);
+        }
 
         fcmMessaging.onMessage((payload) => {
-          if (payload.notification) {
-            new Notification(payload.notification.title || 'طبيبك', {
-              body: payload.notification.body || '',
+          if (payload.data) {
+            new Notification(payload.data.title || 'طبيبك', {
+              body: payload.data.body || '',
               icon: 'https://cdn-icons-png.flaticon.com/512/1930/1930985.png',
             });
           }
@@ -6130,19 +6277,25 @@ c-5.708,0-10.798-2.287-14.546-6.011c-0.87-0.895-1.697-1.857-2.407-2.904c-2.262-3
     initFcm();
 
     async function registerFcmServiceWorker() {
-      if (!('Notification' in window) || !('serviceWorker' in navigator)) return;
+      if (!('Notification' in window) || !('serviceWorker' in navigator)) return null;
       try {
-        const registration = await navigator.serviceWorker.register('/firebase-messaging-sw.js');
-        console.log('FCM service worker registered');
+        // Register — if already registered, this won't re-register unless the SW changed
+        await navigator.serviceWorker.register('/firebase-messaging-sw.js');
+        // Wait until the SW is actually active and controlling the page
+        const registration = await navigator.serviceWorker.ready;
+        console.log('FCM service worker ready:', registration.active?.state);
         return registration;
       } catch (err) {
         console.error('FCM service worker registration failed:', err);
+        fcmLastError = 'SW: ' + err.message;
+        return null;
       }
     }
 
-    async function requestFcmToken() {
-      if (typeof firebase === 'undefined') {
-        setTimeout(requestFcmToken, 500);
+    async function requestFcmToken(useVapidKey = true) {
+      if (typeof firebase === 'undefined' || typeof firebase.messaging !== 'function') {
+        fcmLastError = 'مكتبة Firebase لم تُحمّل بعد';
+        setTimeout(() => { fcmLastError = null; requestFcmToken(); }, 1000);
         return;
       }
       if (!fcmMessaging) {
@@ -6150,24 +6303,130 @@ c-5.708,0-10.798-2.287-14.546-6.011c-0.87-0.895-1.697-1.857-2.407-2.904c-2.262-3
           firebase.initializeApp(firebaseConfig);
           fcmMessaging = firebase.messaging();
         } catch (e) {
-          console.warn('Firebase not ready yet, retrying...');
-          setTimeout(requestFcmToken, 500);
+          fcmLastError = e.message || 'تعذر تهيئة Firebase';
+          setTimeout(() => { fcmLastError = null; requestFcmToken(); }, 1000);
           return;
         }
       }
       try {
         const registration = await registerFcmServiceWorker();
-        const vapidKey = '8Ucn8W54F07Fmc5ec2Kn_bd8RisbdkkmWQHh4SM_K3s';
-        const currentToken = await fcmMessaging.getToken({ vapidKey, serviceWorkerRegistration: registration });
+        const vapidKey = 'BKxhGi3SO7NZIMHUL6SRm2cYXz51ftQWAHhcGftmCHvWnEzvq-w0E-yTE-_bf9BabxoH7F4MmQ4N26uCVmInM3w';
+        const currentToken = await fcmMessaging.getToken({
+          ...(useVapidKey ? { vapidKey } : {}),
+          ...(registration ? { serviceWorkerRegistration: registration } : {}),
+        });
         if (currentToken) {
           console.log('FCM token obtained');
+          fcmLastError = null;
           const token = getToken();
           if (token) {
             await api('POST', '/api/notifications/store-token', { fcmToken: currentToken });
           }
+        } else {
+          fcmLastError = 'لم يتم الحصول على رمز (getToken أعادت فارغاً)';
         }
       } catch (err) {
+        const detail = err.code ? `[${err.code}] ` : '';
+        fcmLastError = detail + (err.message || 'فشل الحصول على رمز FCM');
         console.error('FCM getToken failed:', err);
+        if (useVapidKey) {
+          console.log('Retrying FCM token without VAPID key...');
+          setTimeout(() => requestFcmToken(false), 1000);
+        }
+      }
+    }
+
+    let fcmLastError = null;
+
+    /* ------ FCM server-side diagnostic ------ */
+    async function checkFcmServerStatus() {
+      const el = document.getElementById('fcmServerStatus');
+      if (!el) return;
+      try {
+        const data = await api('GET', '/api/notif-debug');
+        const envOk = data.firebaseEnvVarsPresent?.FIREBASE_PROJECT_ID
+          && data.firebaseEnvVarsPresent?.FIREBASE_CLIENT_EMAIL
+          && data.firebaseEnvVarsPresent?.FIREBASE_PRIVATE_KEY;
+        const hasToken = data.yourAccount?.hasFcmToken;
+        const parts = [];
+        if (envOk) {
+          parts.push('<span style="color:var(--green)"><i class="ti ti-server"></i> الخادم جاهز</span>');
+        } else {
+          parts.push('<span style="color:var(--red)"><i class="ti ti-server-off"></i> الخادم غير مهيئ — الإشعارات عند إغلاق التبويب غير ممكنة</span>');
+        }
+        if (data.firebaseAdminStatus) {
+          const adminOk = data.firebaseAdminStatus.startsWith('ok');
+          parts.push('<span style="color:' + (adminOk ? 'var(--green)' : 'var(--red)') + ';font-size:0.75rem;">Firebase Admin: ' + data.firebaseAdminStatus + '</span>');
+        }
+        if (hasToken) {
+          parts.push('<span style="color:var(--green)"><i class="ti ti-key"></i> رمز الإشعار مسجل</span>');
+          parts.push('<button class="btn btn-sm" id="sendTestPushBtn" style="padding:0.3rem 0.8rem;font-size:0.8rem;cursor:pointer;"><i class="ti ti-send"></i> إرسال اختبار push</button>');
+        } else {
+          parts.push('<span style="color:var(--orange)"><i class="ti ti-key-off"></i> رمز الإشعار غير مسجل</span>');
+          if (Notification.permission === 'granted' && STATE.currentUser) {
+            parts.push('<button class="btn btn-sm" id="fcmRetryBtn" style="padding:0.3rem 0.8rem;font-size:0.8rem;cursor:pointer;"><i class="ti ti-refresh"></i> إعادة التسجيل</button>');
+          }
+        }
+        if (fcmLastError) {
+          parts.push('<br><span style="color:var(--red);font-size:0.75rem;">⚠️ ' + fcmLastError + '</span>');
+        }
+        // Check service worker and test push subscription
+        if ('serviceWorker' in navigator && Notification.permission === 'granted') {
+          const allRegs = await navigator.serviceWorker.getRegistrations().catch(() => []);
+          let swReg = await navigator.serviceWorker.getRegistration('/firebase-messaging-sw.js').catch(() => null);
+          if (!swReg && allRegs.length > 0) {
+            swReg = allRegs[0];
+            parts.push('<br><span style="font-size:0.75rem;color:var(--orange);">SW found at: ' + (swReg.scope || '?') + '</span>');
+          }
+          if (swReg && swReg.active) {
+            parts.push('<br><span style="font-size:0.75rem;color:var(--text-muted);">SW: ' + swReg.active.state + ' (scope: ' + swReg.scope + ')</span>');
+            // Test push subscription to show raw browser error
+            if (!hasToken) {
+              const pushTest = await swReg.pushManager.subscribe({
+                userVisibleOnly: true,
+                applicationServerKey: 'BKxhGi3SO7NZIMHUL6SRm2cYXz51ftQWAHhcGftmCHvWnEzvq-w0E-yTE-_bf9BabxoH7F4MmQ4N26uCVmInM3w',
+              }).then(sub => {
+                sub.unsubscribe();
+                return null;
+              }).catch(e => e.name + ': ' + e.message);
+              if (pushTest) {
+                parts.push('<br><span style="font-size:0.75rem;color:var(--red);">PushManager: ' + pushTest + '</span>');
+              }
+            }
+          } else {
+            parts.push('<br><span style="font-size:0.75rem;color:var(--orange);">SW: ' + (swReg && !swReg.active ? 'installing/ waiting' : 'غير مسجلة') + '</span>');
+            if (allRegs.length === 0) parts.push(' (no SW at all)');
+          }
+        }
+        el.innerHTML = parts.join(' &nbsp;|&nbsp; ');
+        el.style.display = 'block';
+        const retryBtn = document.getElementById('fcmRetryBtn');
+        if (retryBtn) {
+          retryBtn.addEventListener('click', async () => {
+            retryBtn.disabled = true;
+            retryBtn.textContent = '⏳ جاري التسجيل...';
+            await requestFcmToken();
+            checkFcmServerStatus();
+          });
+        }
+        const testBtn = document.getElementById('sendTestPushBtn');
+        if (testBtn) {
+          testBtn.addEventListener('click', async () => {
+            testBtn.disabled = true;
+            testBtn.textContent = '⏳ جاري الإرسال...';
+            try {
+              await api('POST', '/api/notif-debug/send-test');
+              testBtn.textContent = '✅ أُرسل!';
+            } catch (err) {
+              testBtn.textContent = '❌ فشل: ' + (err.message || 'خطأ');
+            }
+            setTimeout(() => testBtn.textContent = 'إرسال اختبار push', 3000);
+            testBtn.disabled = false;
+          });
+        }
+      } catch (err) {
+        el.textContent = '⚠️ تعذر التحقق من حالة الخادم';
+        el.style.display = 'block';
       }
     }
 
@@ -6178,11 +6437,20 @@ c-5.708,0-10.798-2.287-14.546-6.011c-0.87-0.895-1.697-1.857-2.407-2.904c-2.262-3
       const isOpen = btn.getAttribute('aria-expanded') === 'true';
       btn.setAttribute('aria-expanded', String(!isOpen));
       panel.style.display = isOpen ? 'none' : '';
-      if (!isOpen) refreshNotifSettingsUi();
+      if (!isOpen) { refreshNotifSettingsUi(); checkFcmServerStatus(); }
     });
 
     document.getElementById('fcmEnableBtn').addEventListener('click', requestNotifPermission);
     document.getElementById('fcmTestBtn').addEventListener('click', triggerTestNotification);
+
+    // Listen for messages from the service worker (e.g. notification click -> show meds)
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.addEventListener('message', (event) => {
+        if (event.data?.action === 'showMeds') {
+          showTab('meds');
+        }
+      });
+    }
 
     /* ================================================================
        TRIAGE CHAT ENGINE
@@ -6205,26 +6473,39 @@ c-5.708,0-10.798-2.287-14.546-6.011c-0.87-0.895-1.697-1.857-2.407-2.904c-2.262-3
       { q: 'هل لديك حساسية من أي شيء، خاصة الأدوية؟', category: 'الحساسية' },
     ];
 
-    function appendMessage(role, text, imgDataUrl) {
+    function appendMessage(role, text, fileDataUrl) {
       const log = document.getElementById('chatLog');
       const div = document.createElement('div');
       div.className = `msg msg-${role}`;
-      if (imgDataUrl) {
+      if (fileDataUrl) {
         if (text) {
           const p = document.createElement('p');
           p.textContent = text;
           div.appendChild(p);
         }
-        const img = document.createElement('img');
-        img.className = 'chat-img';
-        img.src = imgDataUrl;
-        div.appendChild(img);
+        if (fileDataUrl.startsWith('data:application/pdf')) {
+          // Extract filename from text marker like "[PDF: name.pdf]"
+          const nameMatch = text && text.match(/\[PDF: (.+?)\]/);
+          const fileName = nameMatch ? nameMatch[1] : 'file.pdf';
+          const a = document.createElement('a');
+          a.href = fileDataUrl;
+          a.download = fileName;
+          a.className = 'chat-file-link';
+          a.innerHTML = `<i class="ti ti-file-text" style="font-size:1.5rem;"></i> <span>${fileName}</span>`;
+          a.target = '_blank';
+          div.appendChild(a);
+        } else {
+          const img = document.createElement('img');
+          img.className = 'chat-img';
+          img.src = fileDataUrl;
+          div.appendChild(img);
+        }
       } else {
         div.textContent = text;
       }
       log.appendChild(div);
       log.scrollTop = log.scrollHeight;
-      STATE.triageSession.chatLog.push({ role, text, image: imgDataUrl || null });
+      STATE.triageSession.chatLog.push({ role, text, image: fileDataUrl || null });
     }
 
     function showSuggestions(chips) {
@@ -6350,17 +6631,24 @@ c-5.708,0-10.798-2.287-14.546-6.011c-0.87-0.895-1.697-1.857-2.407-2.904c-2.262-3
       }
     }
 
-    /* ------ Chat image upload ------ */
+    /* ------ Chat file upload (images + PDFs) ------ */
     document.getElementById('chatImgBtn').addEventListener('click', () => {
       document.getElementById('chatImgInput').click();
     });
     document.getElementById('chatImgInput').addEventListener('change', e => {
       const file = e.target.files[0];
       if (!file) return;
-      if (file.size > 5 * 1024 * 1024) { alert('الحد الأقصى لحجم الصورة 5 ميجابايت'); return; }
+      if (file.size > 5 * 1024 * 1024) { alert('الحد الأقصى لحجم الملف 5 ميجابايت'); return; }
       const reader = new FileReader();
-      reader.onload = () => { handleUserChatInput(reader.result); };
-      reader.readAsDataURL(file);
+      reader.onload = () => {
+        const isPdf = file.type === 'application/pdf' || file.name.endsWith('.pdf');
+        handleUserChatInput(isPdf ? `[PDF: ${file.name}]` : reader.result, isPdf ? reader.result : null);
+      };
+      if (file.type === 'application/pdf' || file.name.endsWith('.pdf')) {
+        reader.readAsDataURL(file);
+      } else {
+        reader.readAsDataURL(file);
+      }
       e.target.value = '';
     });
 
@@ -6492,6 +6780,38 @@ c-5.708,0-10.798-2.287-14.546-6.011c-0.87-0.895-1.697-1.857-2.407-2.904c-2.262-3
         handleUserChatInput();
       }
     });
+
+    /* ------ Arrow key navigation between tabs (RTL-aware) ------ */
+    document.addEventListener('keydown', e => {
+      if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+        const navOrder = ['landing', 'meds', 'history', 'food', 'medical-test', 'bmi', 'pharmacist'];
+        const current = STATE.currentTab;
+        let idx = navOrder.indexOf(current);
+        if (idx === -1) idx = 0;
+        // In RTL: right arrow → previous (index-1), left arrow → next (index+1)
+        if (e.key === 'ArrowRight') idx = Math.max(idx - 1, 0);
+        if (e.key === 'ArrowLeft') idx = Math.min(idx + 1, navOrder.length - 1);
+        showTab(navOrder[idx]);
+      }
+    });
+
+    /* ------ Swipe gesture navigation (mobile) ------ */
+    let touchStartX = 0;
+    document.addEventListener('touchstart', e => {
+      touchStartX = e.changedTouches[0].screenX;
+    }, { passive: true });
+    document.addEventListener('touchend', e => {
+      const diff = touchStartX - e.changedTouches[0].screenX;
+      if (Math.abs(diff) < 50) return;
+      const navOrder = ['landing', 'meds', 'history', 'food', 'medical-test', 'bmi', 'pharmacist'];
+      const current = STATE.currentTab;
+      let idx = navOrder.indexOf(current);
+      if (idx === -1) idx = 0;
+      // RTL: swipe left (diff>0) = forward in navOrder; swipe right = backward
+      if (diff > 0) idx = Math.min(idx + 1, navOrder.length - 1);
+      else idx = Math.max(idx - 1, 0);
+      showTab(navOrder[idx]);
+    }, { passive: true });
 
     document.getElementById('restartBtn').addEventListener('click', () => {
       document.getElementById('symptomInput').value = '';
@@ -7155,6 +7475,26 @@ ${hasContext ? userContext : 'لا تتوفر معلومات صحية سابقة
       return JSON.parse(clean);
     }
 
+    async function convertPdfToImage(pdfDataUrl) {
+      try {
+        const pdfjsLib = window.pdfjsLib;
+        if (!pdfjsLib) throw new Error('PDF.js غير محمل');
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+        const pdf = await pdfjsLib.getDocument(pdfDataUrl).promise;
+        const page = await pdf.getPage(1);
+        const viewport = page.getViewport({ scale: 2 });
+        const canvas = document.createElement('canvas');
+        canvas.width = viewport.width;
+        canvas.height = viewport.height;
+        const ctx = canvas.getContext('2d');
+        await page.render({ canvasContext: ctx, viewport }).promise;
+        return canvas.toDataURL('image/jpeg', 0.92);
+      } catch (err) {
+        console.error('PDF conversion error:', err);
+        return null;
+      }
+    }
+
     const uploadZone = document.getElementById('medicalTestUploadZone');
     const medicalInput = document.getElementById('medicalTestInput');
     const previewContainer = document.getElementById('medicalTestPreviewContainer');
@@ -7210,10 +7550,27 @@ ${hasContext ? userContext : 'لا تتوفر معلومات صحية سابقة
         return;
       }
 
+      const isPdf = file.type === 'application/pdf' || file.name.endsWith('.pdf');
+
       const reader = new FileReader();
-      reader.onload = () => {
+      reader.onload = async () => {
         STATE.medicalTest.selectedImage = reader.result;
-        previewImg.src = reader.result;
+        STATE.medicalTest.selectedFileIsPdf = isPdf;
+        STATE.medicalTest.selectedFileName = file.name;
+
+        const pdfPreview = document.getElementById('medicalTestPdfPreview');
+        const pdfNameEl = document.getElementById('medicalTestPdfName');
+
+        if (isPdf) {
+          previewImg.style.display = 'none';
+          pdfPreview.style.display = '';
+          if (pdfNameEl) pdfNameEl.textContent = file.name;
+        } else {
+          previewImg.style.display = '';
+          pdfPreview.style.display = 'none';
+          previewImg.src = reader.result;
+        }
+
         previewContainer.style.display = '';
         uploadZone.style.display = 'none';
         analyzeBtn.disabled = false;
@@ -7225,7 +7582,11 @@ ${hasContext ? userContext : 'لا تتوفر معلومات صحية سابقة
 
     function resetMedicalTestImage() {
       STATE.medicalTest.selectedImage = null;
+      STATE.medicalTest.selectedFileIsPdf = false;
+      STATE.medicalTest.selectedFileName = '';
       previewImg.src = '';
+      previewImg.style.display = '';
+      document.getElementById('medicalTestPdfPreview').style.display = 'none';
       previewContainer.style.display = 'none';
       uploadZone.style.display = '';
       analyzeBtn.disabled = true;
@@ -7260,7 +7621,12 @@ ${hasContext ? userContext : 'لا تتوفر معلومات صحية سابقة
         loadingEl.style.display = '';
 
         try {
-          const resultData = await getMedicalTestRecsFromAI(STATE.medicalTest.selectedImage, apiKey);
+          let imageToSend = STATE.medicalTest.selectedImage;
+          if (STATE.medicalTest.selectedFileIsPdf) {
+            imageToSend = await convertPdfToImage(imageToSend);
+            if (!imageToSend) throw new Error('تعذر تحويل PDF إلى صورة');
+          }
+          const resultData = await getMedicalTestRecsFromAI(imageToSend, apiKey);
 
           document.getElementById('medicalTestDetectedName').textContent = resultData.badge || 'غير محدد';
 
@@ -7861,6 +8227,9 @@ ${hasContext ? userContext : 'لا تتوفر معلومات صحية سابقة
         console.error("Failed to load Groq API key from server", e);
       }
 
+      // Load Google Client ID for Sign In With Google
+      await loadGoogleClientId();
+
       refreshProfileScreen();
       refreshHistoryScreen();
       if (STATE.meds.list.length === 0) renderMedsScreen();
@@ -7954,6 +8323,8 @@ ${hasContext ? userContext : 'لا تتوفر معلومات صحية سابقة
     // Initialize dose slots in modal on first render
     renderDoseSlots(1);
   </script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 
 </body>
 
