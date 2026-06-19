@@ -7326,7 +7326,7 @@ ${hasContext ? userContext : 'لا تتوفر معلومات صحية سابقة
 
       // Strip any accidental markdown fences just in case
       const clean = raw.replace(/```json|```/g, '').trim();
-      return JSON.parse(clean);
+      return safeJsonParse(clean);
     }
 
     function renderFoodCards(data) {
@@ -7438,6 +7438,16 @@ ${hasContext ? userContext : 'لا تتوفر معلومات صحية سابقة
     /* ================================================================
        MEDICAL TEST ANALYZER
        ================================================================ */
+
+    function safeJsonParse(str) {
+      const cleaned = str.replace(/"([^"\\]*(?:\\.[^"\\]*)*)"/g, (match) => {
+        return match.replace(/[\x00-\x1f]/g, (c) => {
+          return '\\u' + c.charCodeAt(0).toString(16).padStart(4, '0');
+        });
+      });
+      return JSON.parse(cleaned);
+    }
+
     async function extractValuesFromImage(base64Image, apiKey) {
       const extractionPrompt = `أنت نظام OCR لتقارير طبية. اتبع الخطوات بدقة:
 
@@ -7491,7 +7501,7 @@ ${hasContext ? userContext : 'لا تتوفر معلومات صحية سابقة
           const startIdx = clean.indexOf('[');
           const endIdx = clean.lastIndexOf(']');
           if (startIdx !== -1 && endIdx !== -1) clean = clean.substring(startIdx, endIdx + 1);
-          return JSON.parse(clean);
+          return safeJsonParse(clean);
         } catch (e) { lastError = e; }
       }
       throw lastError || new Error('فشلت جميع محاولات الاستخراج');
@@ -7547,7 +7557,7 @@ ${valuesText}
       const startIdx = clean.indexOf('{');
       const endIdx = clean.lastIndexOf('}');
       if (startIdx !== -1 && endIdx !== -1) clean = clean.substring(startIdx, endIdx + 1);
-      return JSON.parse(clean);
+      return safeJsonParse(clean);
     }
 
     async function getMedicalTestRecsFromAI(base64Image, apiKey) {
@@ -7608,7 +7618,7 @@ ${valuesText}
           const startIdx = clean.indexOf('{');
           const endIdx = clean.lastIndexOf('}');
           if (startIdx !== -1 && endIdx !== -1) clean = clean.substring(startIdx, endIdx + 1);
-          return JSON.parse(clean);
+          return safeJsonParse(clean);
         } catch (e) { lastError = e; }
       }
       throw lastError || new Error('فشلت جميع المحاولات');
@@ -7659,7 +7669,7 @@ ${pdfText}`;
       const arrStart = extractClean.indexOf('[');
       const arrEnd = extractClean.lastIndexOf(']');
       if (arrStart !== -1 && arrEnd !== -1) extractClean = extractClean.substring(arrStart, arrEnd + 1);
-      const values = JSON.parse(extractClean);
+      const values = safeJsonParse(extractClean);
       if (!Array.isArray(values) || values.length === 0) throw new Error('لم يتم استخراج أي قيم');
 
       // Step 2: analyze the extracted values
