@@ -5353,6 +5353,17 @@ c-5.708,0-10.798-2.287-14.546-6.011c-0.87-0.895-1.697-1.857-2.407-2.904c-2.262-3
 
     startWelcomeAnimation();
 
+    // Tap/click anywhere on welcome screen to skip intro immediately
+    document.getElementById('welcomeScreen')?.addEventListener('click', dismissWelcome);
+    document.getElementById('welcomeScreen')?.addEventListener('touchstart', dismissWelcome, { passive: true });
+
+    function dismissWelcome() {
+      const welcome = document.getElementById('welcomeScreen');
+      if (!welcome || welcome.classList.contains('fade-out')) return;
+      welcome.classList.add('fade-out');
+      setTimeout(() => welcome.remove(), 800);
+    }
+
     /* ================================================================
        STATE
        ================================================================ */
