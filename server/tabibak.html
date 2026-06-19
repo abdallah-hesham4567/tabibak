@@ -3765,6 +3765,21 @@
         color: var(--text-2);
         line-height: 1.5;
       }
+
+      /* Credits Modal and Developer Cards */
+      .dev-card {
+        transition: all var(--speed);
+      }
+
+      .dev-card:hover {
+        transform: translateY(-2px);
+        border-color: var(--primary) !important;
+        box-shadow: var(--shadow);
+      }
+
+      .dev-avatar-wrap:hover .dev-avatar-overlay {
+        opacity: 1 !important;
+      }
   </style>
 
 </head>
@@ -4434,12 +4449,16 @@ c-5.708,0-10.798-2.287-14.546-6.011c-0.87-0.895-1.697-1.857-2.407-2.904c-2.262-3
           <button class="btn btn-primary" id="medicalTestAnalyzeBtn" style="flex:2;min-width:220px;" disabled>
             <i class="ti ti-wand"></i> تحليل التحليل الطبي بالذكاء الاصطناعي
           </button>
-          <button class="btn btn-secondary" id="medicalTestUploadBtn" style="flex:1;min-width:160px;display:flex;align-items:center;justify-content:center;gap:0.5rem;" title="رفع صورة التحليل">
+          <button class="btn btn-secondary" id="medicalTestUploadBtn"
+            style="flex:1;min-width:160px;display:flex;align-items:center;justify-content:center;gap:0.5rem;"
+            title="رفع صورة التحليل">
             <i class="ti ti-cloud-upload" style="font-size:1.8rem !important;color:var(--primary);"></i>
             <span>رفع الصورة</span>
           </button>
-          <button class="clear-image-btn" id="medicalTestClearBtn" style="display:none;flex:1;min-width:160px;" title="إزالة الصورة">
-            <i class="ti ti-trash"></i>
+          <button class="btn btn-secondary" id="medicalTestClearBtn"
+            style="display:none;flex:1;min-width:160px;align-items:center;justify-content:center;gap:0.5rem;"
+            title="إزالة الصورة">
+            <i class="ti ti-trash" style="font-size:1.8rem !important;color:var(--red);"></i>
             <span>حذف الصورة</span>
           </button>
         </div>
@@ -4877,6 +4896,14 @@ c-5.708,0-10.798-2.287-14.546-6.011c-0.87-0.895-1.697-1.857-2.407-2.904c-2.262-3
         <div class="emergency-item"><span>الطوارئ:</span><a href="tel:123">123</a></div>
         <div class="emergency-item" style="color:var(--text-muted);"><span>خط المساعدة:</span><a href="tel:16000"
             style="color:var(--text-muted);">16000</a></div>
+        <div class="emergency-item" style="color:var(--primary);">
+          <span>الاعتمادات:</span>
+          <a href="#" id="openCreditsBtn"
+            style="color:var(--primary);text-decoration:none;display:inline-flex;align-items:center;gap:0.25rem;">
+            <i class="ti ti-users" style="font-size:1.1rem;vertical-align:middle;"></i>
+            <span>فريق العمل</span>
+          </a>
+        </div>
       </div>
       <p class="footer-note">طبيبك هو نظام دعم وفحص. لا يمكنه استبدال القرارات السريرية المهنية أو الفحوصات الجسدية أو
         استشارات الأطباء. في أي حالة طارئة، اتصل بالإسعاف مباشرة.</p>
@@ -4887,6 +4914,197 @@ c-5.708,0-10.798-2.287-14.546-6.011c-0.87-0.895-1.697-1.857-2.407-2.904c-2.262-3
   <!-- ============================================================
      HISTORY DETAIL MODAL
      ============================================================ -->
+  <!-- ============================================================
+     CREDITS MODAL (DEVELOPER TEAM)
+     ============================================================ -->
+  <div class="modal-overlay" id="creditsModal">
+    <div class="modal-card glass" style="max-width: 550px;">
+      <button class="modal-close" id="closeCreditsModal">×</button>
+
+      <div class="modal-scroll" style="padding-top:0.5rem;">
+        <div style="border-bottom:1px solid var(--border);padding-bottom:1rem;margin-bottom:1rem;text-align:center;">
+          <div style="font-size:2.5rem;color:var(--primary);margin-bottom:0.25rem;"><i class="ti ti-code"></i></div>
+          <h2 style="font-size:1.6rem;font-weight:800;color:var(--text-1);margin-bottom:0.25rem;">فريق التطوير والاعتماد
+          </h2>
+          <p style="color:var(--text-muted);font-size:0.875rem;">فريق العمل المطور لتطبيق طبيبك</p>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:0.85rem;">
+
+          <!-- DEV CARD 1: Ahmed abd alazez -->
+          <!-- لرفع صورتك الشخصية، يمكنك الضغط على الدائرة الخاصة بصورتك ورفعها من جهازك، أو قم بتغيير src في الكود أدناه بشكل دائم -->
+          <div class="dev-card"
+            style="display:flex;align-items:center;gap:1.2rem;background:var(--bg-surface);border:1px solid var(--border);padding:0.9rem 1.2rem;border-radius:16px;position:relative;transition:all var(--speed);">
+            <div class="dev-avatar-wrap" id="devAvatarWrap_0"
+              style="position:relative;width:56px;height:56px;border-radius:50%;overflow:hidden;border:2px solid var(--primary);cursor:pointer;flex-shrink:0;"
+              title="اضغط لرفع صورتك" onmouseover="this.querySelector('.dev-avatar-overlay').style.opacity=1"
+              onmouseout="this.querySelector('.dev-avatar-overlay').style.opacity=0">
+              <img id="devAvatarImg_0" src="" style="display:none;width:100%;height:100%;object-fit:cover;" />
+              <div id="devAvatarPlaceholder_0"
+                style="display:flex;width:100%;height:100%;align-items:center;justify-content:center;background:var(--primary-glow);color:var(--primary);">
+                <i class="ti ti-user" style="font-size:1.6rem;"></i>
+              </div>
+              <div class="dev-avatar-overlay"
+                style="position:absolute;inset:0;background:rgba(0,0,0,0.45);display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity 0.2s;">
+                <i class="ti ti-camera" style="color:#fff;font-size:1.1rem;"></i>
+              </div>
+            </div>
+            <input type="file" id="devInput_0" accept="image/*" style="display:none;" />
+            <div style="flex-grow:1;">
+              <h4 style="font-size:1.05rem;font-weight:700;color:var(--text-1);margin-bottom:0.15rem;">Ahmed abd alazez
+              </h4>
+              <p style="font-size:0.8rem;color:var(--text-muted);margin-bottom:0.4rem;">مطور برمجيات / Software
+                Developer</p>
+              <div style="display:flex;gap:0.75rem;">
+                <a href="https://www.linkedin.com/in/ahmed-abd-alazez-730048241/" target="_blank"
+                  style="color:var(--text-2);transition:color 0.2s;font-size:1.15rem;"><i
+                    class="ti ti-brand-linkedin"></i></a>
+                <a href="https://github.com/Ahmed-AbdAlazez" target="_blank"
+                  style="color:var(--text-2);transition:color 0.2s;font-size:1.15rem;"><i
+                    class="ti ti-brand-github"></i></a>
+              </div>
+            </div>
+          </div>
+
+          <!-- DEV CARD 2: abdullah hesham -->
+          <div class="dev-card"
+            style="display:flex;align-items:center;gap:1.2rem;background:var(--bg-surface);border:1px solid var(--border);padding:0.9rem 1.2rem;border-radius:16px;position:relative;transition:all var(--speed);">
+            <div class="dev-avatar-wrap" id="devAvatarWrap_1"
+              style="position:relative;width:56px;height:56px;border-radius:50%;overflow:hidden;border:2px solid var(--primary);cursor:pointer;flex-shrink:0;"
+              title="اضغط لرفع صورتك" onmouseover="this.querySelector('.dev-avatar-overlay').style.opacity=1"
+              onmouseout="this.querySelector('.dev-avatar-overlay').style.opacity=0">
+              <img id="devAvatarImg_1" src="" style="display:none;width:100%;height:100%;object-fit:cover;" />
+              <div id="devAvatarPlaceholder_1"
+                style="display:flex;width:100%;height:100%;align-items:center;justify-content:center;background:var(--primary-glow);color:var(--primary);">
+                <i class="ti ti-user" style="font-size:1.6rem;"></i>
+              </div>
+              <div class="dev-avatar-overlay"
+                style="position:absolute;inset:0;background:rgba(0,0,0,0.45);display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity 0.2s;">
+                <i class="ti ti-camera" style="color:#fff;font-size:1.1rem;"></i>
+              </div>
+            </div>
+            <input type="file" id="devInput_1" accept="image/*" style="display:none;" />
+            <div style="flex-grow:1;">
+              <h4 style="font-size:1.05rem;font-weight:700;color:var(--text-1);margin-bottom:0.15rem;">abdullah hesham
+              </h4>
+              <p style="font-size:0.8rem;color:var(--text-muted);margin-bottom:0.4rem;">مطور برمجيات / Software
+                Developer</p>
+              <div style="display:flex;gap:0.75rem;">
+                <a href="https://www.linkedin.com/in/abdallah-hesham223" target="_blank"
+                  style="color:var(--text-2);transition:color 0.2s;font-size:1.15rem;"><i
+                    class="ti ti-brand-linkedin"></i></a>
+                <a href="https://github.com/abdallah-hesham4567" target="_blank"
+                  style="color:var(--text-2);transition:color 0.2s;font-size:1.15rem;"><i
+                    class="ti ti-brand-github"></i></a>
+              </div>
+            </div>
+          </div>
+
+          <!-- DEV CARD 3: hashem elhelo -->
+          <div class="dev-card"
+            style="display:flex;align-items:center;gap:1.2rem;background:var(--bg-surface);border:1px solid var(--border);padding:0.9rem 1.2rem;border-radius:16px;position:relative;transition:all var(--speed);">
+            <div class="dev-avatar-wrap" id="devAvatarWrap_2"
+              style="position:relative;width:56px;height:56px;border-radius:50%;overflow:hidden;border:2px solid var(--primary);cursor:pointer;flex-shrink:0;"
+              title="اضغط لرفع صورتك" onmouseover="this.querySelector('.dev-avatar-overlay').style.opacity=1"
+              onmouseout="this.querySelector('.dev-avatar-overlay').style.opacity=0">
+              <img id="devAvatarImg_2" src="" style="display:none;width:100%;height:100%;object-fit:cover;" />
+              <div id="devAvatarPlaceholder_2"
+                style="display:flex;width:100%;height:100%;align-items:center;justify-content:center;background:var(--primary-glow);color:var(--primary);">
+                <i class="ti ti-user" style="font-size:1.6rem;"></i>
+              </div>
+              <div class="dev-avatar-overlay"
+                style="position:absolute;inset:0;background:rgba(0,0,0,0.45);display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity 0.2s;">
+                <i class="ti ti-camera" style="color:#fff;font-size:1.1rem;"></i>
+              </div>
+            </div>
+            <input type="file" id="devInput_2" accept="image/*" style="display:none;" />
+            <div style="flex-grow:1;">
+              <h4 style="font-size:1.05rem;font-weight:700;color:var(--text-1);margin-bottom:0.15rem;">hashem elhelo
+              </h4>
+              <p style="font-size:0.8rem;color:var(--text-muted);margin-bottom:0.4rem;">مطور برمجيات / Software
+                Developer</p>
+              <div style="display:flex;gap:0.75rem;">
+                <a href="https://www.linkedin.com/in/hashim-elhelo-034a5b177" target="_blank"
+                  style="color:var(--text-2);transition:color 0.2s;font-size:1.15rem;"><i
+                    class="ti ti-brand-linkedin"></i></a>
+                <a href="https://github.com/hashemelhelo2827" target="_blank"
+                  style="color:var(--text-2);transition:color 0.2s;font-size:1.15rem;"><i
+                    class="ti ti-brand-github"></i></a>
+              </div>
+            </div>
+          </div>
+
+          <!-- DEV CARD 4: fatma eid -->
+          <div class="dev-card"
+            style="display:flex;align-items:center;gap:1.2rem;background:var(--bg-surface);border:1px solid var(--border);padding:0.9rem 1.2rem;border-radius:16px;position:relative;transition:all var(--speed);">
+            <div class="dev-avatar-wrap" id="devAvatarWrap_3"
+              style="position:relative;width:56px;height:56px;border-radius:50%;overflow:hidden;border:2px solid var(--primary);cursor:pointer;flex-shrink:0;"
+              title="اضغط لرفع صورتك" onmouseover="this.querySelector('.dev-avatar-overlay').style.opacity=1"
+              onmouseout="this.querySelector('.dev-avatar-overlay').style.opacity=0">
+              <img id="devAvatarImg_3" src="" style="display:none;width:100%;height:100%;object-fit:cover;" />
+              <div id="devAvatarPlaceholder_3"
+                style="display:flex;width:100%;height:100%;align-items:center;justify-content:center;background:var(--primary-glow);color:var(--primary);">
+                <i class="ti ti-user" style="font-size:1.6rem;"></i>
+              </div>
+              <div class="dev-avatar-overlay"
+                style="position:absolute;inset:0;background:rgba(0,0,0,0.45);display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity 0.2s;">
+                <i class="ti ti-camera" style="color:#fff;font-size:1.1rem;"></i>
+              </div>
+            </div>
+            <input type="file" id="devInput_3" accept="image/*" style="display:none;" />
+            <div style="flex-grow:1;">
+              <h4 style="font-size:1.05rem;font-weight:700;color:var(--text-1);margin-bottom:0.15rem;">fatma eid</h4>
+              <p style="font-size:0.8rem;color:var(--text-muted);margin-bottom:0.4rem;">مطورة برمجيات / Software
+                Developer</p>
+              <div style="display:flex;gap:0.75rem;">
+                <a href="https://www.linkedin.com/in/fatma-eid06" target="_blank"
+                  style="color:var(--text-2);transition:color 0.2s;font-size:1.15rem;"><i
+                    class="ti ti-brand-linkedin"></i></a>
+                <a href="https://github.com/FatmaEid06" target="_blank"
+                  style="color:var(--text-2);transition:color 0.2s;font-size:1.15rem;"><i
+                    class="ti ti-brand-github"></i></a>
+              </div>
+            </div>
+          </div>
+
+          <!-- DEV CARD 5: karen adel -->
+          <div class="dev-card"
+            style="display:flex;align-items:center;gap:1.2rem;background:var(--bg-surface);border:1px solid var(--border);padding:0.9rem 1.2rem;border-radius:16px;position:relative;transition:all var(--speed);">
+            <div class="dev-avatar-wrap" id="devAvatarWrap_4"
+              style="position:relative;width:56px;height:56px;border-radius:50%;overflow:hidden;border:2px solid var(--primary);cursor:pointer;flex-shrink:0;"
+              title="اضغط لرفع صورتك" onmouseover="this.querySelector('.dev-avatar-overlay').style.opacity=1"
+              onmouseout="this.querySelector('.dev-avatar-overlay').style.opacity=0">
+              <img id="devAvatarImg_4" src="" style="display:none;width:100%;height:100%;object-fit:cover;" />
+              <div id="devAvatarPlaceholder_4"
+                style="display:flex;width:100%;height:100%;align-items:center;justify-content:center;background:var(--primary-glow);color:var(--primary);">
+                <i class="ti ti-user" style="font-size:1.6rem;"></i>
+              </div>
+              <div class="dev-avatar-overlay"
+                style="position:absolute;inset:0;background:rgba(0,0,0,0.45);display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity 0.2s;">
+                <i class="ti ti-camera" style="color:#fff;font-size:1.1rem;"></i>
+              </div>
+            </div>
+            <input type="file" id="devInput_4" accept="image/*" style="display:none;" />
+            <div style="flex-grow:1;">
+              <h4 style="font-size:1.05rem;font-weight:700;color:var(--text-1);margin-bottom:0.15rem;">karen adel</h4>
+              <p style="font-size:0.8rem;color:var(--text-muted);margin-bottom:0.4rem;">مطورة برمجيات / Software
+                Developer</p>
+              <div style="display:flex;gap:0.75rem;">
+                <a href="https://www.linkedin.com/in/karenadel" target="_blank"
+                  style="color:var(--text-2);transition:color 0.2s;font-size:1.15rem;"><i
+                    class="ti ti-brand-linkedin"></i></a>
+                <a href="https://github.com/karenadel" target="_blank"
+                  style="color:var(--text-2);transition:color 0.2s;font-size:1.15rem;"><i
+                    class="ti ti-brand-github"></i></a>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
   <div class="modal-overlay" id="historyModal">
     <div class="modal-card glass">
       <button class="modal-close" id="closeModal">×</button>
@@ -6927,7 +7145,7 @@ ${hasContext ? userContext : 'لا تتوفر معلومات صحية سابقة
       const data = await res.json();
       const raw = data.choices?.[0]?.message?.content;
       if (!raw) throw new Error('لم يرد خادم الذكاء الاصطناعي بأي نتائج');
-      
+
       let clean = raw.replace(/```json|```/g, '').trim();
       const startIdx = clean.indexOf('{');
       const endIdx = clean.lastIndexOf('}');
@@ -7663,6 +7881,75 @@ ${hasContext ? userContext : 'لا تتوفر معلومات صحية سابقة
         if (el) el.value = '+' + PHARMACY_PHONE_DEFAULT;
       }
     })();
+
+    // Credits Modal Show/Hide and Image Upload Handling
+    const openCreditsBtn = document.getElementById('openCreditsBtn');
+    const creditsModal = document.getElementById('creditsModal');
+    const closeCreditsModal = document.getElementById('closeCreditsModal');
+
+    if (openCreditsBtn && creditsModal) {
+      openCreditsBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        creditsModal.classList.add('open');
+      });
+    }
+
+    if (closeCreditsModal && creditsModal) {
+      closeCreditsModal.addEventListener('click', () => {
+        creditsModal.classList.remove('open');
+      });
+    }
+
+    if (creditsModal) {
+      creditsModal.addEventListener('click', (e) => {
+        if (e.target === creditsModal) creditsModal.classList.remove('open');
+      });
+    }
+
+    // Connect hidden file inputs to dev avatars and handle uploads
+    for (let i = 0; i < 5; i++) {
+      const avatarWrap = document.getElementById(`devAvatarWrap_${i}`);
+      const fileInput = document.getElementById(`devInput_${i}`);
+      const avatarImg = document.getElementById(`devAvatarImg_${i}`);
+      const placeholder = document.getElementById(`devAvatarPlaceholder_${i}`);
+
+      if (avatarWrap && fileInput) {
+        avatarWrap.addEventListener('click', () => fileInput.click());
+      }
+
+      if (fileInput) {
+        fileInput.addEventListener('change', (e) => {
+          const file = e.target.files[0];
+          if (!file) return;
+          if (file.size > 2 * 1024 * 1024) {
+            alert('الحد الأقصى لحجم الصورة هو 2 ميجابايت.');
+            return;
+          }
+          const reader = new FileReader();
+          reader.onload = () => {
+            avatarImg.src = reader.result;
+            avatarImg.style.display = 'block';
+            placeholder.style.display = 'none';
+            try {
+              localStorage.setItem(`tabibak_dev_photo_${i}`, reader.result);
+            } catch (err) {
+              console.error("Failed to save dev photo in localStorage", err);
+            }
+          };
+          reader.readAsDataURL(file);
+        });
+      }
+
+      // Pre-load saved developer photos from localStorage
+      try {
+        const savedPhoto = localStorage.getItem(`tabibak_dev_photo_${i}`);
+        if (savedPhoto && avatarImg && placeholder) {
+          avatarImg.src = savedPhoto;
+          avatarImg.style.display = 'block';
+          placeholder.style.display = 'none';
+        }
+      } catch (err) { }
+    }
 
     // Initialize dose slots in modal on first render
     renderDoseSlots(1);
