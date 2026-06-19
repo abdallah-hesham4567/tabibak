@@ -4440,16 +4440,20 @@ c-5.708,0-10.798-2.287-14.546-6.011c-0.87-0.895-1.697-1.857-2.407-2.904c-2.262-3
       </div>
 
       <div id="medicalTestUploader">
-        <input type="file" id="medicalTestInput" accept="image/*" style="display:none;" />
+        <input type="file" id="medicalTestInput" accept="image/*,.pdf" style="display:none;" />
         <div class="upload-zone" id="medicalTestUploadZone">
           <i class="ti ti-cloud-upload"></i>
           <h3>اسحب وأفلت صورة التحليل هنا</h3>
-          <p style="color:var(--text-muted);font-size:0.9rem;">أو اضغط لاختيار صورة من جهازك (يدعم JPG، PNG، GIF حتى 5
-            ميجابايت)</p>
+          <p style="color:var(--text-muted);font-size:0.9rem;">أو اضغط لاختيار ملف من جهازك (يدعم JPG، PNG، GIF، PDF
+            حتى 5 ميجابايت)</p>
         </div>
 
         <div class="image-preview-wrapper" id="medicalTestPreviewContainer" style="display:none;">
           <img id="medicalTestPreviewImage" src="" alt="معاينة التحليل الطبي" />
+          <div id="medicalTestPdfPreview" style="display:none;text-align:center;padding:2rem;">
+            <i class="ti ti-file-text" style="font-size:4rem;color:var(--primary);"></i>
+            <p id="medicalTestPdfName" style="margin-top:0.5rem;font-weight:600;"></p>
+          </div>
         </div>
 
         <div style="display:flex;gap:1rem;margin-top:1.5rem;width:100%;flex-wrap:wrap;align-items:stretch;">
@@ -7253,6 +7257,26 @@ ${hasContext ? userContext : 'لا تتوفر معلومات صحية سابقة
       return JSON.parse(clean);
     }
 
+    async function convertPdfToImage(pdfDataUrl) {
+      try {
+        const pdfjsLib = window.pdfjsLib;
+        if (!pdfjsLib) throw new Error('PDF.js غير محمل');
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+        const pdf = await pdfjsLib.getDocument(pdfDataUrl).promise;
+        const page = await pdf.getPage(1);
+        const viewport = page.getViewport({ scale: 2 });
+        const canvas = document.createElement('canvas');
+        canvas.width = viewport.width;
+        canvas.height = viewport.height;
+        const ctx = canvas.getContext('2d');
+        await page.render({ canvasContext: ctx, viewport }).promise;
+        return canvas.toDataURL('image/jpeg', 0.92);
+      } catch (err) {
+        console.error('PDF conversion error:', err);
+        return null;
+      }
+    }
+
     const uploadZone = document.getElementById('medicalTestUploadZone');
     const medicalInput = document.getElementById('medicalTestInput');
     const previewContainer = document.getElementById('medicalTestPreviewContainer');
@@ -7308,10 +7332,27 @@ ${hasContext ? userContext : 'لا تتوفر معلومات صحية سابقة
         return;
       }
 
+      const isPdf = file.type === 'application/pdf' || file.name.endsWith('.pdf');
+
       const reader = new FileReader();
-      reader.onload = () => {
+      reader.onload = async () => {
         STATE.medicalTest.selectedImage = reader.result;
-        previewImg.src = reader.result;
+        STATE.medicalTest.selectedFileIsPdf = isPdf;
+        STATE.medicalTest.selectedFileName = file.name;
+
+        const pdfPreview = document.getElementById('medicalTestPdfPreview');
+        const pdfNameEl = document.getElementById('medicalTestPdfName');
+
+        if (isPdf) {
+          previewImg.style.display = 'none';
+          pdfPreview.style.display = '';
+          if (pdfNameEl) pdfNameEl.textContent = file.name;
+        } else {
+          previewImg.style.display = '';
+          pdfPreview.style.display = 'none';
+          previewImg.src = reader.result;
+        }
+
         previewContainer.style.display = '';
         uploadZone.style.display = 'none';
         analyzeBtn.disabled = false;
@@ -7323,7 +7364,11 @@ ${hasContext ? userContext : 'لا تتوفر معلومات صحية سابقة
 
     function resetMedicalTestImage() {
       STATE.medicalTest.selectedImage = null;
+      STATE.medicalTest.selectedFileIsPdf = false;
+      STATE.medicalTest.selectedFileName = '';
       previewImg.src = '';
+      previewImg.style.display = '';
+      document.getElementById('medicalTestPdfPreview').style.display = 'none';
       previewContainer.style.display = 'none';
       uploadZone.style.display = '';
       analyzeBtn.disabled = true;
@@ -7358,7 +7403,12 @@ ${hasContext ? userContext : 'لا تتوفر معلومات صحية سابقة
         loadingEl.style.display = '';
 
         try {
-          const resultData = await getMedicalTestRecsFromAI(STATE.medicalTest.selectedImage, apiKey);
+          let imageToSend = STATE.medicalTest.selectedImage;
+          if (STATE.medicalTest.selectedFileIsPdf) {
+            imageToSend = await convertPdfToImage(imageToSend);
+            if (!imageToSend) throw new Error('تعذر تحويل PDF إلى صورة');
+          }
+          const resultData = await getMedicalTestRecsFromAI(imageToSend, apiKey);
 
           document.getElementById('medicalTestDetectedName').textContent = resultData.badge || 'غير محدد';
 
@@ -7986,6 +8036,8 @@ ${hasContext ? userContext : 'لا تتوفر معلومات صحية سابقة
     // Initialize dose slots in modal on first render
     renderDoseSlots(1);
   </script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 
 </body>
 
