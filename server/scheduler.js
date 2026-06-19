@@ -56,17 +56,19 @@ function startScheduler() {
       `;
       const allRows = await db.execute(sql);
 
-      const targetUtc = new Date(now.getTime() + 5 * 60000);
       let matchedCount = 0, sentCount = 0, alreadySentCount = 0, failCount = 0;
 
       for (const row of allRows.rows) {
         const tz = Number(row.tzOffset);
-        const targetLocal = new Date(targetUtc.getTime() + tz * 3600000);
-        const targetHH = String(targetLocal.getUTCHours()).padStart(2, '0');
-        const targetMM = String(targetLocal.getUTCMinutes()).padStart(2, '0');
-        const targetTime = `${targetHH}:${targetMM}`;
-
-        if (row.doseTime !== targetTime) continue;
+        // Convert now to user local time
+        const nowLocal = new Date(now.getTime() + tz * 3600000);
+        const nowLocalMins = nowLocal.getUTCHours() * 60 + nowLocal.getUTCMinutes();
+        // Parse dose time to minutes
+        const [dh, dm] = row.doseTime.split(':').map(Number);
+        const doseMins = dh * 60 + dm;
+        // Check if dose is 4-6 minutes away
+        const minsLeft = doseMins - nowLocalMins;
+        if (minsLeft < 4 || minsLeft >= 6) continue;
         matchedCount++;
 
         const alreadySent = await db.execute({
@@ -83,13 +85,9 @@ function startScheduler() {
         try {
           await getMessaging(fcmApp).send({
             token: row.fcmToken,
-            notification: {
-              title: 'تذكير بالدواء',
-              body: `حان موعد ${row.medName} (${row.medDose}) بعد 5 دقائق`,
-            },
             data: {
-              title: 'تذكير بالدواء',
-              body: `حان موعد ${row.medName} (${row.medDose}) بعد 5 دقائق`,
+              title: `💊 ${row.medName} — خلال 5 دقائق`,
+              body: `الجرعة: ${row.medDose}`,
               medicationId: String(row.medicationId),
               doseTime: String(row.doseTime),
               type: 'medication_reminder',

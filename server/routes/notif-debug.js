@@ -21,14 +21,10 @@ router.post('/send-test', async (req, res) => {
     const { getMessaging } = require('firebase-admin/messaging');
     await getMessaging(app).send({
       token: fcmToken,
-      notification: {
-        title: '🔔 طبيبك — اختبار الإشعار',
-        body: 'هذا إشعار تجريبي من الخادم! الإشعارات تعمل ✅',
-      },
       data: {
         type: 'test_notification',
-        title: '🔔 طبيبك — اختبار الإشعار',
-        body: 'هذا إشعار تجريبي من الخادم! الإشعارات تعمل ✅',
+        title: '🔔 طبيبك — الإشعارات تعمل ✅',
+        body: 'هذا إشعار تجريبي من الخادم!',
       },
     });
     res.json({ status: 'success', message: 'Test push sent successfully' });
