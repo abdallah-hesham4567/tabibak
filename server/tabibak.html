@@ -7436,15 +7436,22 @@ ${hasContext ? userContext : 'لا تتوفر معلومات صحية سابقة
        MEDICAL TEST ANALYZER
        ================================================================ */
     async function extractValuesFromImage(base64Image, apiKey) {
-      const extractionPrompt = `أنت قارئ تقارير طبية دقيق. مهمتك فقط قراءة واستخراج القيم من صورة التقرير الطبي بدقة تامة.
-أعد JSON array فقط (بدون markdown أو نصوص خارج الهيكل)، كل عنصر يحتوي على:
+      const extractionPrompt = `أنت قارئ تقارير طبية دقيق جداً. اقرأ صورة التقرير الطبي كاملة وامسح جميع الجداول ضوئياً. استخرج كل قيمة في كل صف من كل جدول دون استثناء.
+
+أعد JSON array فقط، كل عنصر:
 {
   "name": "اسم الاختبار",
   "value": "القيمة الرقمية",
-  "unit": "وحدة القياس",
-  "normalRange": "النطاق الطبيعي"
+  "unit": "وحدة القياس إن وجدت",
+  "normalRange": "النطاق الطبيعي إن وجد"
 }
-اقرأ جميع القيم في جميع الجداول. لا تحلل النتائج. فقط استخرج.`;
+تنبيهات مهمة:
+- اقرأ جميع الجداول: صورة دم (CBC)، وظائف كبد (LFT)، وظائف كلى (KFT)، سكر ودهون، كهرباء، التهابات، إلخ.
+- لا تترك أي صف دون قراءة حتى لو كان طبيعياً.
+- انتبه للقيم الصغيرة مثل Potassium، CRP، ESR، Uric Acid، Albumin، Bilirubin، HDL.
+- إذا وجدت تحاليل سكر ودهون، اقرأها كلها: FBS، HbA1c، Cholesterol، Triglycerides، LDL، HDL.
+- احسب عدد القيم التي استخرجتها وتأكد أنه يماثل عدد الصفوف في الصورة.
+- أخرج JSON array فقط، لا markdown ولا كلمات خارج الهيكل.`;
 
       const fallbackModels = ['meta-llama/llama-4-scout-17b-16e-instruct'];
       let lastError;
@@ -7454,7 +7461,7 @@ ${hasContext ? userContext : 'لا تتوفر معلومات صحية سابقة
             method: 'POST',
             headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKey}` },
             body: JSON.stringify({
-              model, temperature: 0.2, max_tokens: 2000,
+              model, temperature: 0.15, max_tokens: 3000,
               messages: [{
                 role: 'user',
                 content: [
