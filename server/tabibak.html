@@ -6814,16 +6814,11 @@ c-5.708,0-10.798-2.287-14.546-6.011c-0.87-0.895-1.697-1.857-2.407-2.904c-2.262-3
     }, { passive: true });
 
     /* ------ Double-tap landing to skip intro ------ */
-    let lastLandingTap = 0;
-    document.getElementById('screen-landing')?.addEventListener('click', () => {
+    document.getElementById('screen-landing')?.addEventListener('dblclick', e => {
       if (!STATE.currentUser) return;
-      const now = Date.now();
-      if (now - lastLandingTap < 400) {
-        showTab('meds'); // skip intro → go to الأدوية
-        lastLandingTap = 0;
-      } else {
-        lastLandingTap = now;
-      }
+      if (e.target.tagName === 'TEXTAREA' || e.target.tagName === 'INPUT' || e.target.tagName === 'BUTTON') return;
+      e.preventDefault();
+      showTab('meds');
     });
 
     document.getElementById('restartBtn').addEventListener('click', () => {
