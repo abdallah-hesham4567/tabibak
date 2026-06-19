@@ -764,6 +764,26 @@
       display: block;
     }
 
+    .chat-file-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 0.75rem;
+      margin-top: 6px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      text-decoration: none;
+      color: var(--text);
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: all var(--speed);
+    }
+    .chat-file-link:hover {
+      border-color: var(--primary);
+      background: var(--primary-glow-strong);
+    }
+
     .suggestions {
       display: flex;
       flex-wrap: wrap;
@@ -4104,10 +4124,10 @@ c-5.708,0-10.798-2.287-14.546-6.011c-0.87-0.895-1.697-1.857-2.407-2.904c-2.262-3
 
       <div class="chat-input-row">
         <input type="text" id="chatInput" placeholder="اكتب ردك هنا..." autocomplete="off" />
-        <button class="btn btn-secondary" id="chatImgBtn" title="إرفاق صورة"
-          style="padding:0.875rem;font-size:1.2rem;line-height:1;"><i class="ti ti-photo"></i></button>
+        <button class="btn btn-secondary" id="chatImgBtn" title="إرفاق صورة أو PDF"
+          style="padding:0.875rem;font-size:1.2rem;line-height:1;"><i class="ti ti-file"></i></button>
         <button class="btn btn-primary" id="sendBtn" style="padding:0.875rem 1.25rem;">إرسال</button>
-        <input type="file" id="chatImgInput" accept="image/*" style="display:none;" />
+        <input type="file" id="chatImgInput" accept="image/*,.pdf" style="display:none;" />
       </div>
 
     </main>
@@ -6231,26 +6251,39 @@ c-5.708,0-10.798-2.287-14.546-6.011c-0.87-0.895-1.697-1.857-2.407-2.904c-2.262-3
       { q: 'هل لديك حساسية من أي شيء، خاصة الأدوية؟', category: 'الحساسية' },
     ];
 
-    function appendMessage(role, text, imgDataUrl) {
+    function appendMessage(role, text, fileDataUrl) {
       const log = document.getElementById('chatLog');
       const div = document.createElement('div');
       div.className = `msg msg-${role}`;
-      if (imgDataUrl) {
+      if (fileDataUrl) {
         if (text) {
           const p = document.createElement('p');
           p.textContent = text;
           div.appendChild(p);
         }
-        const img = document.createElement('img');
-        img.className = 'chat-img';
-        img.src = imgDataUrl;
-        div.appendChild(img);
+        if (fileDataUrl.startsWith('data:application/pdf')) {
+          // Extract filename from text marker like "[PDF: name.pdf]"
+          const nameMatch = text && text.match(/\[PDF: (.+?)\]/);
+          const fileName = nameMatch ? nameMatch[1] : 'file.pdf';
+          const a = document.createElement('a');
+          a.href = fileDataUrl;
+          a.download = fileName;
+          a.className = 'chat-file-link';
+          a.innerHTML = `<i class="ti ti-file-text" style="font-size:1.5rem;"></i> <span>${fileName}</span>`;
+          a.target = '_blank';
+          div.appendChild(a);
+        } else {
+          const img = document.createElement('img');
+          img.className = 'chat-img';
+          img.src = fileDataUrl;
+          div.appendChild(img);
+        }
       } else {
         div.textContent = text;
       }
       log.appendChild(div);
       log.scrollTop = log.scrollHeight;
-      STATE.triageSession.chatLog.push({ role, text, image: imgDataUrl || null });
+      STATE.triageSession.chatLog.push({ role, text, image: fileDataUrl || null });
     }
 
     function showSuggestions(chips) {
@@ -6376,17 +6409,24 @@ c-5.708,0-10.798-2.287-14.546-6.011c-0.87-0.895-1.697-1.857-2.407-2.904c-2.262-3
       }
     }
 
-    /* ------ Chat image upload ------ */
+    /* ------ Chat file upload (images + PDFs) ------ */
     document.getElementById('chatImgBtn').addEventListener('click', () => {
       document.getElementById('chatImgInput').click();
     });
     document.getElementById('chatImgInput').addEventListener('change', e => {
       const file = e.target.files[0];
       if (!file) return;
-      if (file.size > 5 * 1024 * 1024) { alert('الحد الأقصى لحجم الصورة 5 ميجابايت'); return; }
+      if (file.size > 5 * 1024 * 1024) { alert('الحد الأقصى لحجم الملف 5 ميجابايت'); return; }
       const reader = new FileReader();
-      reader.onload = () => { handleUserChatInput(reader.result); };
-      reader.readAsDataURL(file);
+      reader.onload = () => {
+        const isPdf = file.type === 'application/pdf' || file.name.endsWith('.pdf');
+        handleUserChatInput(isPdf ? `[PDF: ${file.name}]` : reader.result, isPdf ? reader.result : null);
+      };
+      if (file.type === 'application/pdf' || file.name.endsWith('.pdf')) {
+        reader.readAsDataURL(file);
+      } else {
+        reader.readAsDataURL(file);
+      }
       e.target.value = '';
     });
 
@@ -6518,6 +6558,39 @@ c-5.708,0-10.798-2.287-14.546-6.011c-0.87-0.895-1.697-1.857-2.407-2.904c-2.262-3
         handleUserChatInput();
       }
     });
+
+    /* ------ Arrow key navigation between tabs ------ */
+    document.addEventListener('keydown', e => {
+      if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+        const navOrder = ['landing', 'meds', 'history', 'food', 'medical-test', 'bmi', 'pharmacist'];
+        const current = STATE.currentTab;
+        let idx = navOrder.indexOf(current);
+        if (idx === -1) {
+          // If inside triage sub-tabs (chat, breathing, results), treat as landing
+          idx = 0;
+        }
+        if (e.key === 'ArrowRight') idx = Math.min(idx + 1, navOrder.length - 1);
+        if (e.key === 'ArrowLeft') idx = Math.max(idx - 1, 0);
+        showTab(navOrder[idx]);
+      }
+    });
+
+    /* ------ Swipe gesture navigation (mobile) ------ */
+    let touchStartX = 0;
+    document.addEventListener('touchstart', e => {
+      touchStartX = e.changedTouches[0].screenX;
+    }, { passive: true });
+    document.addEventListener('touchend', e => {
+      const diff = touchStartX - e.changedTouches[0].screenX;
+      if (Math.abs(diff) < 50) return;
+      const navOrder = ['landing', 'meds', 'history', 'food', 'medical-test', 'bmi', 'pharmacist'];
+      const current = STATE.currentTab;
+      let idx = navOrder.indexOf(current);
+      if (idx === -1) idx = 0;
+      if (diff > 0) idx = Math.min(idx + 1, navOrder.length - 1);  // swipe left → next tab
+      else idx = Math.max(idx - 1, 0);                               // swipe right → prev tab
+      showTab(navOrder[idx]);
+    }, { passive: true });
 
     document.getElementById('restartBtn').addEventListener('click', () => {
       document.getElementById('symptomInput').value = '';
