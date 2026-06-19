@@ -76,8 +76,9 @@ app.use(express.static(__dirname, {
   },
 }));
 
-// Serve tabibak.html for root path
+// Serve tabibak.html for root path (with no-cache to force fresh client code)
 app.get('/', (req, res) => {
+  res.set('Cache-Control', 'no-cache, no-store, must-revalidate');
   res.sendFile(path.join(__dirname, 'tabibak.html'));
 });
 
