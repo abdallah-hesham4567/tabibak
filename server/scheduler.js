@@ -58,6 +58,10 @@ function startScheduler() {
 
       let matchedCount = 0, sentCount = 0, alreadySentCount = 0, failCount = 0;
 
+      // Debug tz values
+      const tzSet = new Set(allRows.rows.map(r => Number(r.tzOffset)));
+      console.log(`[scheduler] Tick: tz values=${[...tzSet].join(',')} rows=${allRows.rows.length}`);
+
       for (const row of allRows.rows) {
         const tz = Number(row.tzOffset);
         // Convert now to user local time
