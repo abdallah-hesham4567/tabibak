@@ -371,7 +371,8 @@
     }
 
     .nav-btn.active {
-      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      /* background: linear-gradient(135deg, var(--primary), var(--secondary)); */
+      background: var(--primary);
       color: var(--btn-text);
       box-shadow: 0 4px 12px var(--primary-glow);
     }
@@ -2249,9 +2250,14 @@
       font-size: 1.4rem;
       color: var(--primary);
     }
+    .meds-add-btn,
+    .meds-btn-save,
+    .notification-perm-btn {
+      background: var(--primary);
+    }
 
     .meds-add-btn {
-      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      /*background: linear-gradient(135deg, var(--primary), var(--secondary));*/
       border: none;
       color: var(--btn-text);
       font-family: var(--font-heading);
@@ -2723,7 +2729,7 @@
     }
 
     .meds-btn-save {
-      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      /*background: linear-gradient(135deg, var(--primary), var(--secondary));*/
       border: none;
       color: var(--btn-text);
       transition: all 0.2s;
@@ -2946,7 +2952,7 @@
       align-items: center;
       justify-content: center;
       gap: 0.5rem;
-      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      /*background: linear-gradient(135deg, var(--primary), var(--secondary));*/
       color: var(--btn-text);
       padding: 0.75rem 1.75rem;
       border-radius: 30px;
@@ -4144,7 +4150,7 @@ c-5.708,0-10.798-2.287-14.546-6.011c-0.87-0.895-1.697-1.857-2.407-2.904c-2.262-3
        ============================================================ -->
     <main id="screen-landing" class="screen glass active">
       <div class="landing-headline">
-        <h2><i class="ti ti-messages"></i> تحدّث مع مساعدك الطبي الذكي</h2>
+        <h2><i class="ti ti-messages" style="color: var(--primary);"></i> تحدّث مع مساعدك الطبي الذكي</h2>
         <p>سنساعدك على فهم حالتك خطوة بخطوة</p>
       </div>
       <div class="disclaimer">
@@ -4321,7 +4327,7 @@ c-5.708,0-10.798-2.287-14.546-6.011c-0.87-0.895-1.697-1.857-2.407-2.904c-2.262-3
 
       <div class="meds-header">
         <div class="meds-title">
-          <i class="ti ti-pill" aria-hidden="true" style="color: #1e4e8c;"></i>
+          <i class="ti ti-pill" aria-hidden="true" style="color:var(--primary);"></i>
           الأدوية المجدولة
         </div>
         <button class="meds-add-btn" id="medsAddBtn">
@@ -4408,9 +4414,7 @@ c-5.708,0-10.798-2.287-14.546-6.011c-0.87-0.895-1.697-1.857-2.407-2.904c-2.262-3
     <main id="screen-food" class="screen glass">
 
       <div class="food-header">
-        <h2><svg width="20" height="20">
-            <use href="#icon-salad"></use>
-          </svg> التوجيه الغذائي</h2>
+        <h2><i class="ti ti-salad" style="color: var(--primary);"></i> التوجيه الغذائي</h2>
         <p>اختر كيف تشعر أو صف حالتك — سنقترح أفضل الأطعمة والمشروبات والعادات للتعافي.</p>
       </div>
 
@@ -4509,7 +4513,7 @@ c-5.708,0-10.798-2.287-14.546-6.011c-0.87-0.895-1.697-1.857-2.407-2.904c-2.262-3
 
       <div class="medical-test-header">
         <div>
-          <h2>          <i class="ti ti-report-medical" style="color:#1e4e8c;"></i>
+          <h2>          <i class="ti ti-report-medical" style="color:var(--primary);"></i>
             تحليل التحاليل الطبية
             
           </h2>
@@ -4618,7 +4622,7 @@ c-5.708,0-10.798-2.287-14.546-6.011c-0.87-0.895-1.697-1.857-2.407-2.904c-2.262-3
       <div class="glass">
         <div class="bmi-header">
           <span class="bmi-header-icon"><svg class="icon" width="32" height="32">
-              <use href="#icon-scale" fill="none" stroke="#1e4e8c" stroke-width="2" stroke-linecap="round"
+              <use href="#icon-scale" fill="none" stroke="var(--primary)" stroke-width="2" stroke-linecap="round"
                 stroke-linejoin="round" stroke-miterlimit="10" />
             </svg></span>
           <div>
@@ -4874,7 +4878,7 @@ c-5.708,0-10.798-2.287-14.546-6.011c-0.87-0.895-1.697-1.857-2.407-2.904c-2.262-3
     <main id="screen-history" class="screen">
 
       <div id="historyLoggedOut" class="glass text-center-panel">
-        <i class="ti ti-shield-lock panel-icon" style="color: #1e4e8c;"></i>
+        <i class="ti ti-shield-lock panel-icon" style="color: var(--primary);"></i>
         <h3>السجل الطبي الآمن</h3>
         <p>سجّل الدخول أو أنشئ حساباً لعرض وحفظ تقييماتك الطبية.</p>
         <button class="btn btn-primary" id="historyAuthBtn" style="margin-top:1rem;">انتقل إلى تسجيل الدخول</button>
@@ -4902,7 +4906,7 @@ c-5.708,0-10.798-2.287-14.546-6.011c-0.87-0.895-1.697-1.857-2.407-2.904c-2.262-3
     <main id="screen-pharmacist" class="screen glass">
 
       <div class="pharm-header">
-        <div class="pharm-icon"><i class="ti ti-pill" style="color: #1e4e8c";></i></div>
+        <div class="pharm-icon"><i class="ti ti-pill" style="color: var(--primary);"></i></div>
         <div>
           <h2>استشر الصيدلي</h2>
           <p class="pharm-subtitle">تواصل مع صيدلي عبر واتساب للحصول على المشورة الدوائية</p>
