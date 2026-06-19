@@ -5415,6 +5415,9 @@ c-5.708,0-10.798-2.287-14.546-6.011c-0.87-0.895-1.697-1.857-2.407-2.904c-2.262-3
       medicalTest: {
         apiKey: '',
         selectedImage: null, // base64 string
+        selectedFileIsPdf: false,
+        selectedFileName: '',
+        extractedText: '',
       },
       bmi: null,
       meds: {
@@ -7435,7 +7438,131 @@ ${hasContext ? userContext : 'لا تتوفر معلومات صحية سابقة
     /* ================================================================
        MEDICAL TEST ANALYZER
        ================================================================ */
+    async function extractValuesFromImage(base64Image, apiKey) {
+      const extractionPrompt = `أنت نظام OCR لتقارير طبية. اتبع الخطوات بدقة:
+
+الخطوة 1 — المسح: حدد كل جدول وقسم في صورة التقرير.
+الخطوة 2 — العد: احسب إجمالي عدد الصفوف في جميع الجداول.
+الخطوة 3 — الاستخراج: لكل صف، أخرج JSON:
+{
+  "name": "اسم الاختبار",
+  "value": "القيمة الرقمية",
+  "unit": "وحدة القياس إن وجدت",
+  "normalRange": "النطاق الطبيعي إن وجد"
+}
+الخطوة 4 — التحقق: عد عناصر المخرجات. إذا كان العدد أقل من الخطوة 2، أعد المسح للبحث عن الصفوف المفقودة.
+
+قواعد:
+- استخرج كل صف دون استثناء، طبيعياً كان أم غير طبيعي.
+- الخلايا الفارغة → استخدم "—".
+- اقرأ الأقسام واحداً تلو الآخر ولا تنتقل للتالي إلا بعد إنهاء السابق.
+- أخرج JSON array فقط، لا markdown ولا كلمات خارج الهيكل.`;
+
+      const fallbackModels = ['meta-llama/llama-4-scout-17b-16e-instruct'];
+      let lastError;
+      for (const model of ['llama-3.2-90b-vision-preview', ...fallbackModels]) {
+        try {
+          const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKey}` },
+            body: JSON.stringify({
+              model, temperature: 0.15, max_tokens: 4000,
+              messages: [{
+                role: 'user',
+                content: [
+                  { type: 'text', text: extractionPrompt },
+                  { type: 'image_url', image_url: { url: base64Image } }
+                ]
+              }]
+            })
+          });
+          if (!res.ok) {
+            const err = await res.json().catch(() => ({}));
+            const msg = err.error?.message || '';
+            if (msg.includes('decommissioned') || msg.includes('deprecated')) {
+              lastError = new Error(msg); continue;
+            }
+            throw new Error(msg || 'فشل استخراج القيم');
+          }
+          const data = await res.json();
+          const raw = data.choices?.[0]?.message?.content;
+          if (!raw) throw new Error('لم يرد خادم الاستخراج');
+          let clean = raw.replace(/```json|```/g, '').trim();
+          const startIdx = clean.indexOf('[');
+          const endIdx = clean.lastIndexOf(']');
+          if (startIdx !== -1 && endIdx !== -1) clean = clean.substring(startIdx, endIdx + 1);
+          return JSON.parse(clean);
+        } catch (e) { lastError = e; }
+      }
+      throw lastError || new Error('فشلت جميع محاولات الاستخراج');
+    }
+
+    async function analyzeExtractedValues(values, apiKey) {
+      const valuesText = values.map((v, i) =>
+        `${i + 1}. ${v.name}: ${v.value} ${v.unit || ''} (الطبيعي: ${v.normalRange || '—'})`
+      ).join('\n');
+
+      const analysisPrompt = `أنت محلل سريري. إليك القيم المستخرجة من تقرير التحاليل الطبية:
+
+${valuesText}
+
+اتبع هذه الخطوات بالترتيب:
+
+الخطوة 1 — القائمة: اكتب سطراً لكل قيمة:
+"[اسم الاختبار] = [القيمة]، الطبيعي: [النطاق] ← [طبيعي/مرتفع/منخفض]"
+
+الخطوة 2 — التجميع: نظم القيم حسب الجهاز (صورة دم، كبد، كلى، سكر، دهون، كهرباء، التهابات، أخرى).
+
+الخطوة 3 — التشخيص: لخص النتائج الإجمالية ودلالتها السريرية.
+
+الخطوة 4 — الإخراج: أجب بصيغة JSON صالحة 100% فقط:
+{
+  "badge": "عنوان قصير لنوع الفحص أو التحليل المكتشف",
+  "status": "طبيعي أو غير طبيعي / يحتاج متابعة أو مراجعة طبية عاجلة",
+  "statusClass": "green أو orange أو red",
+  "analysis": "نص الخطوة 1 + الخطوة 2 + الخطوة 3 مجتمعة",
+  "advices": [{ "title": "عنوان", "desc": "شرح" }]
+}
+
+هام جداً: كل قيمة من المدخلات يجب أن تظهر في حقل "analysis". أي قيمة مفقودة تعتبر خطأ.`;
+
+      const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKey}` },
+        body: JSON.stringify({
+          model: 'llama-3.3-70b-versatile',
+          temperature: 0.3,
+          max_tokens: 4000,
+          messages: [{ role: 'system', content: 'أنت أخصائي تحاليل طبية خبير. أجب بـ JSON فقط.' }, { role: 'user', content: analysisPrompt }]
+        })
+      });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.error?.message || 'فشل تحليل القيم');
+      }
+      const data = await res.json();
+      const raw = data.choices?.[0]?.message?.content;
+      if (!raw) throw new Error('لم يرد خادم التحليل');
+      let clean = raw.replace(/```json|```/g, '').trim();
+      const startIdx = clean.indexOf('{');
+      const endIdx = clean.lastIndexOf('}');
+      if (startIdx !== -1 && endIdx !== -1) clean = clean.substring(startIdx, endIdx + 1);
+      return JSON.parse(clean);
+    }
+
     async function getMedicalTestRecsFromAI(base64Image, apiKey) {
+      // Step 1: extract raw values from image
+      let extracted;
+      try {
+        extracted = await extractValuesFromImage(base64Image, apiKey);
+      } catch (e) {
+        console.warn('Extraction failed, falling back to single-pass:', e.message);
+      }
+      // Step 2: if extraction succeeded, analyze textually; else fall back to one-shot vision
+      if (extracted && Array.isArray(extracted) && extracted.length > 0) {
+        return await analyzeExtractedValues(extracted, apiKey);
+      }
+      // Fallback: original single-pass approach
       const promptText = `يرجى قراءة وتحليل صورة التحليل الطبي المرفقة، ثم تقديم استجابة بصيغة JSON صالحة 100% تحتوي على الحقول التالية بالضبط:
 {
   "badge": "عنوان قصير لنوع الفحص أو التحليل المكتشف (مثال: صورة دم كاملة CBC، وظائف كبد، إلخ)",
@@ -7465,7 +7592,7 @@ ${hasContext ? userContext : 'لا تتوفر معلومات صحية سابقة
           'Authorization': `Bearer ${apiKey}`,
         },
         body: JSON.stringify({
-         model: 'meta-llama/llama-4-scout-17b-16e-instruct',
+          model: 'llama-3.2-90b-vision-preview', // 90b is better for complex medical reasoning
           temperature: 0.3,
           max_tokens: 1500,
           messages: [
@@ -7589,6 +7716,27 @@ ${hasContext ? userContext : 'لا تتوفر معلومات صحية سابقة
         STATE.medicalTest.selectedImage = reader.result;
         STATE.medicalTest.selectedFileIsPdf = isPdf;
         STATE.medicalTest.selectedFileName = file.name;
+        STATE.medicalTest.extractedText = '';
+
+        // If PDF, extract text directly
+        if (isPdf) {
+          try {
+            const pdfjsLib = window.pdfjsLib;
+            if (pdfjsLib) {
+              pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+              const pdf = await pdfjsLib.getDocument(reader.result).promise;
+              let fullText = '';
+              for (let i = 1; i <= Math.min(pdf.numPages, 10); i++) {
+                const page = await pdf.getPage(i);
+                const content = await page.getTextContent();
+                fullText += content.items.map(item => item.str).join(' ') + '\n';
+              }
+              STATE.medicalTest.extractedText = fullText.trim();
+            }
+          } catch (err) {
+            console.warn('PDF text extraction failed:', err);
+          }
+        }
 
         const pdfPreview = document.getElementById('medicalTestPdfPreview');
         const pdfNameEl = document.getElementById('medicalTestPdfName');
@@ -7616,6 +7764,7 @@ ${hasContext ? userContext : 'لا تتوفر معلومات صحية سابقة
       STATE.medicalTest.selectedImage = null;
       STATE.medicalTest.selectedFileIsPdf = false;
       STATE.medicalTest.selectedFileName = '';
+      STATE.medicalTest.extractedText = '';
       previewImg.src = '';
       previewImg.style.display = '';
       document.getElementById('medicalTestPdfPreview').style.display = 'none';
@@ -7653,12 +7802,18 @@ ${hasContext ? userContext : 'لا تتوفر معلومات صحية سابقة
         loadingEl.style.display = '';
 
         try {
-          let imageToSend = STATE.medicalTest.selectedImage;
-          if (STATE.medicalTest.selectedFileIsPdf) {
-            imageToSend = await convertPdfToImage(imageToSend);
-            if (!imageToSend) throw new Error('تعذر تحويل PDF إلى صورة');
+          let resultData;
+          if (STATE.medicalTest.selectedFileIsPdf && STATE.medicalTest.extractedText) {
+            // PDF with extracted text → text-only analysis (no vision)
+            resultData = await analyzePdfText(STATE.medicalTest.extractedText, apiKey);
+          } else {
+            let imageToSend = STATE.medicalTest.selectedImage;
+            if (STATE.medicalTest.selectedFileIsPdf) {
+              imageToSend = await convertPdfToImage(imageToSend);
+              if (!imageToSend) throw new Error('تعذر تحويل PDF إلى صورة');
+            }
+            resultData = await getMedicalTestRecsFromAI(imageToSend, apiKey);
           }
-          const resultData = await getMedicalTestRecsFromAI(imageToSend, apiKey);
 
           document.getElementById('medicalTestDetectedName').textContent = resultData.badge || 'غير محدد';
 
