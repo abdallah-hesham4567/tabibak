@@ -6614,6 +6614,11 @@ c-5.708,0-10.798-2.287-14.546-6.011c-0.87-0.895-1.697-1.857-2.407-2.904c-2.262-3
     }
 
     function startTriage(initialSymptom, breathingContext = '') {
+      // If chat is already in progress and hasn't finished, don't restart
+      if (STATE.triageSession.chatLog.length > 0 && !STATE.triageSession.result) {
+        showTab('chat');
+        return;
+      }
       // If called with no symptom and chat is active, just show it
       if (!initialSymptom && STATE.triageSession.chatLog.length > 0) {
         showTab('chat');
@@ -6817,7 +6822,12 @@ c-5.708,0-10.798-2.287-14.546-6.011c-0.87-0.895-1.697-1.857-2.407-2.904c-2.262-3
         // In RTL: right arrow → previous (index-1), left arrow → next (index+1)
         if (e.key === 'ArrowRight') idx = Math.max(idx - 1, 0);
         if (e.key === 'ArrowLeft') idx = Math.min(idx + 1, navOrder.length - 1);
-        showTab(navOrder[idx]);
+        const target = navOrder[idx];
+        if (target === 'landing' && STATE.triageSession.chatLog.length > 0 && !STATE.triageSession.result) {
+          showTab('chat');
+        } else {
+          showTab(target);
+        }
       }
     });
 
@@ -6835,7 +6845,12 @@ c-5.708,0-10.798-2.287-14.546-6.011c-0.87-0.895-1.697-1.857-2.407-2.904c-2.262-3
       if (idx === -1) idx = 0;
       if (diff > 0) idx = Math.max(idx - 1, 0);  // swipe left → prev tab
       else idx = Math.min(idx + 1, navOrder.length - 1);  // swipe right → next tab
-      showTab(navOrder[idx]);
+      const target = navOrder[idx];
+      if (target === 'landing' && STATE.triageSession.chatLog.length > 0 && !STATE.triageSession.result) {
+        showTab('chat');
+      } else {
+        showTab(target);
+      }
     }, { passive: true });
 
     /* ------ Double-tap/click landing to skip intro ------ */
