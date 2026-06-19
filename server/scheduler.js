@@ -47,7 +47,7 @@ function startScheduler() {
       const sql = `
         SELECT md.id AS doseId, md.time AS doseTime,
                m.id AS medicationId, m.name AS medName, m.dose AS medDose,
-               u.username, u.fcmToken, COALESCE(u.timezoneOffset, 0) AS tzOffset
+               u.username, u.fcmToken, COALESCE(u.timezoneOffset, 3) AS tzOffset
         FROM medication_doses md
         JOIN medications m ON m.id = md.medicationId
         JOIN users u ON u.username = m.username
