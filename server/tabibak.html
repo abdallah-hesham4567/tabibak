@@ -4963,7 +4963,7 @@ c-5.708,0-10.798-2.287-14.546-6.011c-0.87-0.895-1.697-1.857-2.407-2.904c-2.262-3
       <div class="modal-scroll" style="padding-top:0.5rem;">
         <div style="border-bottom:1px solid var(--border);padding-bottom:1rem;margin-bottom:1rem;text-align:center;">
           <div style="font-size:2.5rem;color:var(--primary);margin-bottom:0.25rem;"><i class="ti ti-code"></i></div>
-          <h2 style="font-size:1.6rem;font-weight:800;color:var(--text-1);margin-bottom:0.25rem;">فريق التطوير والاعتماد
+          <h2 style="font-size:1.6rem;font-weight:800;color:var(--text-1);margin-bottom:0.25rem;">فريق التطوير 
           </h2>
           <p style="color:var(--text-muted);font-size:0.875rem;">فريق العمل المطور لتطبيق طبيبك</p>
         </div>
@@ -7622,9 +7622,18 @@ ${valuesText}
   "statusClass": "green (للطبيعي)، orange (للمتوسط/متابعة)، red (للحالات غير الطبيعية/طارئة) - اختر واحدة فقط تطابق الحالة",
   "analysis": "شرح تفصيلي، علمي ومبسط باللغة العربية الفصحى للنتائج والقيم الواردة في التحليل وتفسيرها بلغة واضحة للمريض.",
   "advices": [
-    { "title": "عنوان النصيحة 1", "desc": "شرح النصيحة 1" },
-    { "title": "عنوان النصيحة 2", "desc": "شرح النصيحة 2" },
-    { "title": "عنوان النصيحة 3", "desc": "شرح النصيحة 3" }
+    {
+      "title": "عنوان النصيحة 1",
+      "desc": "شرح النصيحة 1 بالتفصيل ومبرراتها الطبية بأسلوب هادئ وواضح"
+    },
+    {
+      "title": "عنوان النصيحة 2",
+      "desc": "شرح النصيحة 2 بالتفصيل ومبرراتها الطبية بأسلوب هادئ وواضح"
+    },
+    {
+      "title": "عنوان النصيحة 3",
+      "desc": "شرح النصيحة 3 بالتفصيل ومبرراتها الطبية بأسلوب هادئ وواضح"
+    }
   ]
 }`;
       const fallbackModels = ['meta-llama/llama-4-scout-17b-16e-instruct'];
@@ -7692,12 +7701,31 @@ ${pdfText}`;
 
       const extractRes = await fetch('https://api.groq.com/openai/v1/chat/completions', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKey}` },
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${apiKey}`,
+        },
         body: JSON.stringify({
-          model: 'llama-3.3-70b-versatile',
-          temperature: 0.15,
-          max_tokens: 4000,
-          messages: [{ role: 'user', content: extractionPrompt }]
+          model: 'llama-3.2-90b-vision-preview', // 90b is better for complex medical reasoning
+          temperature: 0.3,
+          max_tokens: 1500,
+          messages: [
+            {
+              role: 'user',
+              content: [
+                {
+                  type: 'text',
+                  text: 'أنت أخصائي تحاليل طبية خبير واستشاري سريري. أجب دائماً بـ JSON فقط متطابق مع الهيكل المطلوب دون أي علامات markdown أو نصوص خارج الهيكل.\n\n' + promptText
+                },
+                {
+                  type: 'image_url',
+                  image_url: {
+                    url: base64Image
+                  }
+                }
+              ]
+            }
+          ]
         })
       });
       if (!extractRes.ok) {
@@ -7714,8 +7742,23 @@ ${pdfText}`;
       const values = safeJsonParse(extractClean);
       if (!Array.isArray(values) || values.length === 0) throw new Error('لم يتم استخراج أي قيم');
 
-      // Step 2: analyze the extracted values
-      return await analyzeExtractedValues(values, apiKey);
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        const msg = err.error?.message || 'فشل الاتصال بخدمة التحليل';
+        throw new Error(msg);
+      }
+
+      const data = await res.json();
+      const raw = data.choices?.[0]?.message?.content;
+      if (!raw) throw new Error('لم يرد خادم الذكاء الاصطناعي بأي نتائج');
+
+      let clean = raw.replace(/```json|```/g, '').trim();
+      const startIdx = clean.indexOf('{');
+      const endIdx = clean.lastIndexOf('}');
+      if (startIdx !== -1 && endIdx !== -1) {
+        clean = clean.substring(startIdx, endIdx + 1);
+      }
+      return JSON.parse(clean);
     }
 
     async function convertPdfToImage(pdfDataUrl) {
