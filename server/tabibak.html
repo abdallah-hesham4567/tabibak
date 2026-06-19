@@ -7464,7 +7464,7 @@ ${hasContext ? userContext : 'لا تتوفر معلومات صحية سابقة
             method: 'POST',
             headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKey}` },
             body: JSON.stringify({
-              model, temperature: 0.15, max_tokens: 3000,
+              model, temperature: 0.15, max_tokens: 4000,
               messages: [{
                 role: 'user',
                 content: [
@@ -7520,7 +7520,7 @@ ${valuesText}
         body: JSON.stringify({
           model: 'llama-3.3-70b-versatile',
           temperature: 0.3,
-          max_tokens: 2000,
+          max_tokens: 4000,
           messages: [{ role: 'system', content: 'أنت أخصائي تحاليل طبية خبير. أجب بـ JSON فقط.' }, { role: 'user', content: analysisPrompt }]
         })
       });
@@ -7571,7 +7571,7 @@ ${valuesText}
             method: 'POST',
             headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKey}` },
             body: JSON.stringify({
-              model, temperature: 0.3, max_tokens: 1500,
+              model, temperature: 0.3, max_tokens: 3000,
               messages: [{
                 role: 'user',
                 content: [
@@ -7628,7 +7628,7 @@ ${pdfText}
         body: JSON.stringify({
           model: 'llama-3.3-70b-versatile',
           temperature: 0.15,
-          max_tokens: 3000,
+          max_tokens: 4000,
           messages: [{ role: 'user', content: extractionPrompt }]
         })
       });
