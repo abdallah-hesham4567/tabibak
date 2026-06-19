@@ -6001,18 +6001,23 @@ c-5.708,0-10.798-2.287-14.546-6.011c-0.87-0.895-1.697-1.857-2.407-2.904c-2.262-3
         fcmMessaging = firebase.messaging();
         console.log('Firebase initialized for FCM');
 
-        fcmMessaging.onToken(async (currentToken) => {
-          try {
-            if (currentToken) {
-              const token = getToken();
-              if (token) {
-                await api('POST', '/api/notifications/store-token', { fcmToken: currentToken, timezoneOffset: -new Date().getTimezoneOffset() / 60 });
+        try {
+          fcmMessaging.onTokenRefresh(async () => {
+            try {
+              const currentToken = await fcmMessaging.getToken();
+              if (currentToken) {
+                const token = getToken();
+                if (token) {
+                  await api('POST', '/api/notifications/store-token', { fcmToken: currentToken, timezoneOffset: -new Date().getTimezoneOffset() / 60 });
+                }
               }
+            } catch (err) {
+              console.error('FCM token refresh failed:', err);
             }
-          } catch (err) {
-            console.error('FCM token refresh failed:', err);
-          }
-        });
+          });
+        } catch (e) {
+          console.warn('onTokenRefresh not supported:', e.message);
+        }
 
         fcmMessaging.onMessage((payload) => {
           if (payload.data) {

@@ -58,16 +58,6 @@ function startScheduler() {
 
       let matchedCount = 0, sentCount = 0, alreadySentCount = 0, failCount = 0;
 
-      // Debug: log first 2 rows to see timezone & dose data
-      if (allRows.rows.length > 0) {
-        const debugRows = allRows.rows.slice(0, 2);
-        for (const r of debugRows) {
-          const tz = Number(r.tzOffset);
-          const nowLocal = new Date(now.getTime() + tz * 3600000);
-          console.log(`[scheduler] DEBUG user=${r.username} tz=${tz} doseTime=${r.doseTime} nowLocal=${nowLocal.getUTCHours()}:${String(nowLocal.getUTCMinutes()).padStart(2,'0')}`);
-        }
-      }
-
       for (const row of allRows.rows) {
         const tz = Number(row.tzOffset);
         // Convert now to user local time
