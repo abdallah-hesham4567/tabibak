@@ -4215,7 +4215,7 @@ c-5.708,0-10.798-2.287-14.546-6.011c-0.87-0.895-1.697-1.857-2.407-2.904c-2.262-3
       </svg>
       <span class="nav-label">الصيدلي</span>
     </button>
-    <button class="nav-btn" data-tab="mentor" id="mentorNavBtn" style="display:none;">
+    <button class="nav-btn" data-tab="mentor" id="mentorNavBtn">
       <i class="ti ti-users"></i>
       <span class="nav-label">المشرفون</span>
     </button>
@@ -4940,6 +4940,19 @@ c-5.708,0-10.798-2.287-14.546-6.011c-0.87-0.895-1.697-1.857-2.407-2.904c-2.262-3
         <div class="form-group" style="margin-top:1.5rem;">
           <label>التاريخ المرضي</label>
           <div class="med-history-box" id="profileHistory">لا يوجد تاريخ مرضي مسجّل.</div>
+        </div>
+
+        <div id="profileMentorSection" style="display:none;margin-top:1.5rem;border-top:1px solid var(--border);padding-top:1rem;">
+          <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.5rem;">
+            <span style="font-size:0.9rem;color:var(--text-2);">المشرفون</span>
+            <button id="profileAddMentorBtn" class="btn btn-primary" style="font-size:0.8rem;padding:0.3rem 0.8rem;margin-right:auto;">+ إضافة مشرف</button>
+          </div>
+          <div id="profileMentorsList" style="display:flex;flex-direction:column;gap:0.3rem;margin-bottom:0.75rem;"></div>
+          <div id="profileMenteesBtnWrap" style="display:none;">
+            <button id="profileMenteesBtn" class="btn btn-secondary" style="width:100%;font-size:0.85rem;">
+              <i class="ti ti-users"></i> المشرف عليهم (عرض)
+            </button>
+          </div>
         </div>
 
         <div class="profile-actions">
@@ -5968,8 +5981,6 @@ c-5.708,0-10.798-2.287-14.546-6.011c-0.87-0.895-1.697-1.857-2.407-2.904c-2.262-3
         STATE.mentors = [];
         STATE.mentees = [];
       }
-      const navBtn = document.getElementById('mentorNavBtn');
-      if (navBtn) navBtn.style.display = (STATE.mentors.length > 0 || STATE.mentees.length > 0) ? '' : 'none';
     }
 
     function renderMentorScreen() {
@@ -9302,6 +9313,47 @@ ${pdfText}`;
           document.getElementById('profileAvatar').style.display = 'none';
           document.getElementById('avatarPlaceholder').style.display = '';
         }
+
+        // Mentor section
+        const mentorSection = document.getElementById('profileMentorSection');
+        mentorSection.style.display = '';
+        const mentorsList = document.getElementById('profileMentorsList');
+        if (STATE.mentors.length === 0) {
+          mentorsList.innerHTML = '<p style="color:var(--text-2);font-size:0.8rem;">لم تقم بإضافة أي مشرف بعد.</p>';
+        } else {
+          mentorsList.innerHTML = STATE.mentors.map(m => `
+            <div style="display:flex;align-items:center;gap:0.5rem;background:var(--bg-surface);border:1px solid var(--border);border-radius:8px;padding:0.4rem 0.6rem;">
+              <i class="ti ti-user-check" style="color:var(--primary);"></i>
+              <span style="flex:1;font-size:0.85rem;">${m.name} <span style="color:var(--text-2);font-size:0.75rem;">@${m.mentorUsername}</span></span>
+              <button class="profile-mentor-remove" data-user="${m.mentorUsername}" style="background:none;border:none;color:var(--red);cursor:pointer;font-size:0.9rem;"><i class="ti ti-trash"></i></button>
+            </div>
+          `).join('');
+          mentorsList.querySelectorAll('.profile-mentor-remove').forEach(btn => {
+            btn.addEventListener('click', async () => {
+              if (!confirm('إزالة هذا المرشد؟')) return;
+              try {
+                await api('DELETE', `/api/mentors/${btn.dataset.user}`);
+                await loadMentorData();
+                refreshProfileScreen();
+              } catch (e) { alert(e.message); }
+            });
+          });
+        }
+        const menteesWrap = document.getElementById('profileMenteesBtnWrap');
+        menteesWrap.style.display = STATE.mentees.length > 0 ? '' : 'none';
+
+        // Wire up add mentor button (re-bind on each refresh)
+        document.getElementById('profileAddMentorBtn').onclick = async () => {
+          const username = prompt('أدخل اسم المستخدم للمرشد:');
+          if (!username) return;
+          try {
+            await api('POST', '/api/mentors', { mentorUsername: username.trim() });
+            await loadMentorData();
+            refreshProfileScreen();
+          } catch (e) { alert(e.message); }
+        };
+        // Wire up mentees button
+        document.getElementById('profileMenteesBtn').onclick = () => showTab('mentor');
       }
     }
 
