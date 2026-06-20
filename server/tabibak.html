@@ -9297,7 +9297,7 @@ ${pdfText}`;
       }
     });
 
-    function refreshProfileScreen() {
+    async function refreshProfileScreen() {
       const loggedIn = !!STATE.currentUser;
       document.getElementById('authContainer').style.display = loggedIn ? 'none' : '';
       document.getElementById('profileContainer').style.display = loggedIn ? '' : 'none';
