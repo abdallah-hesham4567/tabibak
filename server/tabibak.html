@@ -7482,44 +7482,49 @@ ${hasContext ? userContext : 'لا تتوفر معلومات صحية سابقة
       const keyToUse = apiKey || GROQ_API_KEY;
 
       async function callGroq(promptText) {
-        const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${keyToUse}`,
-          },
-          body: JSON.stringify({
-            model: 'qwen/qwen3-32b',
-            temperature: 0.2,
-            max_tokens: 2000,
-            messages: [
-              { role: 'system', content: 'أنت مستشار تغذية محايد. حلل البيانات المقدمة وأخرج JSON صالحاً فقط.' },
-              { role: 'user', content: promptText },
-            ],
-          }),
-        });
-        if (!res.ok) {
+        const models = ['qwen/qwen3-32b', 'llama-3.3-70b-versatile'];
+        let lastError;
+        for (const model of models) {
+          const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${keyToUse}`,
+            },
+            body: JSON.stringify({
+              model,
+              temperature: 0.2,
+              max_tokens: 2000,
+              messages: [
+                { role: 'system', content: 'أنت مستشار تغذية محايد. حلل البيانات المقدمة وأخرج JSON صالحاً فقط.' },
+                { role: 'user', content: promptText },
+              ],
+            }),
+          });
+          if (res.ok) {
+            const data = await res.json();
+            const raw = data.choices?.[0]?.message?.content;
+            if (!raw) throw new Error('لم يرد Groq بأي محتوى');
+            let clean = raw.replace(/```json|```/g, '').trim();
+            clean = clean.replace(/<think>[\s\S]*?<\/think>/gi, '').trim();
+            clean = clean.replace(/<think>/gi, '').trim();
+            const jsonStart = clean.indexOf('{');
+            const jsonEnd = clean.lastIndexOf('}');
+            if (jsonStart !== -1 && jsonEnd !== -1) {
+              clean = clean.substring(jsonStart, jsonEnd + 1);
+            } else {
+              throw new Error('الرد لا يحتوي على JSON صالح');
+            }
+            return safeJsonParse(repairJSON(clean));
+          }
           const err = await res.json().catch(() => ({}));
           const msg = err.error?.message || 'فشل الاتصال';
           if (res.status === 401) throw new Error('مفتاح Groq غير صحيح');
-          if (res.status === 429) throw new Error(msg);
           if (res.status === 503) throw new Error('خدمة Groq غير متاحة مؤقتاً — حاول بعد قليل');
+          if (res.status === 429) { lastError = new Error(msg); continue; }
           throw new Error(`Groq ${res.status}: ${msg}`);
         }
-        const data = await res.json();
-        const raw = data.choices?.[0]?.message?.content;
-        if (!raw) throw new Error('لم يرد Groq بأي محتوى');
-        let clean = raw.replace(/```json|```/g, '').trim();
-        clean = clean.replace(/<think>[\s\S]*?<\/think>/gi, '').trim();
-        clean = clean.replace(/<think>/gi, '').trim();
-        const jsonStart = clean.indexOf('{');
-        const jsonEnd = clean.lastIndexOf('}');
-        if (jsonStart !== -1 && jsonEnd !== -1) {
-          clean = clean.substring(jsonStart, jsonEnd + 1);
-        } else {
-          throw new Error('الرد لا يحتوي على JSON صالح');
-        }
-        return safeJsonParse(repairJSON(clean));
+        throw lastError || new Error('فشلت جميع المحاولات');
       }
 
       return await callGroq(prompt);
@@ -7717,55 +7722,61 @@ ${JSON.stringify(currentData, null, 2)}
   "refusal": "سبب الرفض (فقط إذا رفضت الطلب، وإلا فلا تضف هذا الحقل)"
 }`;
 
-        async function callFollowUp(promptText) {
-          const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${apiKey}`,
-            },
-            body: JSON.stringify({
-              model: 'qwen/qwen3-32b',
-              temperature: 0.2,
-              max_tokens: 3000,
-              messages: [
-                { role: 'system', content: 'أنت مستشار تغذية محايد. أخرج JSON صالحاً فقط.' },
-                { role: 'user', content: promptText },
-              ],
-            }),
-          });
+        async function callFollowUp(promptText, overriddenKey) {
+          const models = ['qwen/qwen3-32b', 'llama-3.3-70b-versatile'];
+          let lastError;
+          for (const model of models) {
+            const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${overriddenKey || apiKey}`,
+              },
+              body: JSON.stringify({
+                model,
+                temperature: 0.2,
+                max_tokens: 3000,
+                messages: [
+                  { role: 'system', content: 'أنت مستشار تغذية محايد. أخرج JSON صالحاً فقط.' },
+                  { role: 'user', content: promptText },
+                ],
+              }),
+            });
 
-          if (!res.ok) {
+            if (res.ok) {
+              const data = await res.json();
+              const raw = data.choices?.[0]?.message?.content;
+              if (!raw) throw new Error('لم يرد Groq بأي محتوى');
+
+              let clean = raw.replace(/```json|```/g, '').trim();
+              clean = clean.replace(/<think>[\s\S]*?<\/think>/gi, '').trim();
+              clean = clean.replace(/<think>/gi, '').trim();
+              const jsonStart = clean.indexOf('{');
+              const jsonEnd = clean.lastIndexOf('}');
+              if (jsonStart !== -1 && jsonEnd !== -1) {
+                clean = clean.substring(jsonStart, jsonEnd + 1);
+              } else {
+                throw new Error('الرد لا يحتوي على JSON صالح');
+              }
+              const parsed = safeJsonParse(repairJSON(clean));
+              if (!parsed.cards || !Array.isArray(parsed.cards)) {
+                throw new Error('الاستجابة لا تحتوي على هيكل بطاقات صالح');
+              }
+              return parsed;
+            }
+
             const err = await res.json().catch(() => ({}));
             const msg = err.error?.message || 'فشل الاتصال';
             if (res.status === 401) throw new Error('مفتاح Groq غير صحيح');
-            if (res.status === 429) throw new Error(msg);
+            if (res.status === 429) { lastError = new Error(msg); continue; }
             if (res.status === 503) throw new Error('خدمة Groq غير متاحة مؤقتاً — حاول بعد قليل');
             throw new Error(msg);
           }
-
-          const data = await res.json();
-          const raw = data.choices?.[0]?.message?.content;
-          if (!raw) throw new Error('لم يرد Groq بأي محتوى');
-
-          let clean = raw.replace(/```json|```/g, '').trim();
-          clean = clean.replace(/<think>[\s\S]*?<\/think>/gi, '').trim();
-          clean = clean.replace(/<think>/gi, '').trim();
-          const jsonStart = clean.indexOf('{');
-          const jsonEnd = clean.lastIndexOf('}');
-          if (jsonStart !== -1 && jsonEnd !== -1) {
-            clean = clean.substring(jsonStart, jsonEnd + 1);
-          } else {
-            throw new Error('الرد لا يحتوي على JSON صالح');
-          }
-          const parsed = safeJsonParse(repairJSON(clean));
-          if (!parsed.cards || !Array.isArray(parsed.cards)) {
-            throw new Error('الاستجابة لا تحتوي على هيكل بطاقات صالح');
-          }
-          return parsed;
+          throw lastError || new Error('فشلت جميع المحاولات');
         }
 
-        const updatedData = await callFollowUp(basePrompt);
+        const followUpKeys = STATE.apiKeys?.filter(k => k !== apiKey) || [];
+        const updatedData = await withFallbackKey(callFollowUp, apiKey, followUpKeys, basePrompt);
 
         // Check if the AI refused the request
         if (updatedData.refusal) {
