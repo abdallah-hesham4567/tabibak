@@ -7608,26 +7608,26 @@ ${JSON.stringify(currentData, null, 2)}
 طلب المستخدم: "${text}"
 
 تعليمات صارمة:
-1. حافظ على نفس هيكل JSON تماماً — لا تغير ترتيب الـ cards، لا تحذف أي card، لا تغير titles.
-2. عند إضافة طعام: ضعه في الـ card المناسبة حسب عنوانها (title):
+1. قيّم طلب المستخدم نقدياً — إذا طلب إضافة طعام غير صحي أو مضر بحالته الصحية، ارفض إضافته.
+2. إذا وافقت على الإضافة: ضع العنصر في الـ card المناسبة حسب عنوانها (title):
    - "أطعمة مستحبة" ← الأطعمة الصلبة
    - "مشروبات وسوائل مستحبة" ← المشروبات والسوائل فقط
    - "تجنَّب تماماً" ← الأطعمة الممنوعة
    - "نصائح نمط الحياة والتغذية العلاجية" ← النصائح والعادات اليومية
-3. عند إزالة عنصر: ابحث عنه في جميع الـ cards واحذفه من الـ card التي يوجد فيها.
-4. كل عنصر مضاف يجب أن يحتوي على "name" و "reason" (سبب علمي).
-5. لا تغير badge أو analysis أو drugWarnings除非 ضرورة قصوى.
-6. أرجِع JSON صالحاً فقط، بدون أي نص خارجي أو علامات markdown.
-7. الرد باللغة العربية.
+3. إذا رفضت الإضافة: أرجِع نفس JSON الأصلي تماماً بدون أي تغيير، وأضف حقل "refusal" يشرح سبب الرفض.
+4. عند إزالة عنصر: ابحث عنه في جميع الـ cards واحذفه من الـ card التي يوجد فيها.
+5. كل عنصر مضاف يجب أن يحتوي على "name" و "reason" (سبب علمي).
+6. لا تغير badge أو analysis أو drugWarnings除非 ضرورة قصوى.
+7. أرجِع JSON صالحاً فقط، بدون أي نص خارجي أو علامات markdown.
+8. الرد باللغة العربية.
 
-التنسيق المطلوب (نفس الهيكل بالضبط):
+التنسيق المطلوب:
 {
   "badge": "...",
   "analysis": "...",
   "drugWarnings": [...],
-  "cards": [
-    { "icon": "...", "title": "...", "items": [{"name": "...", "reason": "..."}] }
-  ]
+  "cards": [...],
+  "refusal": "شرح سبب الرفض (إذا رفضت الإضافة، وإلا فلا تضف هذا الحقل)"
 }`;
 
         const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
@@ -7663,6 +7663,19 @@ ${JSON.stringify(currentData, null, 2)}
         // Validate it has the expected structure
         if (!updatedData.cards || !Array.isArray(updatedData.cards)) {
           throw new Error('الاستجابة لا تحتوي على هيكل بطاقات صالح');
+        }
+
+        // Check if the AI refused the request
+        if (updatedData.refusal) {
+          STATE.food.chatLog.push({ role: 'assistant', text: updatedData.refusal });
+          typing.remove();
+
+          const refusalMsg = document.createElement('div');
+          refusalMsg.style.cssText = 'align-self:flex-start;background:#fefce8;color:#92400e;padding:0.5rem 0.8rem;border-radius:12px 12px 12px 4px;max-width:85%;font-size:0.85rem;word-break:break-word;border:1px solid #fde68a;';
+          refusalMsg.textContent = `⚠️ ${updatedData.refusal}`;
+          chatLog.appendChild(refusalMsg);
+          chatLog.scrollTop = chatLog.scrollHeight;
+          return;
         }
 
         // Update state and re-render
