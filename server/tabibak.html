@@ -4953,6 +4953,10 @@ c-5.708,0-10.798-2.287-14.546-6.011c-0.87-0.895-1.697-1.857-2.407-2.904c-2.262-3
               <i class="ti ti-users"></i> المشرف عليهم (عرض)
             </button>
           </div>
+          <div id="profileMentorMessagesWrap" style="margin-top:0.75rem;display:none;">
+            <h4 style="font-size:0.85rem;color:var(--text-2);margin-bottom:0.4rem;">📩 رسائل المشرفين</h4>
+            <div id="profileMentorMessages" style="display:flex;flex-direction:column;gap:0.3rem;max-height:200px;overflow-y:auto;"></div>
+          </div>
         </div>
 
         <div class="profile-actions">
@@ -9354,6 +9358,29 @@ ${pdfText}`;
         };
         // Wire up mentees button
         document.getElementById('profileMenteesBtn').onclick = () => showTab('mentor');
+
+        // Load mentor messages
+        const msgWrap = document.getElementById('profileMentorMessagesWrap');
+        const msgDiv = document.getElementById('profileMentorMessages');
+        if (STATE.mentors.length > 0) {
+          try {
+            const msgs = await api('GET', '/api/mentors/messages');
+            if (msgs && msgs.length > 0) {
+              msgWrap.style.display = '';
+              msgDiv.innerHTML = msgs.slice(0, 10).map(m => `
+                <div style="background:var(--bg-surface);border:1px solid var(--border);border-radius:8px;padding:0.4rem 0.6rem;font-size:0.8rem;">
+                  <strong style="color:var(--primary);font-size:0.75rem;">${m.mentorName}</strong>
+                  <p style="margin:0.2rem 0;word-break:break-word;">${m.message}</p>
+                  <span style="color:var(--text-2);font-size:0.65rem;">${new Date(m.createdAt).toLocaleDateString('ar-EG')}</span>
+                </div>
+              `).join('');
+            } else {
+              msgWrap.style.display = 'none';
+            }
+          } catch (e) { msgWrap.style.display = 'none'; }
+        } else {
+          msgWrap.style.display = 'none';
+        }
       }
     }
 

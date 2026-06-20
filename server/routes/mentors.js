@@ -298,4 +298,23 @@ router.get('/mentee/:user/chat', async (req, res) => {
   }
 });
 
+// Get my messages from all mentors (for the mentee)
+router.get('/messages', async (req, res) => {
+  try {
+    const db = await getDb();
+    const rows = await db.execute({
+      sql: `SELECT mm.*, u.name AS mentorName
+            FROM mentor_messages mm
+            JOIN users u ON u.username = mm.mentorUsername
+            WHERE mm.username = ?
+            ORDER BY mm.createdAt DESC
+            LIMIT 100`,
+      args: [req.user.username],
+    });
+    res.json(rows.rows);
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
 module.exports = router;
