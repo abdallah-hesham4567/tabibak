@@ -6358,14 +6358,43 @@ c-5.708,0-10.798-2.287-14.546-6.011c-0.87-0.895-1.697-1.857-2.407-2.904c-2.262-3
             const doseMins = dh * 60 + dm;
             const minsLeft = doseMins - nowMins;
 
-            // Fire when exactly 5 minutes away (window: 4.5–5.5 min)
+            const takenKey = `${med.id}_${idx}`;
+
+            // 1) 5 minutes before dose
             if (minsLeft >= 4.5 && minsLeft < 5.5) {
-              // Use sessionStorage to avoid firing twice in the same minute
               const fireKey = `notif_${med.id}_dose${idx}_${now.toDateString()}`;
               if (!sessionStorage.getItem(fireKey)) {
                 sessionStorage.setItem(fireKey, '1');
                 new Notification(`💊 تذكير دواء — ${med.name}`, {
                   body: `حان وقت جرعة ${med.name} (${med.dose}) خلال 5 دقائق — الموعد: ${dose.time}`,
+                  icon: 'https://cdn-icons-png.flaticon.com/512/1930/1930985.png',
+                  tag: fireKey,
+                  requireInteraction: true,
+                });
+              }
+            }
+
+            // 2) At the dose time
+            if (minsLeft >= -0.5 && minsLeft < 0.5) {
+              const fireKey = `notif_now_${med.id}_dose${idx}_${now.toDateString()}`;
+              if (!sessionStorage.getItem(fireKey)) {
+                sessionStorage.setItem(fireKey, '1');
+                new Notification(`💊 حان الآن موعد دواء — ${med.name}`, {
+                  body: `حان الآن موعد جرعة ${med.name} (${med.dose})`,
+                  icon: 'https://cdn-icons-png.flaticon.com/512/1930/1930985.png',
+                  tag: fireKey,
+                  requireInteraction: true,
+                });
+              }
+            }
+
+            // 3) 5 minutes after dose (only if not marked as taken)
+            if (minsLeft >= -5.5 && minsLeft < -4.5) {
+              const fireKey = `notif_remind_${med.id}_dose${idx}_${now.toDateString()}`;
+              if (!sessionStorage.getItem(fireKey) && !STATE.meds.taken[takenKey]) {
+                sessionStorage.setItem(fireKey, '1');
+                new Notification(`💊 تذكير — دواء ${med.name}`, {
+                  body: `لم يتم تأكيد جرعة ${med.name} (${med.dose}) — هل تناولتها؟`,
                   icon: 'https://cdn-icons-png.flaticon.com/512/1930/1930985.png',
                   tag: fireKey,
                   requireInteraction: true,

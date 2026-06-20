@@ -46,6 +46,7 @@ function startScheduler() {
 
       const sql = `
         SELECT md.id AS doseId, md.time AS doseTime,
+               (SELECT COUNT(*) - 1 FROM medication_doses md2 WHERE md2.medicationId = md.medicationId AND md2.id <= md.id) AS doseIdx,
                m.id AS medicationId, m.name AS medName, m.dose AS medDose,
                u.username, u.fcmToken, COALESCE(u.timezoneOffset, 3) AS tzOffset
         FROM medication_doses md
@@ -70,53 +71,69 @@ function startScheduler() {
         // Parse dose time to minutes
         const [dh, dm] = row.doseTime.split(':').map(Number);
         const doseMins = dh * 60 + dm;
-        // Check if dose is 4-6 minutes away
         const minsLeft = doseMins - nowLocalMins;
-        if (minsLeft < 4 || minsLeft >= 6) continue;
-        matchedCount++;
+        // Check notification windows
+        const windows = [
+          { min: 4, max: 6, type: 'medication_reminder', title: `💊 ${row.medName} — خلال 5 دقائق`, body: `الجرعة: ${row.medDose}` },
+          { min: -1, max: 1, type: 'medication_due', title: `💊 ${row.medName} — حان الآن`, body: `الجرعة: ${row.medDose}` },
+          { min: -6, max: -4, type: 'medication_followup', title: `💊 ${row.medName} — تذكير، لم يتم التأكيد`, body: `الجرعة: ${row.medDose} — هل تناولتها؟` },
+        ];
 
-        const alreadySent = await db.execute({
-          sql: 'SELECT id FROM notification_log WHERE username = ? AND medicationId = ? AND doseId = ? AND date = ?',
-          args: [row.username, row.medicationId, row.doseId, today],
-        });
-        if (alreadySent.rows.length > 0) { alreadySentCount++; continue; }
+        for (const win of windows) {
+          if (minsLeft < win.min || minsLeft >= win.max) continue;
+          matchedCount++;
 
-        if (!fcmReady || !fcmApp || !row.fcmToken) {
-          failCount++;
-          continue;
-        }
-
-        try {
-          await getMessaging(fcmApp).send({
-            token: row.fcmToken,
-            data: {
-              title: `💊 ${row.medName} — خلال 5 دقائق`,
-              body: `الجرعة: ${row.medDose}`,
-              medicationId: String(row.medicationId),
-              doseTime: String(row.doseTime),
-              type: 'medication_reminder',
-            },
-          });
-          console.log(`[scheduler] FCM sent to ${row.username} for ${row.medName} at ${row.doseTime}`);
-          sentCount++;
-
-          await db.execute({
-            sql: 'INSERT INTO notification_log (username, medicationId, doseId, doseTime, date) VALUES (?, ?, ?, ?, ?)',
-            args: [row.username, row.medicationId, row.doseId, row.doseTime, today],
-          });
-        } catch (err) {
-          failCount++;
-          console.error(`[scheduler] FCM failed for ${row.username}:`, err.message);
-
-          if (
-            err.code === 'messaging/invalid-registration-token' ||
-            err.code === 'messaging/registration-token-not-registered'
-          ) {
-            await db.execute({
-              sql: "UPDATE users SET fcmToken = '' WHERE username = ?",
-              args: [row.username],
+          // For follow-up: skip if already logged as taken
+          if (win.type === 'medication_followup') {
+            const logCheck = await db.execute({
+              sql: 'SELECT id FROM medication_log WHERE username = ? AND medicationId = ? AND doseIdx = ? AND date = ?',
+              args: [row.username, row.medicationId, row.doseIdx, today],
             });
-            console.log(`[scheduler] Cleared stale FCM token for ${row.username}`);
+            if (logCheck.rows.length > 0) { alreadySentCount++; continue; }
+          }
+
+          const alreadySent = await db.execute({
+            sql: 'SELECT id FROM notification_log WHERE username = ? AND medicationId = ? AND doseId = ? AND date = ? AND type = ?',
+            args: [row.username, row.medicationId, row.doseId, today, win.type],
+          });
+          if (alreadySent.rows.length > 0) { alreadySentCount++; continue; }
+
+          if (!fcmReady || !fcmApp || !row.fcmToken) {
+            failCount++;
+            continue;
+          }
+
+          try {
+            await getMessaging(fcmApp).send({
+              token: row.fcmToken,
+              data: {
+                title: win.title,
+                body: win.body,
+                medicationId: String(row.medicationId),
+                doseTime: String(row.doseTime),
+                type: win.type,
+              },
+            });
+            sentCount++;
+
+            await db.execute({
+              sql: 'INSERT INTO notification_log (username, medicationId, doseId, doseTime, date, type) VALUES (?, ?, ?, ?, ?, ?)',
+              args: [row.username, row.medicationId, row.doseId, row.doseTime, today, win.type],
+            });
+          } catch (err) {
+            failCount++;
+            console.error(`[scheduler] FCM failed for ${row.username}:`, err.message);
+
+            if (
+              err.code === 'messaging/invalid-registration-token' ||
+              err.code === 'messaging/registration-token-not-registered'
+            ) {
+              await db.execute({
+                sql: "UPDATE users SET fcmToken = '' WHERE username = ?",
+                args: [row.username],
+              });
+              console.log(`[scheduler] Cleared stale FCM token for ${row.username}`);
+            }
           }
         }
       }

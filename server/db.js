@@ -83,6 +83,7 @@ async function initSchema() {
       doseId INTEGER NOT NULL,
       doseTime TEXT NOT NULL,
       date TEXT NOT NULL,
+      type TEXT NOT NULL DEFAULT 'medication_reminder',
       sentAt TEXT DEFAULT (datetime('now')),
       FOREIGN KEY (username) REFERENCES users(username),
       FOREIGN KEY (medicationId) REFERENCES medications(id),
@@ -100,6 +101,7 @@ async function initSchema() {
   try { await db.execute('ALTER TABLE users ADD COLUMN verificationCode TEXT DEFAULT \'\''); } catch (e) { }
   try { await db.execute('ALTER TABLE users ADD COLUMN verificationCodeExpires TEXT DEFAULT \'\''); } catch (e) { }
   try { await db.execute('ALTER TABLE users ADD COLUMN googleId TEXT DEFAULT \'\''); } catch (e) { }
+  try { await db.execute('ALTER TABLE notification_log ADD COLUMN type TEXT NOT NULL DEFAULT \'medication_reminder\''); } catch (e) { }
 }
 
 module.exports = { getDb };
