@@ -5971,12 +5971,12 @@ c-5.708,0-10.798-2.287-14.546-6.011c-0.87-0.895-1.697-1.857-2.407-2.904c-2.262-3
     async function loadMentorData() {
       if (!STATE.currentUser) return;
       try {
-        const [mentors, mentees] = await Promise.all([
+        const [mentors, mentees] = await Promise.allSettled([
           api('GET', '/api/mentors'),
           api('GET', '/api/mentors/mentees'),
         ]);
-        STATE.mentors = Array.isArray(mentors) ? mentors : [];
-        STATE.mentees = Array.isArray(mentees) ? mentees : [];
+        STATE.mentors = mentors.status === 'fulfilled' && Array.isArray(mentors.value) ? mentors.value : [];
+        STATE.mentees = mentees.status === 'fulfilled' && Array.isArray(mentees.value) ? mentees.value : [];
       } catch (e) {
         STATE.mentors = [];
         STATE.mentees = [];
