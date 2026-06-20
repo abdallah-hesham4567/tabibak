@@ -7491,6 +7491,8 @@ ${hasContext ? userContext : 'لا تتوفر معلومات صحية سابقة
         const jsonEnd = clean.lastIndexOf('}');
         if (jsonStart !== -1 && jsonEnd !== -1) {
           clean = clean.substring(jsonStart, jsonEnd + 1);
+        } else {
+          throw new Error('الرد لا يحتوي على JSON صالح');
         }
         return safeJsonParse(clean);
       }
@@ -7736,6 +7738,8 @@ ${JSON.stringify(currentData, null, 2)}
         const jsonEnd = clean.lastIndexOf('}');
         if (jsonStart !== -1 && jsonEnd !== -1) {
           clean = clean.substring(jsonStart, jsonEnd + 1);
+        } else {
+          throw new Error('الرد لا يحتوي على JSON صالح');
         }
         const updatedData = safeJsonParse(clean);
 
