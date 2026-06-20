@@ -7487,6 +7487,8 @@ ${hasContext ? userContext : 'لا تتوفر معلومات صحية سابقة
         const raw = data.choices?.[0]?.message?.content;
         if (!raw) throw new Error('لم يرد Groq بأي محتوى');
         let clean = raw.replace(/```json|```/g, '').trim();
+        clean = clean.replace(/<think>[\s\S]*?<\/think>/gi, '').trim();
+        clean = clean.replace(/<think>[\s\S]*/gi, '').trim();
         const jsonStart = clean.indexOf('{');
         const jsonEnd = clean.lastIndexOf('}');
         if (jsonStart !== -1 && jsonEnd !== -1) {
@@ -7734,6 +7736,8 @@ ${JSON.stringify(currentData, null, 2)}
         if (!raw) throw new Error('لم يرد Groq بأي محتوى');
 
         let clean = raw.replace(/```json|```/g, '').trim();
+        clean = clean.replace(/<think>[\s\S]*?<\/think>/gi, '').trim();
+        clean = clean.replace(/<think>[\s\S]*/gi, '').trim();
         const jsonStart = clean.indexOf('{');
         const jsonEnd = clean.lastIndexOf('}');
         if (jsonStart !== -1 && jsonEnd !== -1) {
