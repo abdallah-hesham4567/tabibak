@@ -4342,6 +4342,9 @@ c-5.708,0-10.798-2.287-14.546-6.011c-0.87-0.895-1.697-1.857-2.407-2.904c-2.262-3
       <div class="results-actions">
         <button class="btn btn-secondary" id="restartBtn">بدء فحص جديد</button>
         <button class="btn btn-primary" id="copyReportBtn">نسخ التقرير الطبي</button>
+        <button class="btn btn-secondary" id="foodFromTriageBtn" style="border-color:var(--primary);color:var(--primary);">
+          <i class="ti ti-salad"></i> توصيات غذائية
+        </button>
       </div>
 
       <textarea id="reportText" style="position:absolute;left:-9999px;" aria-hidden="true"></textarea>
@@ -7025,6 +7028,16 @@ c-5.708,0-10.798-2.287-14.546-6.011c-0.87-0.895-1.697-1.857-2.407-2.904c-2.262-3
       navigator.clipboard.writeText(ta.value).catch(() => document.execCommand('copy'));
       document.getElementById('copyReportBtn').textContent = '✓ تم النسخ!';
       setTimeout(() => document.getElementById('copyReportBtn').textContent = 'نسخ التقرير الطبي', 2000);
+    });
+
+    document.getElementById('foodFromTriageBtn').addEventListener('click', () => {
+      const result = STATE.triageSession.result;
+      const condition = result?.condition || STATE.triageSession.symptom || '';
+      showTab('food');
+      document.getElementById('foodCustomInput').value = condition;
+      document.querySelectorAll('.chip').forEach(c => c.classList.remove('selected'));
+      STATE.food.selectedMood = '';
+      document.getElementById('foodGetBtn').click();
     });
 
     /* ================================================================
