@@ -89,6 +89,33 @@ async function initSchema() {
       FOREIGN KEY (medicationId) REFERENCES medications(id),
       FOREIGN KEY (doseId) REFERENCES medication_doses(id)
     )`,
+    `CREATE TABLE IF NOT EXISTS mentors (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      username TEXT NOT NULL,
+      mentorUsername TEXT NOT NULL,
+      createdAt TEXT DEFAULT (datetime('now')),
+      FOREIGN KEY (username) REFERENCES users(username) ON DELETE CASCADE,
+      FOREIGN KEY (mentorUsername) REFERENCES users(username) ON DELETE CASCADE,
+      UNIQUE(username, mentorUsername)
+    )`,
+    `CREATE TABLE IF NOT EXISTS mentor_notes (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      sessionId INTEGER NOT NULL,
+      mentorUsername TEXT NOT NULL,
+      note TEXT NOT NULL,
+      createdAt TEXT DEFAULT (datetime('now')),
+      FOREIGN KEY (sessionId) REFERENCES sessions(id) ON DELETE CASCADE
+    )`,
+    `CREATE TABLE IF NOT EXISTS mentor_messages (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      username TEXT NOT NULL,
+      mentorUsername TEXT NOT NULL,
+      message TEXT NOT NULL,
+      role TEXT NOT NULL DEFAULT 'mentor',
+      createdAt TEXT DEFAULT (datetime('now')),
+      FOREIGN KEY (username) REFERENCES users(username) ON DELETE CASCADE,
+      FOREIGN KEY (mentorUsername) REFERENCES users(username) ON DELETE CASCADE
+    )`,
   ];
   for (const sql of statements) {
     await db.execute(sql);

@@ -11,6 +11,7 @@ const medicationRoutes = require('./routes/medications');
 const sessionRoutes = require('./routes/sessions');
 const notificationRoutes = require('./routes/notifications');
 const notifDebugRoutes = require('./routes/notif-debug');
+const mentorRoutes = require('./routes/mentors');
 
 const app = express();
 const server = http.createServer(app);
@@ -57,6 +58,7 @@ app.use('/api/notifications', authenticateToken, notificationRoutes);
 app.use('/api/medications', authenticateToken, medicationRoutes);
 app.use('/api/sessions', authenticateToken, sessionRoutes);
 app.use('/api/notif-debug', authenticateToken, notifDebugRoutes);
+app.use('/api/mentors', authenticateToken, mentorRoutes);
 
 // Config routes to expose non-sensitive environment keys dynamically to client
 app.get('/api/config/groq-key', (req, res) => {
