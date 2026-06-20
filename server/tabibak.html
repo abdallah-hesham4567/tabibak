@@ -5532,6 +5532,7 @@ c-5.708,0-10.798-2.287-14.546-6.011c-0.87-0.895-1.697-1.857-2.407-2.904c-2.262-3
       theme: 'light',
       currentUser: null,
       apiKeys: [],
+      medicalKeys: [],
       sessions: [],
       triageSession: {
         symptom: '',
@@ -8423,7 +8424,7 @@ ${pdfText}`;
         loadingEl.style.display = '';
 
         try {
-          const fallbackKeys = STATE.apiKeys || [];
+          const fallbackKeys = STATE.medicalKeys.length > 0 ? STATE.medicalKeys : STATE.apiKeys;
           let resultData;
           if (STATE.medicalTest.selectedFileIsPdf && STATE.medicalTest.extractedText) {
             // PDF with extracted text → text-only analysis (no vision)
@@ -9357,6 +9358,11 @@ ${pdfText}`;
         if (data.keys && data.keys.length > 0) {
           STATE.apiKeys = data.keys;
           STATE.food.apiKey = data.keys[0];
+        }
+        if (data.medicalKeys && data.medicalKeys.length > 0) {
+          STATE.medicalKeys = data.medicalKeys;
+          STATE.medicalTest.apiKey = data.medicalKeys[0];
+        } else if (data.keys && data.keys.length > 0) {
           STATE.medicalTest.apiKey = data.keys[0];
         }
       } catch (e) {

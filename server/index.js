@@ -61,7 +61,8 @@ app.use('/api/notif-debug', authenticateToken, notifDebugRoutes);
 // Config routes to expose non-sensitive environment keys dynamically to client
 app.get('/api/config/groq-key', (req, res) => {
   res.json({
-    keys: [process.env.GROQ_API_KEY, process.env.GROQ_API_KEY_FALLBACK, process.env.GROQ_API_KEY_THIRD].filter(Boolean)
+    keys: [process.env.GROQ_API_KEY, process.env.GROQ_API_KEY_FALLBACK, process.env.GROQ_API_KEY_THIRD].filter(Boolean),
+    medicalKeys: [process.env.GROQ_API_KEY_MEDICAL, process.env.GROQ_API_KEY_MEDICAL_FALLBACK].filter(Boolean)
   });
 });
 
