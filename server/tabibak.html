@@ -7459,44 +7459,59 @@ ${hasContext ? userContext : 'لا تتوفر معلومات صحية سابقة
       const keyToUse = apiKey || GROQ_API_KEY;
 
       async function callGroq(promptText) {
-        const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${keyToUse}`,
-          },
-          body: JSON.stringify({
-            model: 'qwen/qwen3-32b',
-            temperature: 0.4,
-            max_tokens: 2000,
-            messages: [
-              { role: 'system', content: 'أنت أخصائي تغذية سريرية. أجب دائماً بـ JSON فقط بدون أي نص خارجه.' },
-              { role: 'user', content: promptText },
-            ],
-          }),
-        });
-        if (!res.ok) {
-          const err = await res.json().catch(() => ({}));
-          const msg = err.error?.message || 'فشل الاتصال';
-          if (res.status === 401) throw new Error('مفتاح Groq غير صحيح');
-          if (res.status === 429) throw new Error('تجاوزت الحد المسموح به — انتظر دقيقة وحاول مجدداً');
-          if (res.status === 503) throw new Error('خدمة Groq غير متاحة مؤقتاً — حاول بعد قليل');
-          throw new Error(`Groq ${res.status}: ${msg}`);
+        for (let attempt = 0; attempt < 3; attempt++) {
+          try {
+            const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${keyToUse}`,
+              },
+              body: JSON.stringify({
+                model: 'qwen/qwen3-32b',
+                temperature: 0.4,
+                max_tokens: 2000,
+                messages: [
+                  { role: 'system', content: 'أنت أخصائي تغذية سريرية. أجب دائماً بـ JSON فقط بدون أي نص خارجه.' },
+                  { role: 'user', content: promptText },
+                ],
+              }),
+            });
+            if (!res.ok) {
+              const err = await res.json().catch(() => ({}));
+              const msg = err.error?.message || 'فشل الاتصال';
+              if (res.status === 401) throw new Error('مفتاح Groq غير صحيح');
+              if (res.status === 503) throw new Error('خدمة Groq غير متاحة مؤقتاً — حاول بعد قليل');
+              if (res.status === 429) {
+                const waitMatch = msg.match(/in\s+([\d.]+)s/);
+                const waitMs = waitMatch ? (parseFloat(waitMatch[1]) + 1) * 1000 : 15000;
+                await new Promise(r => setTimeout(r, waitMs));
+                continue;
+              }
+              throw new Error(`Groq ${res.status}: ${msg}`);
+            }
+            const data = await res.json();
+            const raw = data.choices?.[0]?.message?.content;
+            if (!raw) throw new Error('لم يرد Groq بأي محتوى');
+            let clean = raw.replace(/```json|```/g, '').trim();
+            clean = clean.replace(/<think>[\s\S]*?<\/think>/gi, '').trim();
+            clean = clean.replace(/<think>/gi, '').trim();
+            const jsonStart = clean.indexOf('{');
+            const jsonEnd = clean.lastIndexOf('}');
+            if (jsonStart !== -1 && jsonEnd !== -1) {
+              clean = clean.substring(jsonStart, jsonEnd + 1);
+            } else {
+              throw new Error('الرد لا يحتوي على JSON صالح');
+            }
+            return safeJsonParse(repairJSON(clean));
+          } catch (e) {
+            const isRateLimit = e.message?.includes('Rate limit') || e.message?.includes('rate_limit');
+            if (!isRateLimit || attempt === 2) throw e;
+            const waitMatch = e.message.match(/in\s+([\d.]+)s/);
+            const waitMs = waitMatch ? (parseFloat(waitMatch[1]) + 1) * 1000 : 15000;
+            await new Promise(r => setTimeout(r, waitMs));
+          }
         }
-        const data = await res.json();
-        const raw = data.choices?.[0]?.message?.content;
-        if (!raw) throw new Error('لم يرد Groq بأي محتوى');
-        let clean = raw.replace(/```json|```/g, '').trim();
-        clean = clean.replace(/<think>[\s\S]*?<\/think>/gi, '').trim();
-        clean = clean.replace(/<think>/gi, '').trim();
-        const jsonStart = clean.indexOf('{');
-        const jsonEnd = clean.lastIndexOf('}');
-        if (jsonStart !== -1 && jsonEnd !== -1) {
-          clean = clean.substring(jsonStart, jsonEnd + 1);
-        } else {
-          throw new Error('الرد لا يحتوي على JSON صالح');
-        }
-        return safeJsonParse(repairJSON(clean));
       }
 
       const retryPrompts = [
@@ -7712,47 +7727,66 @@ ${JSON.stringify(currentData, null, 2)}
 }`;
 
         async function callFollowUp(promptText) {
-          const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${apiKey}`,
-            },
-            body: JSON.stringify({
-              model: 'qwen/qwen3-32b',
-              temperature: 0.4,
-              max_tokens: 3000,
-              messages: [
-                { role: 'system', content: 'أنت أخصائي تغذية سريرية. أجب دائماً بـ JSON فقط بدون أي نص خارجه.' },
-                { role: 'user', content: promptText },
-              ],
-            }),
-          });
+          for (let attempt = 0; attempt < 3; attempt++) {
+            try {
+              const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                  'Authorization': `Bearer ${apiKey}`,
+                },
+                body: JSON.stringify({
+                  model: 'qwen/qwen3-32b',
+                  temperature: 0.4,
+                  max_tokens: 3000,
+                  messages: [
+                    { role: 'system', content: 'أنت أخصائي تغذية سريرية. أجب دائماً بـ JSON فقط بدون أي نص خارجه.' },
+                    { role: 'user', content: promptText },
+                  ],
+                }),
+              });
 
-          if (!res.ok) {
-            const err = await res.json().catch(() => ({}));
-            throw new Error(err.error?.message || 'فشل الاتصال');
-          }
+              if (!res.ok) {
+                const err = await res.json().catch(() => ({}));
+                const msg = err.error?.message || 'فشل الاتصال';
+                if (res.status === 401) throw new Error('مفتاح Groq غير صحيح');
+                if (res.status === 503) throw new Error('خدمة Groq غير متاحة مؤقتاً — حاول بعد قليل');
+                if (res.status === 429) {
+                  const waitMatch = msg.match(/in\s+([\d.]+)s/);
+                  const waitMs = waitMatch ? (parseFloat(waitMatch[1]) + 1) * 1000 : 15000;
+                  await new Promise(r => setTimeout(r, waitMs));
+                  continue;
+                }
+                throw new Error(msg);
+              }
 
-          const data = await res.json();
-          const raw = data.choices?.[0]?.message?.content;
-          if (!raw) throw new Error('لم يرد Groq بأي محتوى');
+              const data = await res.json();
+              const raw = data.choices?.[0]?.message?.content;
+              if (!raw) throw new Error('لم يرد Groq بأي محتوى');
 
-          let clean = raw.replace(/```json|```/g, '').trim();
-          clean = clean.replace(/<think>[\s\S]*?<\/think>/gi, '').trim();
-          clean = clean.replace(/<think>/gi, '').trim();
-          const jsonStart = clean.indexOf('{');
-          const jsonEnd = clean.lastIndexOf('}');
-          if (jsonStart !== -1 && jsonEnd !== -1) {
-            clean = clean.substring(jsonStart, jsonEnd + 1);
-          } else {
-            throw new Error('الرد لا يحتوي على JSON صالح');
+              let clean = raw.replace(/```json|```/g, '').trim();
+              clean = clean.replace(/<think>[\s\S]*?<\/think>/gi, '').trim();
+              clean = clean.replace(/<think>/gi, '').trim();
+              const jsonStart = clean.indexOf('{');
+              const jsonEnd = clean.lastIndexOf('}');
+              if (jsonStart !== -1 && jsonEnd !== -1) {
+                clean = clean.substring(jsonStart, jsonEnd + 1);
+              } else {
+                throw new Error('الرد لا يحتوي على JSON صالح');
+              }
+              const parsed = safeJsonParse(repairJSON(clean));
+              if (!parsed.cards || !Array.isArray(parsed.cards)) {
+                throw new Error('الاستجابة لا تحتوي على هيكل بطاقات صالح');
+              }
+              return parsed;
+            } catch (e) {
+              const isRateLimit = e.message?.includes('Rate limit') || e.message?.includes('rate_limit');
+              if (!isRateLimit || attempt === 2) throw e;
+              const waitMatch = e.message.match(/in\s+([\d.]+)s/);
+              const waitMs = waitMatch ? (parseFloat(waitMatch[1]) + 1) * 1000 : 15000;
+              await new Promise(r => setTimeout(r, waitMs));
+            }
           }
-          const parsed = safeJsonParse(repairJSON(clean));
-          if (!parsed.cards || !Array.isArray(parsed.cards)) {
-            throw new Error('الاستجابة لا تحتوي على هيكل بطاقات صالح');
-          }
-          return parsed;
         }
 
         const retryPrompts = [
