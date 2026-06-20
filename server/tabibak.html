@@ -7425,7 +7425,7 @@ c-5.708,0-10.798-2.287-14.546-6.011c-0.87-0.895-1.697-1.857-2.407-2.904c-2.262-3
     const GROQ_API_KEY = ''; // loaded dynamically from backend config to prevent git leaks
 
 
-    async function getFoodRecsFromAI(mood, apiKey) {
+    async function getFoodRecsFromAI(mood, allKeys) {
 
       // ── 1. Build user health context from STATE ──────────────
       const user = STATE.currentUser;
@@ -7535,21 +7535,16 @@ ${hasContext ? userContext : 'لا تتوفر معلومات صحية سابقة
 }`;
 
       // ── 3. Call Groq API — works directly from the browser ───
-      //       No proxy needed. CORS is fully supported by Groq.
-      const keyToUse = apiKey || GROQ_API_KEY;
-
-      async function callGroq(promptText) {
+      async function callGroq(promptText, allKeys) {
         const qwen = 'qwen/qwen3-32b';
         const llama = 'llama-3.3-70b-versatile';
-        const models = STATE.food.preferredModel === 'llama' ? [llama, qwen] : [qwen, llama];
-        let lastError;
-        for (const model of models) {
+        const pref = STATE.food.preferredModel;
+        const primaryKey = allKeys[0];
+
+        const tryModel = async (key, model) => {
           const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
             method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${keyToUse}`,
-            },
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${key}` },
             body: JSON.stringify({
               model,
               temperature: 0.2,
@@ -7575,19 +7570,40 @@ ${hasContext ? userContext : 'لا تتوفر معلومات صحية سابقة
               throw new Error('الرد لا يحتوي على JSON صالح');
             }
             STATE.food.lastModelUsed = model;
-            return safeJsonParse(repairJSON(clean));
+            return { ok: true, data: safeJsonParse(repairJSON(clean)) };
           }
           const err = await res.json().catch(() => ({}));
           const msg = err.error?.message || 'فشل الاتصال';
-          if (res.status === 401) throw new Error('مفتاح Groq غير صحيح');
-          if (res.status === 503) throw new Error('خدمة Groq غير متاحة مؤقتاً — حاول بعد قليل');
-          if (res.status === 429) { lastError = new Error(msg); continue; }
-          throw new Error(`Groq ${res.status}: ${msg}`);
+          if (res.status === 401) return { ok: false, fatal: true, error: new Error('مفتاح Groq غير صحيح') };
+          if (res.status === 503) return { ok: false, fatal: true, error: new Error('خدمة Groq غير متاحة مؤقتاً — حاول بعد قليل') };
+          if (res.status === 429) return { ok: false, fatal: false };
+          return { ok: false, fatal: true, error: new Error(`Groq ${res.status}: ${msg}`) };
+        };
+
+        const primaryModel = pref === 'llama' ? llama : qwen;
+        const fallbackModel = pref === 'llama' ? qwen : llama;
+
+        // Phase 1: try primary model on all keys
+        for (const key of allKeys) {
+          const r = await tryModel(key, primaryModel);
+          if (r.ok) return r.data;
+          if (r.fatal) throw r.error;
         }
-        throw lastError || new Error('فشلت جميع المحاولات');
+
+        // Phase 2: cycle re-check primary on org1 ↔ fallback on each key
+        for (const llmKey of allKeys) {
+          const q = await tryModel(primaryKey, primaryModel);
+          if (q.ok) return q.data;
+          if (q.fatal) throw q.error;
+          const f = await tryModel(llmKey, fallbackModel);
+          if (f.ok) return f.data;
+          if (f.fatal) throw f.error;
+        }
+
+        throw new Error('فشلت جميع محاولات الاتصال بالنماذج');
       }
 
-      return await callGroq(prompt);
+      return await callGroq(prompt, allKeys);
     }
 
     function renderFoodCards(data, clearChat = true) {
@@ -7680,7 +7696,8 @@ ${hasContext ? userContext : 'لا تتوفر معلومات صحية سابقة
       try {
         let data;
         if (STATE.food.apiKey) {
-          data = await withFallbackKey(getFoodRecsFromAI, STATE.food.apiKey, STATE.apiKeys, mood);
+          const keys = STATE.apiKeys.length > 0 ? STATE.apiKeys : [STATE.food.apiKey];
+          data = await getFoodRecsFromAI(mood, keys);
         } else {
           await new Promise(r => setTimeout(r, 700));
           data = FOOD_FALLBACK[mood] || FOOD_FALLBACK['default'];
@@ -7810,18 +7827,16 @@ ${JSON.stringify(currentData, null, 2)}
   "refusal": "سبب الرفض (فقط إذا رفضت الطلب، وإلا فلا تضف هذا الحقل)"
 }`;
 
-        async function callFollowUp(promptText, overriddenKey) {
+        async function callFollowUp(promptText, allKeys) {
           const qwen = 'qwen/qwen3-32b';
           const llama = 'llama-3.3-70b-versatile';
-          const models = STATE.food.preferredModel === 'llama' ? [llama, qwen] : [qwen, llama];
-          let lastError;
-          for (const model of models) {
+          const pref = STATE.food.preferredModel;
+          const primaryKey = allKeys[0];
+
+          const tryModel = async (key, model) => {
             const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
               method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${overriddenKey || apiKey}`,
-              },
+              headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${key}` },
               body: JSON.stringify({
                 model,
                 temperature: 0.2,
@@ -7853,21 +7868,42 @@ ${JSON.stringify(currentData, null, 2)}
                 throw new Error('الاستجابة لا تحتوي على هيكل بطاقات صالح');
               }
               STATE.food.lastModelUsed = model;
-              return parsed;
+              return { ok: true, data: parsed };
             }
 
             const err = await res.json().catch(() => ({}));
             const msg = err.error?.message || 'فشل الاتصال';
-            if (res.status === 401) throw new Error('مفتاح Groq غير صحيح');
-            if (res.status === 429) { lastError = new Error(msg); continue; }
-            if (res.status === 503) throw new Error('خدمة Groq غير متاحة مؤقتاً — حاول بعد قليل');
-            throw new Error(msg);
+            if (res.status === 401) return { ok: false, fatal: true, error: new Error('مفتاح Groq غير صحيح') };
+            if (res.status === 429) return { ok: false, fatal: false };
+            if (res.status === 503) return { ok: false, fatal: true, error: new Error('خدمة Groq غير متاحة مؤقتاً — حاول بعد قليل') };
+            return { ok: false, fatal: true, error: new Error(msg) };
+          };
+
+          const primaryModel = pref === 'llama' ? llama : qwen;
+          const fallbackModel = pref === 'llama' ? qwen : llama;
+
+          // Phase 1: primary model on all keys
+          for (const key of allKeys) {
+            const r = await tryModel(key, primaryModel);
+            if (r.ok) return r.data;
+            if (r.fatal) throw r.error;
           }
-          throw lastError || new Error('فشلت جميع المحاولات');
+
+          // Phase 2: re-check primary on org1 ↔ fallback on each key
+          for (const llmKey of allKeys) {
+            const q = await tryModel(primaryKey, primaryModel);
+            if (q.ok) return q.data;
+            if (q.fatal) throw q.error;
+            const f = await tryModel(llmKey, fallbackModel);
+            if (f.ok) return f.data;
+            if (f.fatal) throw f.error;
+          }
+
+          throw new Error('فشلت جميع محاولات الاتصال بالنماذج');
         }
 
-        const followUpKeys = STATE.apiKeys?.filter(k => k !== apiKey) || [];
-        const updatedData = await withFallbackKey(callFollowUp, apiKey, followUpKeys, basePrompt);
+        const followUpKeys = STATE.apiKeys.length > 0 ? STATE.apiKeys : [apiKey];
+        const updatedData = await callFollowUp(basePrompt, followUpKeys);
 
         // Check if the AI refused the request
         if (updatedData.refusal) {
