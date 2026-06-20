@@ -4497,6 +4497,17 @@ c-5.708,0-10.798-2.287-14.546-6.011c-0.87-0.895-1.697-1.857-2.407-2.904c-2.262-3
         <div class="food-cards" id="foodCards"></div>
         <button class="btn btn-secondary" id="foodResetBtn" style="margin-top:1rem;width:100%;">↩ الحصول على توصيات
           جديدة</button>
+
+        <!-- Food Chat Follow-up -->
+        <div id="foodChatArea" style="display:none;margin-top:1.5rem;border-top:1px solid var(--border);padding-top:1rem;">
+          <p style="margin-bottom:0.5rem;font-weight:600;color:var(--text-1);">💬 تريد إضافة أو إزالة طعام؟</p>
+          <div id="foodChatLog" class="chat-log" style="min-height:0;max-height:200px;overflow-y:auto;margin-bottom:0.5rem;display:flex;flex-direction:column;gap:0.5rem;"></div>
+          <div class="food-chat-input-row" style="display:flex;gap:0.5rem;">
+            <input type="text" id="foodChatInput" placeholder="مثال: أضف سمك السلمون أو أزل الموز..."
+              autocomplete="off" style="flex:1;padding:0.5rem;border-radius:8px;border:1px solid var(--border);background:var(--bg-surface);color:inherit;font-size:0.9rem;" />
+            <button class="btn btn-primary" id="foodChatSendBtn" style="white-space:nowrap;">إرسال</button>
+          </div>
+        </div>
       </div>
 
       <div id="foodError" style="display:none;" class="food-error">
@@ -5489,6 +5500,9 @@ c-5.708,0-10.798-2.287-14.546-6.011c-0.87-0.895-1.697-1.857-2.407-2.904c-2.262-3
       food: {
         apiKey: '', // loaded from backend config dynamically to prevent git leaks
         selectedMood: '',
+        currentData: null, // last fetched food recommendations (full JSON)
+        currentMood: '',   // the mood/query that was used
+        chatLog: [],       // [{ role: 'user'|'assistant', text: '...' }]
       },
       medicalTest: {
         apiKey: '',
@@ -7424,7 +7438,7 @@ ${hasContext ? userContext : 'لا تتوفر معلومات صحية سابقة
       return safeJsonParse(clean);
     }
 
-    function renderFoodCards(data) {
+    function renderFoodCards(data, clearChat = true) {
       document.getElementById('foodConditionBadge').textContent = data.badge;
 
       // Render clinical analysis if it exists
@@ -7479,12 +7493,22 @@ ${hasContext ? userContext : 'لا تتوفر معلومات صحية سابقة
       }).join('');
 
       document.getElementById('foodResults').style.display = '';
+
+      // Show the food chat area for follow-up modifications
+      if (clearChat) {
+        document.getElementById('foodChatLog').innerHTML = '';
+        document.getElementById('foodChatInput').value = '';
+      }
+      document.getElementById('foodChatArea').style.display = '';
     }
 
     async function fetchFoodRecommendations(mood) {
       document.getElementById('foodLoading').style.display = '';
       document.getElementById('foodResults').style.display = 'none';
       document.getElementById('foodError').style.display = 'none';
+      document.getElementById('foodChatArea').style.display = 'none';
+      STATE.food.chatLog = [];
+      STATE.food.currentMood = mood;
       try {
         let data;
         if (STATE.food.apiKey) {
@@ -7493,12 +7517,15 @@ ${hasContext ? userContext : 'لا تتوفر معلومات صحية سابقة
           await new Promise(r => setTimeout(r, 700));
           data = FOOD_FALLBACK[mood] || FOOD_FALLBACK['default'];
         }
+        STATE.food.currentData = data;
         renderFoodCards(data);
       } catch (e) {
         document.getElementById('foodErrorMsg').textContent = `خطأ: ${e.message}. جاري عرض التوصيات المدمجة.`;
         document.getElementById('foodError').style.display = '';
         await new Promise(r => setTimeout(r, 300));
-        renderFoodCards(FOOD_FALLBACK[mood] || FOOD_FALLBACK['default']);
+        const fallback = FOOD_FALLBACK[mood] || FOOD_FALLBACK['default'];
+        STATE.food.currentData = fallback;
+        renderFoodCards(fallback);
       } finally {
         document.getElementById('foodLoading').style.display = 'none';
       }
@@ -7522,10 +7549,148 @@ ${hasContext ? userContext : 'لا تتوفر معلومات صحية سابقة
 
     document.getElementById('foodResetBtn').addEventListener('click', () => {
       document.getElementById('foodResults').style.display = 'none';
+      document.getElementById('foodChatArea').style.display = 'none';
       document.getElementById('foodError').style.display = 'none';
       document.querySelectorAll('.chip').forEach(c => c.classList.remove('selected'));
       document.getElementById('foodCustomInput').value = '';
       STATE.food.selectedMood = '';
+      STATE.food.currentData = null;
+      STATE.food.currentMood = '';
+      STATE.food.chatLog = [];
+    });
+
+    async function handleFoodChat() {
+      const input = document.getElementById('foodChatInput');
+      const text = input.value.trim();
+      if (!text) return;
+      input.value = '';
+
+      const chatLog = document.getElementById('foodChatLog');
+
+      // Append user message
+      const userMsg = document.createElement('div');
+      userMsg.style.cssText = 'align-self:flex-end;background:var(--primary);color:white;padding:0.4rem 0.8rem;border-radius:12px 12px 4px 12px;max-width:85%;font-size:0.85rem;word-break:break-word;';
+      userMsg.textContent = text;
+      chatLog.appendChild(userMsg);
+
+      STATE.food.chatLog.push({ role: 'user', text });
+
+      // Show typing indicator
+      const typing = document.createElement('div');
+      typing.style.cssText = 'align-self:flex-start;color:var(--text-2);font-size:0.8rem;padding:0.3rem 0;';
+      typing.textContent = 'جارٍ تعديل القائمة...';
+      chatLog.appendChild(typing);
+      chatLog.scrollTop = chatLog.scrollHeight;
+
+      try {
+        const currentData = STATE.food.currentData;
+        if (!currentData) throw new Error('لا توجد بيانات غذائية حالية');
+
+        const apiKey = STATE.food.apiKey;
+        if (!apiKey) {
+          // No API key — simple local add/remove simulation
+          await new Promise(r => setTimeout(r, 500));
+          typing.remove();
+          const botMsg = document.createElement('div');
+          botMsg.style.cssText = 'align-self:flex-start;background:var(--bubble-bot);color:inherit;padding:0.4rem 0.8rem;border-radius:12px 12px 12px 4px;max-width:85%;font-size:0.85rem;word-break:break-word;';
+          botMsg.textContent = 'عذراً، تعديل القائمة يتطلب اتصالاً بخدمة الذكاء الاصطناعي. يرجى التحقق من مفتاح API.';
+          chatLog.appendChild(botMsg);
+          chatLog.scrollTop = chatLog.scrollHeight;
+          return;
+        }
+
+        // Build follow-up prompt with current food data
+        const followUpPrompt = `أنت أخصائي تغذية سريرية. قام المستخدم بمراجعة خطته الغذائية ويريد تعديلها.
+
+الخطة الغذائية الحالية (JSON):
+${JSON.stringify(currentData, null, 2)}
+
+طلب المستخدم: "${text}"
+
+تعليمات:
+- عدّل الخطة بناءً على طلب المستخدم (قد يطلب إضافة أو إزالة أطعمة/مشروبات/نصائح).
+- حافظ على نفس هيكل JSON تماماً.
+- إذا أضاف المستخدم طعاماً، أضفه مع سبب علمي مناسب في "reason".
+- إذا أزال المستخدم طعاماً، احذفه من القائمة.
+- حافظ على التحليل السريري (analysis) محدثاً إن لزم الأمر.
+- أرجِع JSON صالحاً فقط، بدون أي نص خارجي أو علامات markdown.
+- الرد باللغة العربية.
+
+التنسيق المطلوب:
+{
+  "badge": "...",
+  "analysis": "...",
+  "drugWarnings": [...],
+  "cards": [
+    { "icon": "...", "title": "...", "items": [{"name": "...", "reason": "..."}] }
+  ]
+}`;
+
+        const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${apiKey}`,
+          },
+          body: JSON.stringify({
+            model: 'llama-3.3-70b-versatile',
+            temperature: 0.4,
+            max_tokens: 1500,
+            response_format: { type: 'json_object' },
+            messages: [
+              { role: 'system', content: 'أنت أخصائي تغذية سريرية. أجب دائماً بـ JSON فقط بدون أي نص خارجه.' },
+              { role: 'user', content: followUpPrompt },
+            ],
+          }),
+        });
+
+        if (!res.ok) {
+          const err = await res.json().catch(() => ({}));
+          throw new Error(err.error?.message || 'فشل الاتصال');
+        }
+
+        const data = await res.json();
+        const raw = data.choices?.[0]?.message?.content;
+        if (!raw) throw new Error('لم يرد Groq بأي محتوى');
+
+        const clean = raw.replace(/```json|```/g, '').trim();
+        const updatedData = safeJsonParse(clean);
+
+        // Validate it has the expected structure
+        if (!updatedData.cards || !Array.isArray(updatedData.cards)) {
+          throw new Error('الاستجابة لا تحتوي على هيكل بطاقات صالح');
+        }
+
+        // Update state and re-render
+        STATE.food.currentData = updatedData;
+        STATE.food.chatLog.push({ role: 'assistant', text: 'تم تعديل القائمة بنجاح ✓' });
+        typing.remove();
+
+        // Append success message
+        const botMsg = document.createElement('div');
+        botMsg.style.cssText = 'align-self:flex-start;background:var(--bubble-bot);color:inherit;padding:0.4rem 0.8rem;border-radius:12px 12px 12px 4px;max-width:85%;font-size:0.85rem;word-break:break-word;';
+        botMsg.textContent = 'تم تعديل القائمة ✓';
+        chatLog.appendChild(botMsg);
+        chatLog.scrollTop = chatLog.scrollHeight;
+
+        // Re-render food cards with updated data
+        renderFoodCards(updatedData, false);
+
+      } catch (e) {
+        const typingEl = chatLog.querySelector('div:last-child');
+        if (typingEl?.textContent === 'جارٍ تعديل القائمة...') typingEl.remove();
+
+        const errMsg = document.createElement('div');
+        errMsg.style.cssText = 'align-self:flex-start;background:var(--red-bg);color:var(--red);padding:0.4rem 0.8rem;border-radius:12px 12px 12px 4px;max-width:85%;font-size:0.85rem;word-break:break-word;';
+        errMsg.textContent = `خطأ: ${e.message}`;
+        chatLog.appendChild(errMsg);
+        chatLog.scrollTop = chatLog.scrollHeight;
+      }
+    }
+
+    document.getElementById('foodChatSendBtn').addEventListener('click', handleFoodChat);
+    document.getElementById('foodChatInput').addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') handleFoodChat();
     });
 
     // API key is set in STATE.food.apiKey — no user UI needed
