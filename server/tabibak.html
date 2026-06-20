@@ -7496,7 +7496,7 @@ ${hasContext ? userContext : 'لا تتوفر معلومات صحية سابقة
         } else {
           throw new Error('الرد لا يحتوي على JSON صالح');
         }
-        return safeJsonParse(clean);
+        return safeJsonParse(repairJSON(clean));
       }
 
       try {
@@ -7745,7 +7745,7 @@ ${JSON.stringify(currentData, null, 2)}
         } else {
           throw new Error('الرد لا يحتوي على JSON صالح');
         }
-        const updatedData = safeJsonParse(clean);
+        const updatedData = safeJsonParse(repairJSON(clean));
 
         // Validate it has the expected structure
         if (!updatedData.cards || !Array.isArray(updatedData.cards)) {
@@ -7908,6 +7908,16 @@ ${JSON.stringify(currentData, null, 2)}
         });
       });
       return JSON.parse(cleaned);
+    }
+
+    function repairJSON(str) {
+      try { JSON.parse(str); return str; } catch (e) { }
+      str = str.replace(/}\s*{/g, '},{');
+      str = str.replace(/\]\s*{/g, '],{');
+      str = str.replace(/}\s*\[/g, '},[');
+      str = str.replace(/,\s*]/g, ']');
+      str = str.replace(/,\s*}/g, '}');
+      return str;
     }
 
     async function extractValuesFromImage(base64Image, apiKey) {
