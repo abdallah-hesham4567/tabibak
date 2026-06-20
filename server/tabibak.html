@@ -2299,8 +2299,9 @@
       #medsListContainer {
         grid-template-columns: 1fr 1fr;
       }
-      .meds-section-label {
-        grid-column: 1 / -1; /* "جرعات الصباح" etc. spans the full row */
+      .meds-section-label,
+      .meds-empty {
+        grid-column: 1 / -1;
       }
     }
 
