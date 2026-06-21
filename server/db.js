@@ -74,7 +74,7 @@ async function initSchema() {
       date TEXT NOT NULL,
       takenAt TEXT DEFAULT (datetime('now')),
       FOREIGN KEY (username) REFERENCES users(username),
-      FOREIGN KEY (medicationId) REFERENCES medications(id)
+      FOREIGN KEY (medicationId) REFERENCES medications(id) ON DELETE CASCADE
     )`,
     `CREATE TABLE IF NOT EXISTS notification_log (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -86,7 +86,7 @@ async function initSchema() {
       type TEXT NOT NULL DEFAULT 'medication_reminder',
       sentAt TEXT DEFAULT (datetime('now')),
       FOREIGN KEY (username) REFERENCES users(username),
-      FOREIGN KEY (medicationId) REFERENCES medications(id),
+      FOREIGN KEY (medicationId) REFERENCES medications(id) ON DELETE CASCADE,
       FOREIGN KEY (doseId) REFERENCES medication_doses(id)
     )`,
     `CREATE TABLE IF NOT EXISTS mentors (
