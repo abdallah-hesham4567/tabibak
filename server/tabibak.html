@@ -7140,10 +7140,11 @@ c-5.708,0-10.798-2.287-14.546-6.011c-0.87-0.895-1.697-1.857-2.407-2.904c-2.262-3
     }
 
     let triageKeyIndex = 0;
+    const TRIAGE_MAX_QUESTIONS = 13;
 
     async function askTriageQwen() {
       const step = STATE.triageSession.step;
-      if (step >= 6) { finishTriage(); return; }
+      if (step >= TRIAGE_MAX_QUESTIONS) { finishTriage(); return; }
 
       const apiKeys = STATE.apiKeys && STATE.apiKeys.length > 0 ? STATE.apiKeys
         : (STATE.medicalKeys && STATE.medicalKeys.length > 0 ? STATE.medicalKeys : []);
@@ -7154,7 +7155,7 @@ c-5.708,0-10.798-2.287-14.546-6.011c-0.87-0.895-1.697-1.857-2.407-2.904c-2.262-3
       }
 
       document.getElementById('categoryBadge').textContent = 'الذكاء الاصطناعي';
-      updateProgress(step, 6);
+      updateProgress(step, TRIAGE_MAX_QUESTIONS);
 
       const messages = [
         {
@@ -7165,9 +7166,11 @@ c-5.708,0-10.798-2.287-14.546-6.011c-0.87-0.895-1.697-1.857-2.407-2.904c-2.262-3
 القواعد:
 - اسأل سؤالاً تشخيصياً واحداً فقط في كل مرة
 - اجمع معلومات عن: المدة، الشدة، التاريخ المرضي، الأعراض المرافقة، الأدوية، الحساسية
-- لديك 6 أسئلة كحد أقصى. السؤال الحالي رقم ${step + 1}
+- لديك ${TRIAGE_MAX_QUESTIONS} أسئلة كحد أقصى. السؤال الحالي رقم ${step + 1}
 - كن موجزاً — سؤال واحد قصير ومباشر
-- أجب فقط بنص السؤال، لا شيء آخر`
+
+إذا قال المريض "خلاص", "اكتفي", "قل لي التشخيص", "just give me the disease" أو أي عبارة تدل على أنه يريد النتيجة الآن → أجب فقط: {"done": true}
+وإلا → أجب فقط بنص السؤال، لا شيء آخر`
         }
       ];
 
@@ -7206,11 +7209,21 @@ c-5.708,0-10.798-2.287-14.546-6.011c-0.87-0.895-1.697-1.857-2.407-2.904c-2.262-3
             throw new Error(msg || 'فشل الاتصال');
           }
           const data = await res.json();
-          const question = data.choices?.[0]?.message?.content?.trim();
-          if (!question) throw new Error('لم يرد بنص');
+          const responseText = data.choices?.[0]?.message?.content?.trim();
+          if (!responseText) throw new Error('لم يرد بنص');
 
           triageKeyIndex = (keyIdx + 1) % apiKeys.length;
-          await showTypingThenAppend(question, 600);
+
+          // Check if Qwen wants to conclude early
+          try {
+            const parsed = JSON.parse(responseText);
+            if (parsed.done === true) {
+              finishTriage();
+              return;
+            }
+          } catch (_) {}
+
+          await showTypingThenAppend(responseText, 600);
           return;
         } catch (e) { lastError = e; }
       }
@@ -7250,18 +7263,18 @@ c-5.708,0-10.798-2.287-14.546-6.011c-0.87-0.895-1.697-1.857-2.407-2.904c-2.262-3
 
       STATE.triageSession = {
         symptom: initialSymptom, chatLog: [], step: 0,
-        totalSteps: 6, category: 'الذكاء الاصطناعي',
+        totalSteps: TRIAGE_MAX_QUESTIONS, category: 'الذكاء الاصطناعي',
         redFlagFired: false, result: null,
       };
 
       showTab('chat');
       document.getElementById('chatLog').innerHTML = '';
       document.getElementById('redFlagBanner').classList.remove('visible');
-      updateProgress(0, 6);
+      updateProgress(0, TRIAGE_MAX_QUESTIONS);
 
       const intro = breathingContext
         ? `مرحباً! أنا طبيبك. بناءً على نتيجة تقييم التنفس (${breathingContext})، وعَرَضك المُبلَّغ عنه "${initialSymptom}" — سأطرح عليك بعض الأسئلة الذكية لفهم حالتك بشكل أفضل.`
-        : `مرحباً! أنا طبيبك. لاحظتُ عَرَضك: "${initialSymptom}". سأطرح عليك 6 أسئلة ذكية بالذكاء الاصطناعي لفهم حالتك بشكل أفضل.`;
+        : `مرحباً! أنا طبيبك. لاحظتُ عَرَضك: "${initialSymptom}". سأطرح عليك أسئلة ذكية بالذكاء الاصطناعي لفهم حالتك بشكل أفضل. قل "خلاص" أو "اكتفي" متى أردت النتيجة.`;
 
       appendMessage('bot', intro);
       checkRedFlags(initialSymptom);
@@ -7276,8 +7289,8 @@ c-5.708,0-10.798-2.287-14.546-6.011c-0.87-0.895-1.697-1.857-2.407-2.904c-2.262-3
       appendMessage('user', text, imgDataUrl);
       checkRedFlags(text);
       STATE.triageSession.step++;
-      updateProgress(STATE.triageSession.step, 6);
-      if (STATE.triageSession.step < 6) {
+      updateProgress(STATE.triageSession.step, TRIAGE_MAX_QUESTIONS);
+      if (STATE.triageSession.step < TRIAGE_MAX_QUESTIONS) {
         setTimeout(askTriageQwen, 400);
       } else {
         setTimeout(finishTriage, 600);
