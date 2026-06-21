@@ -16,8 +16,6 @@ async function getDb() {
       db = createClient({ url: `file:${filePath}` });
     }
 
-    try { await db.execute('PRAGMA foreign_keys = ON'); } catch (e) { }
-
     initPromise = initSchema();
     await initPromise;
   } else if (initPromise) {
