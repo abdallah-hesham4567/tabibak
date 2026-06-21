@@ -1,0 +1,102 @@
+/* ============================================================
+       LANDING SCREEN
+       ============================================================ */
+    #landing-screen {
+      max-width: 650px;
+      margin: 1.5rem auto;
+      width: 100%;
+    }
+
+    .disclaimer {
+      background: var(--red-bg);
+      border: 1px solid var(--red-border);
+      border-radius: 14px;
+      padding: 1.25rem;
+      display: flex;
+      gap: 1rem;
+      align-items: flex-start;
+    }
+
+    .disclaimer-icon {
+      font-size: 1.5rem;
+      color: var(--red);
+    }
+
+    .disclaimer p {
+      font-size: 0.875rem;
+      color: var(--text-2);
+      line-height: 1.55;
+    }
+
+    .disclaimer strong {
+      color: var(--text-1);
+    }
+
+    .divider-line {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+    }
+
+    .divider-line::before,
+    .divider-line::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    .btn-breathing {
+      width: 100%;
+      padding: 0.875rem 1.5rem;
+      border-radius: var(--radius);
+      border: 1.5px solid var(--border);
+      background: var(--input-bg);
+      color: var(--primary);
+      font-family: var(--font-body);
+      font-size: 0.95rem;
+      font-weight: 500;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.6rem;
+      transition: all 0.25s ease;
+    }
+
+    .btn-breathing:hover {
+      background: var(--primary-glow);
+      border-color: var(--primary);
+      transform: translateY(-2px);
+    }
+
+    .landing-headline {
+      text-align: right;
+      padding: 0.5rem 0 1rem;
+    }
+
+    .landing-headline h2 {
+      font-size: 1.6rem;
+      font-weight: 800;
+      color: var(--text-1);
+      margin-bottom: 0.4rem;
+      position: relative;
+      padding-bottom: 0.6rem;
+    }
+    .landing-headline h2::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      width: 44px;
+      height: 3px;
+      background: var(--primary);
+      border-radius: 2px;
+    }
+
+    .landing-headline p {
+      color: var(--text-2);
+      font-size: 0.95rem;
+    }

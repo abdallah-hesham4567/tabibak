@@ -1,0 +1,129 @@
+/* ============================================================
+       PROFILE / AUTH SCREENS
+       ============================================================ */
+    .auth-tabs {
+      display: flex;
+      border-bottom: 2px solid var(--border);
+      margin-bottom: 1.5rem;
+    }
+
+    .auth-tab {
+      flex: 1;
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      padding: 0.75rem;
+      font-family: var(--font-heading);
+      font-weight: 600;
+      font-size: 1.05rem;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -2px;
+      transition: all var(--speed);
+    }
+
+    .auth-tab:hover {
+      color: var(--primary);
+    }
+
+    .auth-tab.active {
+      color: var(--primary);
+      border-bottom-color: var(--primary);
+    }
+
+    .auth-form {
+      display: none;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
+    .auth-form.active {
+      display: flex;
+      animation: fadeIn 0.4s ease-out;
+    }
+
+    .form-row {
+      display: flex;
+      gap: 1rem;
+    }
+
+    .form-row .form-group {
+      flex: 1;
+    }
+
+    .auth-subtitle {
+      font-size: 0.9rem;
+      color: var(--text-2);
+    }
+
+    .profile-header {
+      display: flex;
+      align-items: center;
+      gap: 1.25rem;
+      margin-bottom: 1.75rem;
+    }
+
+    .avatar {
+      font-size: 2.25rem;
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      border: 2px solid var(--primary);
+      background: var(--primary-glow);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 15px var(--primary-glow);
+    }
+
+    .detail-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .detail-card {
+      background: var(--input-bg);
+      border: 1px solid var(--border);
+      padding: 1rem 1.25rem;
+      border-radius: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+      transition: all var(--speed);
+    }
+
+    .detail-card:hover {
+      border-color: var(--primary);
+    }
+
+    .detail-label {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+
+    .detail-value {
+      font-family: var(--font-heading);
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--primary);
+    }
+
+    .med-history-box {
+      background: var(--input-bg);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 1.25rem;
+      font-size: 0.95rem;
+      color: var(--text-2);
+      line-height: 1.6;
+    }
+
+    .profile-actions {
+      display: flex;
+      gap: 1rem;
+      margin-top: 2rem;
+    }

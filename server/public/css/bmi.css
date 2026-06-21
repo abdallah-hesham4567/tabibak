@@ -1,0 +1,207 @@
+/* ============================================================
+       BMI SCREEN
+       ============================================================ */
+    .bmi-header {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .bmi-header-icon {
+      font-size: 2rem;
+    }
+
+    .bmi-form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.25rem;
+      margin: 1.5rem 0;
+    }
+
+    .bmi-unit-badge {
+      display: inline-block;
+      background: var(--primary-glow);
+      border: 1px solid rgba(43, 108, 176, 0.2);
+      padding: 0.1rem 0.5rem;
+      border-radius: 8px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin-left: 0.4rem;
+      vertical-align: middle;
+    }
+
+    .bmi-result-card {
+      margin-top: 1.5rem;
+    }
+
+    .bmi-hero {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+    }
+
+    .bmi-circle {
+      width: 110px;
+      height: 110px;
+      flex-shrink: 0;
+      border-radius: 50%;
+      border: 4px solid var(--primary);
+      background: var(--bg-surface);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 20px var(--primary-glow);
+      transition: all 0.6s ease;
+    }
+
+    .bmi-circle.underweight {
+      border-color: var(--secondary);
+    }
+
+    .bmi-circle.normal {
+      border-color: var(--green);
+    }
+
+    .bmi-circle.overweight {
+      border-color: var(--orange);
+    }
+
+    .bmi-circle.obese {
+      border-color: var(--red);
+    }
+
+    .bmi-value {
+      font-family: var(--font-heading);
+      font-size: 2rem;
+      font-weight: 800;
+      color: var(--primary);
+      line-height: 1;
+    }
+
+    .bmi-sublabel {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    .bmi-cat-info {
+      flex: 1;
+      min-width: 160px;
+    }
+
+    .bmi-cat-badge {
+      display: inline-block;
+      padding: 0.35rem 1rem;
+      border-radius: 20px;
+      font-weight: 700;
+      font-size: 0.85rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      margin-bottom: 0.5rem;
+    }
+
+    .bmi-cat-badge.underweight {
+      background: rgba(14, 165, 233, 0.15);
+      color: var(--secondary);
+    }
+
+    .bmi-cat-badge.normal {
+      background: var(--green-bg);
+      color: var(--green);
+    }
+
+    .bmi-cat-badge.overweight {
+      background: var(--orange-bg);
+      color: var(--orange);
+    }
+
+    .bmi-cat-badge.obese {
+      background: var(--red-bg);
+      color: var(--red);
+    }
+
+    .bmi-cat-desc {
+      font-size: 0.9rem;
+      color: var(--text-2);
+    }
+
+    .bmi-gauge {
+      margin: 1.5rem 0;
+    }
+
+    .gauge-track {
+      position: relative;
+      height: 14px;
+      background: linear-gradient(90deg, var(--red) 0%, var(--orange) 35%, var(--green) 70%, var(--secondary) 100%);
+      border-radius: 7px;
+      overflow: visible;
+      margin-bottom: 0.5rem;
+    }
+
+    .gauge-pointer {
+      position: absolute;
+      top: -5px;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: var(--bg-page);
+      border: 3px solid var(--text-1);
+      transform: translateX(-50%);
+      transition: left 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+
+    }
+
+    .gauge-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      padding: 0 2px;
+    }
+
+    .tips-section {
+      margin-top: 1.25rem;
+    }
+
+    .tips-title {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 0.75rem;
+    }
+
+    .tips-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.65rem;
+    }
+
+    .tips-list li {
+      display: flex;
+      gap: 0.75rem;
+      font-size: 0.9rem;
+      color: var(--text-2);
+    }
+
+    .tips-list li::before {
+      content: "✦";
+      color: var(--primary);
+      flex-shrink: 0;
+    }
+
+    .bmi-disclaimer {
+      margin-top: 1.25rem;
+      padding: 1rem;
+      background: var(--input-bg);
+      border-radius: 12px;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      line-height: 1.55;
+      display: flex;
+      gap: 0.5rem;
+    }

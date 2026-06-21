@@ -1,0 +1,395 @@
+/* ============================================================
+       NUTRITION SCREEN
+       ============================================================ */
+    .food-header h2 {
+      font-size: 1.6rem;
+      margin-bottom: 0.25rem;
+    }
+
+    .food-header p {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+    }
+
+    .mood-section-label {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-2);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 0.75rem;
+    }
+
+    .mood-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .chip {
+      background: var(--input-bg);
+      border: 1px solid var(--border);
+      border-radius: 30px;
+      padding: 0.45rem 1rem;
+      font-size: 0.875rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+      color: var(--text-2);
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+
+    .chip:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+      background: var(--primary-glow);
+    }
+
+    .chip.selected {
+      background: var(--primary-glow);
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    .food-input-row {
+      display: flex;
+      gap: 0.75rem;
+    }
+
+    .food-input-row input {
+      flex: 1;
+    }
+
+    .food-loading {
+      text-align: center;
+      padding: 2rem;
+    }
+
+    .pulse-ring-wrap {
+      position: relative;
+      width: 80px;
+      height: 80px;
+      margin: 0 auto 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .pulse-ring {
+      position: absolute;
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      border: 2px solid var(--primary);
+      animation: ringPulse 1.5s ease-in-out infinite;
+    }
+
+    .pulse-emoji {
+      font-size: 2.5rem;
+    }
+
+    .food-error {
+      text-align: center;
+      padding: 1.5rem;
+      color: var(--red);
+    }
+
+    .food-results-header {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .food-condition-badge {
+      background: var(--primary-glow);
+      border: 1px solid rgba(43, 108, 176, 0.2);
+      padding: 0.3rem 0.9rem;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--primary);
+    }
+
+    .food-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1rem;
+    }
+
+    .food-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 1.25rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      transition: all var(--speed);
+    }
+
+    .food-card:hover {
+      border-color: var(--primary);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow);
+    }
+
+    .food-card-icon {
+      font-size: 2rem;
+    }
+
+    .food-card-title {
+      font-family: var(--font-heading);
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--primary);
+    }
+
+    .food-card-items {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+    }
+
+    .food-card-items li {
+      font-size: 0.875rem;
+      color: var(--text-2);
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .food-card-items li::before {
+      content: "•";
+      color: var(--primary);
+    }
+
+    .api-toggle-btn {
+      width: 100%;
+      background: var(--input-bg);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 0.85rem 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      cursor: pointer;
+      color: var(--text-2);
+      font-family: var(--font-body);
+      font-size: 0.9rem;
+      transition: all var(--speed);
+    }
+
+    .api-toggle-btn:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    .api-arrow {
+      margin-left: auto;
+      transition: transform var(--speed);
+    }
+
+    .api-toggle-btn[aria-expanded="true"] .api-arrow {
+      transform: rotate(180deg);
+    }
+
+    .model-selector-row {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-top: 0.5rem;
+      justify-content: center;
+    }
+
+    .model-selector-label {
+      font-size: 0.8rem;
+      color: var(--text-2);
+    }
+
+    .model-toggle-btn {
+      background: var(--input-bg);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 0.3rem 0.9rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      cursor: pointer;
+      color: var(--text-1);
+      font-family: var(--font-body);
+      font-size: 0.8rem;
+      transition: all var(--speed);
+    }
+
+    .model-toggle-btn:hover {
+      border-color: var(--primary);
+    }
+
+    .model-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      font-size: 0.7rem;
+      padding: 0.15rem 0.5rem;
+      border-radius: 12px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      color: var(--text-2);
+      white-space: nowrap;
+    }
+
+    .api-panel {
+      padding: 1rem 0 0;
+    }
+
+    .api-panel p {
+      font-size: 0.875rem;
+      color: var(--text-2);
+      margin-bottom: 0.75rem;
+    }
+
+    .api-panel a {
+      color: var(--primary);
+      text-decoration: underline;
+    }
+
+    .api-status {
+      font-size: 0.82rem;
+      margin-top: 0.5rem;
+      color: var(--green);
+    }
+
+    /* Clinical Nutrition Advisor Enhancements */
+    .food-user-context-bar {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 0.6rem 1rem;
+      margin-bottom: 1.25rem;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.75rem;
+      font-size: 0.8rem;
+      color: var(--text-2);
+    }
+
+    .context-item {
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+
+    .context-item i {
+      color: var(--primary);
+      font-size: 0.95rem;
+    }
+
+    .context-divider {
+      color: var(--border);
+      font-weight: 300;
+    }
+
+    .food-analysis-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-left: 4px solid var(--primary);
+      border-radius: 16px;
+      padding: 1.25rem;
+      margin-bottom: 1.25rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    body.dark .food-analysis-card {
+      background: rgba(13, 148, 136, 0.05);
+    }
+
+    .fac-header {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--primary);
+      font-weight: 700;
+      font-size: 1rem;
+    }
+
+    .fac-icon {
+      font-size: 1.25rem;
+    }
+
+    .fac-text {
+      font-size: 0.9rem;
+      line-height: 1.5;
+      color: var(--text-2);
+    }
+
+    .food-warnings-card {
+      background: rgba(239, 68, 68, 0.05);
+      border: 1px solid rgba(239, 68, 68, 0.2);
+      border-left: 4px solid var(--red);
+      border-radius: 16px;
+      padding: 1.25rem;
+      margin-bottom: 1.25rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .fwc-header {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--red);
+      font-weight: 700;
+      font-size: 1rem;
+    }
+
+    .fwc-icon {
+      font-size: 1.25rem;
+    }
+
+    .fwc-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+      padding: 0;
+      margin: 0;
+    }
+
+    .fwc-list li {
+      font-size: 0.9rem;
+      color: var(--text-2);
+      display: flex;
+      align-items: flex-start;
+      gap: 0.4rem;
+    }
+
+    .fwc-list li::before {
+      content: "⚠️";
+      font-size: 0.9rem;
+    }
+
+    .food-item-wrapper {
+      display: flex;
+      flex-direction: column;
+      gap: 0.15rem;
+      width: 100%;
+    }
+
+    .food-item-name {
+      font-weight: 600;
+      color: var(--text-1);
+    }
+
+    .food-item-reason {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      line-height: 1.3;
+    }

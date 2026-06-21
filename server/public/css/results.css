@@ -1,0 +1,113 @@
+/* ============================================================
+       RESULTS SCREEN
+       ============================================================ */
+    .results-header {
+      text-align: center;
+      padding: 2.5rem;
+      border-radius: var(--radius);
+      position: relative;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      background: var(--bg-surface);
+    }
+
+    .results-header.red {
+      background: var(--red-bg);
+      border-color: var(--red-border);
+      box-shadow: 0 0 35px var(--red-border);
+    }
+
+    .results-header.orange {
+      background: var(--orange-bg);
+      border-color: var(--orange-border);
+      box-shadow: 0 0 35px var(--orange-border);
+    }
+
+    .results-header.green {
+      background: var(--green-bg);
+      border-color: var(--green-border);
+      box-shadow: 0 0 35px var(--green-border);
+    }
+
+    .urgency-badge {
+      display: inline-block;
+      padding: 0.45rem 1.25rem;
+      border-radius: 30px;
+      font-family: var(--font-heading);
+      font-weight: 700;
+      font-size: 0.85rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 1rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    .results-header.red .urgency-badge {
+      background: var(--red);
+      color: #fff;
+    }
+
+    .results-header.orange .urgency-badge {
+      background: var(--orange);
+      color: #fff;
+    }
+
+    .results-header.green .urgency-badge {
+      background: var(--green);
+      color: #fff;
+    }
+
+    .condition-title {
+      font-size: 1.85rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    .results-header.red .condition-title {
+      color: var(--red);
+    }
+
+    .results-header.orange .condition-title {
+      color: var(--orange);
+    }
+
+    .results-header.green .condition-title {
+      color: var(--green);
+    }
+
+    .results-desc {
+      color: var(--text-2);
+      max-width: 600px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 1;
+    }
+
+    .rec-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .rec-list li {
+      display: flex;
+      gap: 0.875rem;
+      font-size: 0.975rem;
+      color: var(--text-2);
+    }
+
+    .rec-list li::before {
+      content: "✦";
+      color: var(--primary);
+      font-weight: bold;
+    }
+
+    .results-actions {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+    }

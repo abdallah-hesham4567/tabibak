@@ -1,0 +1,159 @@
+/* ============================================================
+       HISTORY SCREEN
+       ============================================================ */
+    @media (min-width: 760px) {
+    .history-card {
+        padding: 0.85rem 1.4rem;
+      }
+      .hc-info {
+        display: grid;
+        grid-template-columns: 2fr 1fr 2fr;
+        align-items: center;
+        gap: 1rem;
+      }
+      .hc-title,
+      .hc-meta,
+      .hc-symptom {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+    }
+    
+    .text-center-panel {
+      text-align: center;
+      padding: 3.5rem 2.5rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .panel-icon {
+      font-size: 3rem;
+      color: #1e3a8a;
+    }
+
+    .history-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      width: 100%;
+    }
+
+    .history-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-left: 6px solid var(--primary);
+      border-radius: 14px;
+      padding: 1.15rem 1.4rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      transition: all var(--speed);
+      gap: 1.25rem;
+    }
+
+    .history-card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow);
+    }
+
+    .history-card.red {
+      border-left-color: var(--red);
+    }
+
+    .history-card.orange {
+      border-left-color: var(--orange);
+    }
+
+    .history-card.green {
+      border-left-color: var(--green);
+    }
+
+    .hc-info {
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+      flex-grow: 1;
+      overflow: hidden;
+    }
+
+    .hc-title {
+      font-family: var(--font-heading);
+      font-size: 1.1rem;
+      font-weight: 700;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .hc-meta {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .hc-symptom {
+      font-size: 0.85rem;
+      color: var(--text-2);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .hc-actions {
+      display: flex;
+      gap: 0.5rem;
+      flex-shrink: 0;
+    }
+
+    .history-filter-bar {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 1.25rem;
+      flex-wrap: wrap;
+    }
+
+    .history-filter-bar button {
+      padding: 0.45rem 1rem;
+      border-radius: 20px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--text-1);
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: all var(--speed);
+      font-family: var(--font-body);
+    }
+
+    .history-filter-bar button:hover {
+      background: var(--primary-glow);
+    }
+
+    .history-filter-bar button.active {
+      background: var(--primary);
+      color: #fff;
+      border-color: var(--primary);
+    }
+
+    .icon-btn {
+      background: var(--input-bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      width: 38px;
+      height: 38px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 1rem;
+      color: var(--text-2);
+      transition: all var(--speed);
+    }
+
+    .icon-btn:hover {
+      background: var(--input-focus);
+      color: var(--red);
+      border-color: rgba(225, 29, 72, 0.25);
+    }

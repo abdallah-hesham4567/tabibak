@@ -1,0 +1,235 @@
+/* ============================================================
+       ADD MEDICATION MODAL (bottom sheet)
+       ============================================================ */
+    .meds-modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(10, 14, 26, 0.6);
+      backdrop-filter: blur(12px);
+      display: none;
+      align-items: flex-end;
+      justify-content: center;
+      z-index: 9998;
+      padding: 0;
+    }
+
+    .meds-modal-overlay.open {
+      display: flex;
+      animation: fadeIn 0.25s ease;
+    }
+
+    .meds-modal {
+      background: var(--bg-page);
+      width: 100%;
+      max-width: 560px;
+      border-radius: var(--radius) var(--radius) 0 0;
+      padding: 1.75rem 1.75rem 2rem;
+      border: 1px solid var(--border);
+      border-bottom: none;
+      animation: slideUp 0.35s cubic-bezier(0.18, 0.89, 0.32, 1.15);
+      max-height: 92vh;
+      overflow-y: auto;
+      position: relative;
+    }
+
+    .editable-time-badge {
+      position: absolute;
+      top: 1.5rem;
+      left: 1.75rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      background: var(--primary-glow);
+      border: 1px solid rgba(47, 122, 251, 0.25);
+      color: var(--primary);
+      font-size: 0.72rem;
+      font-weight: 600;
+      padding: 0.3rem 0.7rem;
+      border-radius: 20px;
+      animation: fadeIn 0.4s ease-out;
+    }
+
+    .editable-time-badge i {
+      font-size: 0.85rem;
+    }
+
+    @media (max-width: 768px) {
+      .editable-time-badge {
+        top: 1.25rem;
+        left: 1.25rem;
+        font-size: 0.68rem;
+        padding: 0.25rem 0.6rem;
+      }
+    }
+
+    .meds-modal h3 {
+      font-family: var(--font-heading);
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--text-1);
+      margin-bottom: 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .meds-modal h3 i {
+      color: var(--primary);
+    }
+
+    .meds-field {
+      margin-bottom: 0.875rem;
+    }
+
+    .meds-field label {
+      display: block;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-2);
+      margin-bottom: 0.4rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .meds-field input,
+    .meds-field select {
+      font-size: 0.9rem;
+      padding: 0.7rem 1rem;
+    }
+
+    .meds-field-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem;
+    }
+
+    .meds-modal-btns {
+      display: flex;
+      gap: 0.75rem;
+      margin-top: 1.25rem;
+    }
+
+    .meds-modal-btns button {
+      flex: 1;
+      padding: 0.8rem;
+      border-radius: 12px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: var(--font-heading);
+    }
+
+    .meds-btn-cancel {
+      background: var(--input-bg);
+      border: 1px solid var(--border);
+      color: var(--text-2);
+      transition: all 0.2s;
+    }
+
+    .meds-btn-cancel:hover {
+      border-color: var(--text-2);
+    }
+
+    .meds-btn-save {
+      /*background: linear-gradient(135deg, var(--primary), var(--secondary));*/
+      border: none;
+      color: var(--btn-text);
+      transition: all 0.2s;
+    }
+
+    .meds-btn-save:hover {
+      filter: brightness(1.05);
+    }
+
+    .dose-count-row {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .dose-count-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      border: 1.5px solid var(--border);
+      background: var(--input-bg);
+      color: var(--text-1);
+      font-size: 1.2rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+      flex-shrink: 0;
+      line-height: 1;
+    }
+
+    .dose-count-btn:hover {
+      border-color: var(--primary);
+      background: var(--primary-glow);
+      color: var(--primary);
+    }
+
+    .dose-count-display {
+      font-family: var(--font-heading);
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: var(--primary);
+      min-width: 32px;
+      text-align: center;
+    }
+
+    .dose-count-info {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+    }
+
+    .dose-slots-container {
+      display: flex;
+      flex-direction: column;
+      gap: 0.55rem;
+      margin-top: 0.6rem;
+    }
+
+    .dose-slot-row {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      background: var(--input-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 0.55rem 1rem;
+      transition: border-color 0.2s;
+    }
+
+    .dose-slot-row:focus-within {
+      border-color: var(--primary);
+    }
+
+    .dose-slot-label {
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--primary);
+      min-width: 52px;
+      font-family: var(--font-heading);
+    }
+
+    .dose-slot-row input[type="time"] {
+      border: none !important;
+      background: transparent !important;
+      padding: 0.2rem 0 !important;
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--text-1);
+      flex: 1;
+      box-shadow: none !important;
+      width: auto;
+    }
+
+    .dose-slot-row input[type="time"]:focus {
+      outline: none;
+      background: transparent !important;
+      box-shadow: none !important;
+      border: none !important;
+    }

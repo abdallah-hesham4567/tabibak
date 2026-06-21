@@ -1,0 +1,109 @@
+/* ============================================================
+       RESPONSIVE
+       ============================================================ */
+    @media (max-width: 768px) {
+      .app {
+        padding: 1rem 1rem 2rem;
+      }
+
+      .glass {
+        padding: 1.75rem;
+      }
+
+      .app-subtitle {
+        display: none;
+      }
+
+      .header-top-bar {
+        padding: 0.6rem 1rem;
+      }
+
+      .header-brand {
+        font-size: 1.35rem;
+      }
+
+      .app-nav {
+        justify-content: center;
+        padding: 0.35rem 0.5rem;
+      }
+
+      .nav-btn {
+        padding: 0.5rem 0.6rem;
+        font-size: 0.78rem;
+        flex: 1;
+        justify-content: center;
+      }
+
+      .nav-btn .nav-label {
+        display: none;
+      }
+
+      .app-nav {
+        gap: 0;
+        padding: 0.35rem 0;
+        justify-content: space-between;
+      }
+
+      .nav-btn {
+        padding: 0.5rem 0.4rem;
+        flex: 1;
+        justify-content: center;
+        min-width: 0;
+      }
+
+      .bmi-form-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .results-actions {
+        flex-direction: column;
+      }
+
+      .btn {
+        width: 100%;
+      }
+
+      .form-row {
+        flex-direction: column;
+      }
+
+      .modal-card {
+        padding: 1.75rem 1.25rem 1.25rem;
+        max-height: 90vh;
+      }
+
+      .modal-actions {
+        flex-direction: column;
+      }
+
+      .diff-grid {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .diff-btn {
+        flex-direction: row;
+        justify-content: flex-start;
+        min-width: unset;
+      }
+
+      .detail-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .history-card {
+        flex-direction: column;
+      }
+
+      .meds-stats {
+        grid-template-columns: repeat(3, 1fr);
+      }
+
+      .meds-field-row {
+        grid-template-columns: 1fr;
+      }
+
+      .meds-modal {
+        padding: 1.25rem 1.25rem 2rem;
+      }
+    }
