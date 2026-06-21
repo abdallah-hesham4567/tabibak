@@ -1,0 +1,149 @@
+/* ============================================================
+   DESIGN TOKENS — light & dark themes
+   ============================================================ */
+:root {
+  /* Typography */
+  --font-heading: 'Cairo', 'Outfit', sans-serif;
+  --font-body: 'Cairo', 'Inter', sans-serif;
+
+  /* Spacing scale */
+  --sp-xs: 0.25rem;
+  --sp-sm: 0.5rem;
+  --sp-md: 1rem;
+  --sp-lg: 1.5rem;
+  --sp-xl: 2rem;
+  --sp-2xl: 3rem;
+
+  /* Border radius */
+  --r-sm: 10px;
+  --r-md: 16px;
+  --r-lg: 20px;
+  --r-xl: 24px;
+  --r-full: 9999px;
+  --radius: 20px;
+  /* keep existing name */
+
+  /* Speed */
+  --speed: 0.25s;
+  --speed-slow: 0.4s;
+
+  /* Colors - Light */
+  --bg-page: #eef3f9;
+  --bg-surface: rgba(255, 255, 255, 0.95);
+  --bg-surface-hover: rgba(255, 255, 255, 1);
+  --border: rgba(59, 112, 166, 0.12);
+  --border-strong: rgba(59, 112, 166, 0.22);
+
+  --primary: #2b6cb0;
+  --primary-dark: #1e4e8c;
+  --primary-light: #dbeafe;
+  --primary-glow: rgba(43, 108, 176, 0.08);
+  --primary-glow-strong: rgba(43, 108, 176, 0.07);
+
+  --secondary: #4299e1;
+  --secondary-glow: rgba(66, 153, 225, 0.08);
+
+  --bubble-bot: #f7faff;
+  --bubble-bot-border: rgba(43, 108, 176, 0.08);
+  --bubble-user: rgba(66, 153, 225, 0.06);
+  --bubble-user-b: rgba(66, 153, 225, 0.18);
+
+  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow-sm: 0 2px 8px rgba(43, 108, 176, 0.06), 0 1px 3px rgba(0, 0, 0, 0.04);
+  --shadow: 0 8px 24px rgba(43, 108, 176, 0.07), 0 2px 6px rgba(0, 0, 0, 0.04);
+  --shadow-md: 0 12px 32px rgba(43, 108, 176, 0.10), 0 2px 8px rgba(0, 0, 0, 0.05);
+  --shadow-lg: 0 20px 50px rgba(43, 108, 176, 0.12), 0 4px 12px rgba(0, 0, 0, 0.07);
+  --shadow-colored: 0 2px 6px rgba(43, 108, 176, 0.10);
+  /* Status colors */
+  --red: #dc2626;
+  --red-bg: #fef2f2;
+  --red-border: rgba(220, 38, 38, 0.15);
+  --red-glow: rgba(220, 38, 38, 0.12);
+
+  --orange: #d97706;
+  --orange-bg: #fffbeb;
+  --orange-border: rgba(217, 119, 6, 0.15);
+
+  --yellow: #ffe100;
+
+  --green: #059669;
+  --green-bg: #ecfdf5;
+  --green-border: rgba(5, 150, 105, 0.15);
+
+  /* Meds */
+  --med-bg: rgba(255, 255, 255, 0.90);
+  --med-card-bg: #f8fffe;
+  --med-border: rgba(43, 108, 176, 0.12);
+  --med-taken: rgba(43, 108, 176, 0.05);
+  --med-streak: #d97706;
+  --med-missed: #dc2626;
+  --med-check: #059669;
+}
+
+body.dark {
+  /* --- The Base Canvas: True Obsidian (Clean, deep, non-muddy) --- */
+  --bg-page: #09090b;
+  /* True deep canvas; eliminates glare entirely */
+  --bg-surface: #18181b;
+  /* Crisp, solid charcoal for dashboard cards and containers */
+  --border: #27272a;
+  /* Ultra-subtle, sharp border instead of messy transparencies */
+
+  /* --- Brand Accents: Surgical & Precise --- */
+  --primary: #2f7afb;
+  /* Vibrant, intentional clinical blue with excellent legibility */
+  --primary-glow: rgba(47, 122, 251, 0.08);
+  --secondary: #38a3ff;
+  /* Lighter, related blue — keeps gradients cohesive instead of fading to gray */
+  --secondary-glow: rgba(56, 163, 255, 0.10);
+  --btn-text: #ffffff;
+  /* Pure white text for solid primary buttons */
+
+  /* --- Typography: High-Contrast Reading (Zero eye strain) --- */
+  --text-1: #f4f4f5;
+  /* Off-white for crisp, readable headings */
+  --text-2: #a1a1aa;
+  /* Clear zinc-gray for body paragraphs and descriptions */
+  --text-muted: #71717a;
+  /* Soft matte gray for timestamps, secondary labels, and footers */
+
+  /* --- Form Fields --- */
+  --input-bg: #09090b;
+  /* Sunken input fields that match the base canvas for depth */
+  --input-focus: #27272a;
+  /* Clean highlight when clicking fields */
+
+  /* --- Chat Interface (Tabibak Assistant) --- */
+  --bubble-bot: #27272a;
+  /* Clean neutral bubble for the medical bot */
+  --bubble-user: #2f7afb;
+  /* Sharp, clear signature blue for the user's messages */
+  --bubble-user-b: transparent;
+
+  /* --- Depth & Lighting (The human touch) --- */
+  /* Combines a tiny 1px white rim highlight with a deep drop shadow to create real physical elevation */
+  --shadow: 0 0 0 1px rgba(255, 255, 255, 0.03), 0 8px 32px rgba(0, 0, 0, 0.5);
+
+  /* --- Status Indicators: Pure & Clinical (Not washed out) --- */
+  --red: #ef4444;
+  --red-bg: rgba(239, 68, 68, 0.06);
+  --red-border: rgba(239, 68, 68, 0.15);
+
+  --orange: #f59e0b;
+  --orange-bg: rgba(245, 158, 11, 0.05);
+  --orange-border: rgba(245, 158, 11, 0.15);
+
+  --green: #10b981;
+  --green-bg: rgba(16, 185, 129, 0.06);
+  --green-border: rgba(16, 185, 129, 0.15);
+
+  /* --- Medical Dashboard & Medication Tracker --- */
+  --med-bg: #18181b;
+  --med-card-bg: #202024;
+  /* Slightly lifted contrast for treatment/prescription cards */
+  --med-border: #27272a;
+  --med-taken: rgba(47, 122, 251, 0.08);
+  --med-streak: #f59e0b;
+  --med-missed: #ef4444;
+  --med-check: #10b981;
+}

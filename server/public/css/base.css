@@ -1,0 +1,48 @@
+.breath-mute-btn i {
+  color: var(--text-1);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: var(--bg-page);
+  background-image:
+    radial-gradient(circle at 10% 20%, var(--primary-glow) 0%, transparent 45%),
+    radial-gradient(circle at 90% 80%, var(--secondary-glow) 0%, transparent 45%);
+  background-attachment: fixed;
+  color: var(--text-1);
+  font-family: var(--font-body);
+  line-height: 1.6;
+  min-height: 100vh;
+  overflow-x: hidden;
+  transition: background-color var(--speed), color var(--speed);
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+a {
+  color: inherit;
+}
+
+.moon {
+  color: #ffffff;
+  filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.3));
+}
+
+.sun {
+  color: #FFC107;
+  filter: drop-shadow(0 0 4px rgba(255, 193, 7, 0.5));
+}

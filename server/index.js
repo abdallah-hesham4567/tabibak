@@ -12,6 +12,7 @@ const sessionRoutes = require('./routes/sessions');
 const notificationRoutes = require('./routes/notifications');
 const notifDebugRoutes = require('./routes/notif-debug');
 const mentorRoutes = require('./routes/mentors');
+const aiRoutes = require('./routes/ai');
 
 const app = express();
 const server = http.createServer(app);
@@ -31,7 +32,7 @@ app.use(express.json());
 // Serialize BigInt from libSQL/SQLite across all routes
 BigInt.prototype.toJSON = function() { return Number(this); };
 
-// Socket.io — real-time sync
+// Socket.io — reserved for future real-time med sync (not used by tabibak.html yet)
 const io = new Server(server, {
   cors: {
     origin: FRONTEND_URL,
@@ -62,6 +63,9 @@ app.use('/api/medications', authenticateToken, medicationRoutes);
 app.use('/api/sessions', authenticateToken, sessionRoutes);
 app.use('/api/notif-debug', authenticateToken, notifDebugRoutes);
 app.use('/api/mentors', authenticateToken, mentorRoutes);
+
+// Optional Groq proxy for future client migration (client still calls Groq directly today)
+app.use('/api/ai', aiRoutes);
 
 // Config routes to expose non-sensitive environment keys dynamically to client
 app.get('/api/config/groq-key', (req, res) => {
