@@ -8603,7 +8603,7 @@ ${dislikedList.length > 0 ? dislikedList.join('، ') : 'لا يوجد'}
 - أخرج JSON array فقط، لا markdown ولا كلمات خارج الهيكل.`;
 
 
-      const fallbackModels = ['qwen/qwen3.6-27b'];
+      const fallbackModels = ['qwen/qwen3.6-27b', 'meta-llama/llama-4-scout-17b-16e-instruct', 'llama-3.2-11b-vision-preview', 'meta-llama/llama-4-maverick-17b-128e-instruct'];
       let lastError;
       for (const model of ['meta-llama/llama-4-scout-17b-16e-instruct', ...fallbackModels]) {
         try {
@@ -8611,7 +8611,7 @@ ${dislikedList.length > 0 ? dislikedList.join('، ') : 'لا يوجد'}
             method: 'POST',
             headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKey}` },
             body: JSON.stringify({
-              model, temperature: 0.15, max_tokens: 4000,
+              model, temperature: 0.1, max_tokens: 4000,
               messages: [{
                 role: 'user',
                 content: [
@@ -8637,6 +8637,9 @@ ${dislikedList.length > 0 ? dislikedList.join('، ') : 'لا يوجد'}
           const endIdx = clean.lastIndexOf(']');
           if (startIdx !== -1 && endIdx !== -1) clean = clean.substring(startIdx, endIdx + 1);
           STATE.medicalTest.lastModelUsed = model;
+          if (clean.indexOf('[') === -1 && clean.indexOf('{') === -1) {
+            throw new Error(`النموذج ${model} لم يُرجع JSON صالح`);
+          }
           return safeJsonParse(repairJSON(clean));
         } catch (e) { lastError = e; }
       }
@@ -8686,29 +8689,43 @@ ${valuesText}
 
 هام جداً: كل قيمة من المدخلات يجب أن تظهر في حقل "analysis" في الخطوة 1.`;
 
-      const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKey}` },
-        body: JSON.stringify({
-          model: 'llama-3.3-70b-versatile',
-          temperature: 0.3,
-          max_tokens: 4000,
-          messages: [{ role: 'system', content: 'أنت أخصائي تحاليل طبية خبير. أجب بـ JSON فقط.' }, { role: 'user', content: analysisPrompt }]
-        })
-      });
-      if (!res.ok) {
-        const err = await res.json().catch(() => ({}));
-        throw new Error(err.error?.message || 'فشل تحليل القيم');
+      const models = ['llama-3.3-70b-versatile', 'qwen/qwen3-32b', 'deepseek-r1-distill-llama-70b'];
+      let lastError;
+      for (const model of models) {
+        try {
+          const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKey}` },
+            body: JSON.stringify({
+              model,
+              temperature: 0.3,
+              max_tokens: 4000,
+              messages: [{ role: 'system', content: 'أنت أخصائي تحاليل طبية خبير. أجب بـ JSON فقط.' }, { role: 'user', content: analysisPrompt }]
+            })
+          });
+          if (!res.ok) {
+            const err = await res.json().catch(() => ({}));
+            const msg = err.error?.message || '';
+            if (msg.includes('decommissioned') || msg.includes('deprecated')) {
+              lastError = new Error(msg); continue;
+            }
+            throw new Error(msg || 'فشل تحليل القيم');
+          }
+          const data = await res.json();
+          const raw = data.choices?.[0]?.message?.content;
+          if (!raw) throw new Error('لم يرد خادم التحليل');
+          let clean = raw.replace(/```json|```/g, '').trim();
+          const startIdx = clean.indexOf('{');
+          const endIdx = clean.lastIndexOf('}');
+          if (startIdx !== -1 && endIdx !== -1) clean = clean.substring(startIdx, endIdx + 1);
+          if (clean.indexOf('{') === -1 && clean.indexOf('[') === -1) {
+            throw new Error(`النموذج ${model} لم يُرجع JSON صالح`);
+          }
+          STATE.medicalTest.lastModelUsed = model;
+          return safeJsonParse(repairJSON(clean));
+        } catch (e) { lastError = e; }
       }
-      const data = await res.json();
-      const raw = data.choices?.[0]?.message?.content;
-      if (!raw) throw new Error('لم يرد خادم التحليل');
-      let clean = raw.replace(/```json|```/g, '').trim();
-      const startIdx = clean.indexOf('{');
-      const endIdx = clean.lastIndexOf('}');
-      if (startIdx !== -1 && endIdx !== -1) clean = clean.substring(startIdx, endIdx + 1);
-      STATE.medicalTest.lastModelUsed = 'llama-3.3-70b-versatile';
-      return safeJsonParse(repairJSON(clean));
+      throw lastError || new Error('فشلت جميع محاولات التحليل');
     }
 
     async function getMedicalTestRecsFromAI(base64Image, apiKey) {
@@ -8755,7 +8772,7 @@ ${valuesText}
     }
   ]
 }`;
-      const fallbackModels = ['qwen/qwen3.6-27b'];
+      const fallbackModels = ['qwen/qwen3.6-27b', 'meta-llama/llama-4-scout-17b-16e-instruct', 'llama-3.2-11b-vision-preview', 'meta-llama/llama-4-maverick-17b-128e-instruct'];
       let lastError;
       for (const model of ['meta-llama/llama-4-scout-17b-16e-instruct', ...fallbackModels]) {
         try {
@@ -8763,7 +8780,7 @@ ${valuesText}
             method: 'POST',
             headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKey}` },
             body: JSON.stringify({
-              model, temperature: 0.3, max_tokens: 3000,
+              model, temperature: 0.1, max_tokens: 3000,
               messages: [{
                 role: 'user',
                 content: [
@@ -8788,6 +8805,9 @@ ${valuesText}
           const startIdx = clean.indexOf('{');
           const endIdx = clean.lastIndexOf('}');
           if (startIdx !== -1 && endIdx !== -1) clean = clean.substring(startIdx, endIdx + 1);
+          if (clean.indexOf('{') === -1 && clean.indexOf('[') === -1) {
+            throw new Error(`النموذج ${model} لم يُرجع JSON صالح`);
+          }
           STATE.medicalTest.lastModelUsed = model;
           return safeJsonParse(repairJSON(clean));
         } catch (e) { lastError = e; }
