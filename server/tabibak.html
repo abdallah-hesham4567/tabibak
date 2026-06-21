@@ -7826,6 +7826,24 @@ c-5.708,0-10.798-2.287-14.546-6.011c-0.87-0.895-1.697-1.857-2.407-2.904c-2.262-3
 
     const GROQ_API_KEY = ''; // loaded dynamically from backend config to prevent git leaks
 
+    function getDislikedFoods() {
+      const username = STATE.currentUser ? STATE.currentUser.username : 'guest';
+      try {
+        const stored = localStorage.getItem(`tabibak_disliked_foods_${username}`);
+        return stored ? JSON.parse(stored) : [];
+      } catch (e) {
+        return [];
+      }
+    }
+
+    function saveDislikedFoods(list) {
+      const username = STATE.currentUser ? STATE.currentUser.username : 'guest';
+      try {
+        localStorage.setItem(`tabibak_disliked_foods_${username}`, JSON.stringify(list));
+      } catch (e) {
+        console.error("Failed to save disliked foods:", e);
+      }
+    }
 
     async function getFoodRecsFromAI(mood, allKeys) {
 
@@ -7875,6 +7893,8 @@ c-5.708,0-10.798-2.287-14.546-6.011c-0.87-0.895-1.697-1.857-2.407-2.904c-2.262-3
         });
       }
 
+      const dislikedList = getDislikedFoods();
+
       // ── 2. Build the personalized prompt ─────────────────────
       const hasContext = userContext.length > 0;
 
@@ -7882,6 +7902,7 @@ c-5.708,0-10.798-2.287-14.546-6.011c-0.87-0.895-1.697-1.857-2.407-2.904c-2.262-3
 
 بيانات المستخدم الحالية المتاحة:
 ${hasContext ? userContext : 'لا تتوفر معلومات صحية سابقة للملف الشخصي.'}
+${dislikedList.length > 0 ? `\n⚠️ الأطعمة التي يكرهها أو لا يفضلها المستخدم ويجب تجنبها تماماً واستبدالها ببدائل صحية ومناسبة في الخطة: ${dislikedList.join('، ')}` : ''}
 
 الموضوع / سبب الطلب: "${mood}"
 
@@ -7892,7 +7913,7 @@ ${hasContext ? userContext : 'لا تتوفر معلومات صحية سابقة
 4. في "cards" ضع 4 أقسام كالتالي:
    - "أطعمة مستحبة": أطعمة مفيدة بناءً على البيانات.
    - "مشروبات وسوائل مستحبة": مشروبات مفيدة.
-   - "تجنَّب تماماً": أطعمة قد تتعارض مع البيانات.
+   - "تجنَّب تماماً": أطعمة قد تتعارض مع البيانات. ويجب تجنب وإقصاء أي طعام يكرهه المستخدم تماماً (المدرج في القائمة أعلاه إن وجد).
    - "نصائح نمط الحياة والتغذية العلاجية": إرشادات عامة.
 5. كل عنصر في "items" يجب أن يحتوي على "name" و "reason" (سبب علمي مبني على الأدلة).
 6. إذا لم تتوفر بيانات كافية، اذكر ذلك بوضوح في التحليل وقدم توصيات عامة متوازنة.
@@ -8206,28 +8227,37 @@ ${hasContext ? userContext : 'لا تتوفر معلومات صحية سابقة
         }
 
         // Build follow-up prompt with current food data
+        const dislikedList = getDislikedFoods();
         const basePrompt = `أنت مستشار تغذية محايد. قام المستخدم بمراجعة خطته الغذائية ويريد تعديلها حسب طلبه.
 
 الخطة الغذائية الحالية (JSON):
 ${JSON.stringify(currentData, null, 2)}
 
-طلب المستخدم: "${text}"
+الأطعمة التي يكرهها أو لا يفضلها المستخدم حالياً ويجب استبعادها تماماً واستبدالها ببدائل مناسبة وصحية:
+${dislikedList.length > 0 ? dislikedList.join('، ') : 'لا يوجد'}
+
+طلب المستخدم الحالي: "${text}"
 
 تعليمات:
 1. قيّم الطلب بناءً على البيانات المتاحة في الخطة الحالية.
-2. إذا كان الطلب إضافة عنصر جديد: ضعه في الـ card المناسبة حسب عنوانها (title).
-3. إذا كان الطلب إزالة عنصر: ابحث عنه في جميع الـ cards واحذفه.
-4. إذا كان الطلب غير مناسب أو غير صحي بناءً على التحليل الموضوعي للخطة: أرجِع نفس JSON الأصلي بدون تغيير وأضف حقل "refusal" يشرح سبب الرفض موضوعياً.
-5. كل عنصر مضاف يحتوي على "name" و "reason" (سبب موضوعي).
-6. أخرج JSON صالحاً مطابقاً للهيكل التالي:
+2. إذا عبر المستخدم في طلبه الحالي عن كرهه أو عدم تفضيله أو رغبته في استبدال طعام معين لأنه لا يحبه (مثل "لا أحب كذا" أو "أكره كذا" أو "أزل كذا لأني لا آكله")، فقم بالآتي:
+   أ. حدد هذا الطعام المستبعد واستبدله ببديل مناسب في الخطة.
+   ب. ضع اسم هذا الطعام المستبعد باللغة العربية في مصفوفة "newDislikedFoods" المذكورة أدناه لتسجيله للمستقبل.
+3. إذا كان الطلب إضافة عنصر جديد: ضعه في الـ card المناسبة حسب عنوانها (title).
+4. إذا كان الطلب إزالة عنصر: ابحث عنه في جميع الـ cards واحذفه.
+5. إذا كان الطلب غير مناسب أو غير صحي بناءً على التحليل الموضوعي للخطة: أرجِع نفس JSON الأصلي بدون تغيير وأضف حقل "refusal" يشرح سبب الرفض موضوعياً.
+6. كل عنصر مضاف يحتوي على "name" و "reason" (سبب موضوعي).
+7. أخرج JSON صالحاً مطابقاً للهيكل التالي:
 
 {
   "badge": "...",
   "analysis": "...",
   "drugWarnings": [...],
   "cards": [...],
+  "newDislikedFoods": ["اسم الطعام المكتشف من طلب المستخدم الحالي إذا ذكر عدم حبه له، وإلا مصفوفة فارغة"],
   "refusal": "سبب الرفض (فقط إذا رفضت الطلب، وإلا فلا تضف هذا الحقل)"
-}`;
+}
+`;
 
         async function callFollowUp(promptText, allKeys) {
           const qwen = 'qwen/qwen3-32b';
@@ -8318,6 +8348,22 @@ ${JSON.stringify(currentData, null, 2)}
           chatLog.appendChild(refusalMsg);
           chatLog.scrollTop = chatLog.scrollHeight;
           return;
+        }
+
+        // Process newly disliked foods returned by AI
+        if (updatedData.newDislikedFoods && Array.isArray(updatedData.newDislikedFoods) && updatedData.newDislikedFoods.length > 0) {
+          const currentDisliked = getDislikedFoods();
+          let changed = false;
+          updatedData.newDislikedFoods.forEach(food => {
+            const trimmed = food.trim();
+            if (trimmed && !currentDisliked.includes(trimmed)) {
+              currentDisliked.push(trimmed);
+              changed = true;
+            }
+          });
+          if (changed) {
+            saveDislikedFoods(currentDisliked);
+          }
         }
 
         // Update state and re-render
@@ -8555,29 +8601,41 @@ ${JSON.stringify(currentData, null, 2)}
         `${i + 1}. ${v.name}: ${v.value} ${v.unit || ''} (الطبيعي: ${v.normalRange || '—'})`
       ).join('\n');
 
-      const analysisPrompt = `أنت محلل سريري خبير. إليك القيم المستخرجة من تقرير التحاليل الطبية:
+      const analysisPrompt = `أنت محلل سريري خبير واستشاري طبي محترف. إليك القيم المستخرجة من تقرير التحاليل الطبية:
 
 ${valuesText}
 
-اتبع هذه الخطوات بالترتيب:
+تحقق أولاً بدقة: هل البيانات المستخرجة أعلاه (إن وجدت) أو السياق يمثل فحوصات أو تحاليل طبية بشرية مخبرية حقيقية؟ إذا كانت البيانات فارغة أو لا تتعلق بالفحوصات الطبية البشرية (مثال: مقارنة سيارات، مواصفات هواتف، فواتير، تقييمات تكنولوجية، أو أي موضوع آخر غير طبي)، فيجب عليك إرجاع استجابة JSON تحتوي حصراً على الحقول التالية بالضبط بالقيم المحددة:
+{
+  "badge": "غير طبي",
+  "status": "هذا ليس فحصًا طبيًا",
+  "statusClass": "red",
+  "analysis": "هذا ليس فحصًا طبيًا",
+  "advices": []
+}
+(تنبيه: لا تضف أي نص آخر أو تفاصيل خارج هيكل JSON في هذه الحالة).
 
-الخطوة 1 — لكل قيمة، استخدم معرفتك الطبية (المدى الطبيعي القياسي المعروف عالمياً) لتحديد الحالة. تجاهل حقل "الطبيعي" من المدخلات إذا كان ناقصاً أو غير دقيق، واعتمد على خبرتك السريرية. اكتب سطراً واحداً لكل قيمة بالصيغة الآتية التي تظهر المقارنة صراحة:
-"[اسم الاختبار] = [القيمة]، الطبيعي: [المدى] → [القيمة] ضمن [المدى] → [طبيعي/مرتفع/منخفض]"
+أما إذا كانت فحوصات طبية بشرية، فاتبع الخطوات التالية بدقة متناهية لصياغة التقرير باحترافية:
 
-الخطوة 2 — التجميع: نظم القيم حسب الجهاز (صورة دم، كبد، كلى، سكر، دهون، كهرباء، التهابات، أخرى).
+الخطوة 1 — لكل تحليل أو قيمة في المدخلات، اكتب سطرًا منفصلاً تماماً (باستخدام \n للانتقال للسطر التالي) بالصيغة التالية تماماً لتوضيح المقارنة صراحة وبساطة:
+"مستوى [اسم التحليل باللغة العربية والإنجليزية] هو [القيمة] [الوحدة] والمدى الطبيعي يتراوح بين [المدى الطبيعي]، لذا فهو [طبيعي / غير طبيعي (مرتفع أو منخفض)]."
+مثال: "مستوى الهيموجلوبين (Hemoglobin) هو 5 والمدى الطبيعي يتراوح بين 6-8، لذا فهو غير طبيعي (منخفض)."
+يجب أن تظهر كل قيمة مستخرجة في سطر مستقل ومنفصل.
 
-الخطوة 3 — التشخيص: لخص النتائج الإجمالية ودلالتها السريرية.
+الخطوة 2 — التبسيط للمريض: قدّم شرحاً مبسطاً بأسلوب مفهوم جداً للشخص العادي الذي ليس لديه خلفية طبية للمفاهيم والمصطلحات الطبية الصعبة الواردة في التحاليل (مثل معنى الهيموجلوبين، الكرياتينين، الدهون الثلاثية، إلخ) ودورها وتأثيرها على الجسم.
+
+الخطوة 3 — التشخيص والتلخيص: لخص النتائج الإجمالية ودلالتها السريرية العامة.
 
 الخطوة 4 — الإخراج: أجب بصيغة JSON صالحة 100% فقط:
 {
   "badge": "عنوان قصير لنوع الفحص أو التحليل المكتشف",
   "status": "طبيعي أو غير طبيعي / يحتاج متابعة أو مراجعة طبية عاجلة",
   "statusClass": "green أو orange أو red",
-  "analysis": "نص الخطوة 1 + الخطوة 2 + الخطوة 3 مجتمعة",
-  "advices": [{ "title": "عنوان", "desc": "شرح" }]
+  "analysis": "[نص الخطوة 1]\n\n[نص الخطوة 2]\n\n[نص الخطوة 3]",
+  "advices": [{ "title": "عنوان النصيحة", "desc": "شرح النصيحة ومبرراتها الطبية بأسلوب هادئ وواضح" }]
 }
 
-هام جداً: كل قيمة من المدخلات يجب أن تظهر في حقل "analysis". أي قيمة مفقودة تعتبر خطأ.`;
+هام جداً: كل قيمة من المدخلات يجب أن تظهر في حقل "analysis" في الخطوة 1.`;
 
       const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
         method: 'POST',
@@ -8617,24 +8675,32 @@ ${valuesText}
         return await analyzeExtractedValues(extracted, apiKey);
       }
       // Fallback: original single-pass approach
-      const promptText = `يرجى قراءة وتحليل صورة التحليل الطبي المرفقة، ثم تقديم استجابة بصيغة JSON صالحة 100% تحتوي على الحقول التالية بالضبط:
+      const promptText = `أنت أخصائي تحاليل طبية خبير واستشاري سريري محترف. يرجى قراءة وتحليل صورة التحليل الطبي المرفقة.
+
+تحقق أولاً بدقة: هل الصورة المرفقة هي فحص طبي أو تقرير طبي بشري؟ إذا كانت الصورة لا تتعلق بالتحاليل أو الفحوصات الطبية البشرية (مثال: مقارنة سيارات، مواصفات هواتف، فواتير، جداول غير طبية، أو أي موضوع آخر غير طبي)، فيجب عليك إرجاع استجابة JSON تحتوي حصراً على الحقول التالية بالضبط بالقيم المحددة:
+{
+  "badge": "غير طبي",
+  "status": "هذا ليس فحصًا طبيًا",
+  "statusClass": "red",
+  "analysis": "هذا ليس فحصًا طبيًا",
+  "advices": []
+}
+(تنبيه: لا تضف أي نص آخر أو تفاصيل خارج هيكل JSON في هذه الحالة).
+
+أما إذا كانت فحوصات طبية بشرية، فقدم استجابة بصيغة JSON صالحة 100% تحتوي على الحقول التالية بالضبط:
 {
   "badge": "عنوان قصير لنوع الفحص أو التحليل المكتشف (مثال: صورة دم كاملة CBC، وظائف كبد، إلخ)",
   "status": "طبيعي أو غير طبيعي / يحتاج متابعة أو مراجعة طبية عاجلة",
   "statusClass": "green (للطبيعي)، orange (للمتوسط/متابعة)، red (للحالات غير الطبيعية/طارئة) - اختر واحدة فقط تطابق الحالة",
-  "analysis": "شرح تفصيلي، علمي ومبسط باللغة العربية الفصحى للنتائج والقيم الواردة في التحليل وتفسيرها بلغة واضحة للمريض.",
+  "analysis": "اكتب الشرح بالترتيب التالي:
+1. لكل فحص أو قيمة واردة في الصورة، اكتب سطرًا منفصلاً تماماً (باستخدام \\n للانتقال للسطر التالي) يوضح المقارنة:
+'مستوى [اسم التحليل باللغة العربية والإنجليزية] هو [القيمة] [الوحدة] والمدى الطبيعي يتراوح بين [المدى الطبيعي]، لذا فهو [طبيعي / غير طبيعي (مرتفع أو منخفض)].'
+2. ثم (في سطر جديد) قدّم شرحاً مبسطاً بأسلوب مفهوم جداً للشخص العادي الذي لا يملك خلفية طبية للمفاهيم والمصطلحات الصعبة الواردة في التحليل وتأثيرها ودورها في الجسم.
+3. ثم (في سطر جديد) لخص النتائج الإجمالية ودلالتها السريرية العامة.",
   "advices": [
     {
       "title": "عنوان النصيحة 1",
       "desc": "شرح النصيحة 1 بالتفصيل ومبرراتها الطبية بأسلوب هادئ وواضح"
-    },
-    {
-      "title": "عنوان النصيحة 2",
-      "desc": "شرح النصيحة 2 بالتفصيل ومبرراتها الطبية بأسلوب هادئ وواضح"
-    },
-    {
-      "title": "عنوان النصيحة 3",
-      "desc": "شرح النصيحة 3 بالتفصيل ومبرراتها الطبية بأسلوب هادئ وواضح"
     }
   ]
 }`;
@@ -8730,7 +8796,7 @@ ${pdfText}`;
       const arrEnd = extractClean.lastIndexOf(']');
       if (arrStart !== -1 && arrEnd !== -1) extractClean = extractClean.substring(arrStart, arrEnd + 1);
       const values = safeJsonParse(extractClean);
-      if (!Array.isArray(values) || values.length === 0) throw new Error('لم يتم استخراج أي قيم');
+      if (!Array.isArray(values)) throw new Error('فشل تنسيق البيانات المستخرجة');
 
       return await analyzeExtractedValues(values, apiKey);
     }
@@ -8952,10 +9018,17 @@ ${pdfText}`;
           resultsEl.style.display = '';
           STATE.medicalTest.lastResult = resultData;
           // Auto-save to history if logged in
-          if (STATE.currentUser) {
+          const isMedical = resultData.badge !== 'غير طبي' && resultData.analysis !== 'هذا ليس فحصًا طبيًا';
+          if (STATE.currentUser && isMedical) {
             saveMedicalTestSession(resultData);
           }
-          document.getElementById('medicalTestSaveBtn').textContent = STATE.currentUser ? '✓ تم الحفظ في السجل' : 'حفظ في السجل';
+          if (isMedical) {
+            document.getElementById('medicalTestSaveBtn').textContent = STATE.currentUser ? '✓ تم الحفظ في السجل' : 'حفظ في السجل';
+            document.getElementById('medicalTestSaveBtn').disabled = false;
+          } else {
+            document.getElementById('medicalTestSaveBtn').textContent = 'غير قابل للحفظ (مستند غير طبي)';
+            document.getElementById('medicalTestSaveBtn').disabled = true;
+          }
         } catch (error) {
           console.error("Analysis error:", error);
           errorMsgEl.textContent = `فشل تحليل المستند الطبي: ${error.message || 'خطأ غير معروف'}. يرجى التأكد من جودة الصورة والمحاولة مرة أخرى.`;
