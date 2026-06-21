@@ -93,8 +93,6 @@
       --med-card-bg: #f8fffe;
       --med-border: rgba(43, 108, 176, 0.12);
       --med-taken: rgba(43, 108, 176, 0.05);
-      --med-streak: #d97706;
-      --med-missed: #dc2626;
       --med-check: #059669;
     }
 
@@ -161,8 +159,6 @@
       /* Slightly lifted contrast for treatment/prescription cards */
       --med-border: #27272a;
       --med-taken: rgba(47, 122, 251, 0.08);
-      --med-streak: #f59e0b;
-      --med-missed: #ef4444;
       --med-check: #10b981;
     }
 
@@ -2586,46 +2582,6 @@
       font-weight: 600;
     }
 
-    .meds-stats {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 0.75rem;
-      margin-top: 0.5rem;
-    }
-
-    .meds-stat {
-      background: var(--bg-surface);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 1rem;
-      text-align: center;
-    }
-
-    .meds-stat-num {
-      font-family: var(--font-heading);
-      font-size: 1.6rem;
-      font-weight: 800;
-      color: var(--primary);
-      line-height: 1;
-      margin-bottom: 0.25rem;
-    }
-
-    .meds-stat-num.streak {
-      color: var(--med-streak);
-    }
-
-    .meds-stat-num.missed {
-      color: var(--med-missed);
-    }
-
-    .meds-stat-label {
-      font-size: 0.72rem;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      font-weight: 600;
-    }
-
     .meds-empty {
       text-align: center;
       padding: 3rem 1rem;
@@ -3534,10 +3490,6 @@
         flex-direction: column;
       }
 
-      .meds-stats {
-        grid-template-columns: repeat(3, 1fr);
-      }
-
       .meds-field-row {
         grid-template-columns: 1fr;
       }
@@ -4439,21 +4391,6 @@ c-5.708,0-10.798-2.287-14.546-6.011c-0.87-0.895-1.697-1.857-2.407-2.904c-2.262-3
       <div class="meds-tip-card" id="medsTipCard" style="display:none;">
         <i class="ti ti-alert-triangle" aria-hidden="true"></i>
         <p id="medsTipText">تذكير بدواء حيوي</p>
-      </div>
-
-      <div class="meds-stats">
-        <div class="meds-stat">
-          <div class="meds-stat-num" id="medsAdherenceStat">0%</div>
-          <div class="meds-stat-label">الالتزام</div>
-        </div>
-        <div class="meds-stat">
-          <div class="meds-stat-num streak" id="medsStreakStat">0</div>
-          <div class="meds-stat-label">أيام متتالية</div>
-        </div>
-        <div class="meds-stat">
-          <div class="meds-stat-num missed" id="medsMissedStat">0</div>
-          <div class="meds-stat-label">جرعات فائتة هذا الأسبوع</div>
-        </div>
       </div>
 
       <!-- Browser Push Notification Settings -->
@@ -5695,8 +5632,6 @@ c-5.708,0-10.798-2.287-14.546-6.011c-0.87-0.895-1.697-1.857-2.407-2.904c-2.262-3
         list: [],
         taken: {},
         activeTab: 'today',
-        streak: 0,
-        missedWeek: 0,
       },
       modalSessionIndex: -1,
       mentors: [],
@@ -5713,8 +5648,6 @@ c-5.708,0-10.798-2.287-14.546-6.011c-0.87-0.895-1.697-1.857-2.407-2.904c-2.262-3
         localStorage.setItem('tabibak_meds_taken', JSON.stringify({
           date: new Date().toDateString(),
           taken: STATE.meds.taken,
-          streak: STATE.meds.streak,
-          missed: STATE.meds.missedWeek,
         }));
       } catch (e) { }
     }
@@ -5740,8 +5673,6 @@ c-5.708,0-10.798-2.287-14.546-6.011c-0.87-0.895-1.697-1.857-2.407-2.904c-2.262-3
           const parsed = JSON.parse(mt);
           if (parsed.date === new Date().toDateString()) {
             STATE.meds.taken = parsed.taken || {};
-            STATE.meds.streak = parsed.streak || 0;
-            STATE.meds.missedWeek = parsed.missed || 0;
           }
         }
       } catch (e) { }
@@ -6454,9 +6385,6 @@ c-5.708,0-10.798-2.287-14.546-6.011c-0.87-0.895-1.697-1.857-2.407-2.904c-2.262-3
 
       document.getElementById('medsProgressCount').textContent = `تم أخذ ${takenCount}/${totalDoses} من الجرعات`;
       document.getElementById('medsProgressFill').style.width = `${pct}%`;
-      document.getElementById('medsAdherenceStat').textContent = `${pct}%`;
-      document.getElementById('medsStreakStat').textContent = STATE.meds.streak || 5;
-      document.getElementById('medsMissedStat').textContent = STATE.meds.missedWeek || 1;
 
       const urgentNotTaken = list.find(m => {
         if (!m.urgent) return false;
