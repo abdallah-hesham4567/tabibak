@@ -7139,16 +7139,76 @@ c-5.708,0-10.798-2.287-14.546-6.011c-0.87-0.895-1.697-1.857-2.407-2.904c-2.262-3
       }
     }
 
-    // function askNextQuestion() {
-    //   const step = STATE.triageSession.step;
-    //   if (step >= TRIAGE_QUESTIONS.length) { finishTriage(); return; }
-    //   const q = TRIAGE_QUESTIONS[step];
-    //   document.getElementById('categoryBadge').textContent = q.category;
-    //   updateProgress(step, TRIAGE_QUESTIONS.length);
-    //   showTypingThenAppend(q.q);
-    // }
-    // REPLACE the existing askNextQuestion with this:
-    function askNextQuestion() {
+    async function askTriageQwen() {
+      const step = STATE.triageSession.step;
+      if (step >= 6) { finishTriage(); return; }
+
+      const apiKeys = STATE.apiKeys && STATE.apiKeys.length > 0 ? STATE.apiKeys
+        : (STATE.medicalKeys && STATE.medicalKeys.length > 0 ? STATE.medicalKeys : []);
+
+      if (apiKeys.length === 0) {
+        askFixedQuestion();
+        return;
+      }
+
+      document.getElementById('categoryBadge').textContent = 'الذكاء الاصطناعي';
+      updateProgress(step, 6);
+
+      const messages = [
+        {
+          role: 'system',
+          content: `أنت مساعد فحص طبي. دورك هو جمع معلومات عن أعراض المريض.
+المريض أبلغ عن عرضه: "${STATE.triageSession.symptom}".
+
+القواعد:
+- اسأل سؤالاً تشخيصياً واحداً فقط في كل مرة
+- اجمع معلومات عن: المدة، الشدة، التاريخ المرضي، الأعراض المرافقة، الأدوية، الحساسية
+- لديك 6 أسئلة كحد أقصى. السؤال الحالي رقم ${step + 1}
+- كن موجزاً — سؤال واحد قصير ومباشر
+- أجب فقط بنص السؤال، لا شيء آخر`
+        }
+      ];
+
+      for (const m of STATE.triageSession.chatLog) {
+        if (m.role === 'user' || m.role === 'bot') {
+          messages.push({ role: m.role === 'bot' ? 'assistant' : 'user', content: m.text || '' });
+        }
+      }
+
+      let lastError;
+      for (const apiKey of apiKeys) {
+        try {
+          const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKey}` },
+            body: JSON.stringify({
+              model: 'qwen/qwen3-32b',
+              temperature: 0.3,
+              max_tokens: 500,
+              messages,
+            }),
+          });
+          if (!res.ok) {
+            const err = await res.json().catch(() => ({}));
+            const msg = err.error?.message || '';
+            if (msg.includes('decommissioned') || msg.includes('deprecated')) {
+              lastError = new Error(msg); continue;
+            }
+            throw new Error(msg || 'فشل الاتصال');
+          }
+          const data = await res.json();
+          const question = data.choices?.[0]?.message?.content?.trim();
+          if (!question) throw new Error('لم يرد بنص');
+
+          await showTypingThenAppend(question, 600);
+          return;
+        } catch (e) { lastError = e; }
+      }
+      console.warn('Qwen failed, falling back to fixed questions:', lastError);
+      askFixedQuestion();
+    }
+
+    function askFixedQuestion() {
       const step = STATE.triageSession.step;
       if (step >= TRIAGE_QUESTIONS.length) { finishTriage(); return; }
       const q = TRIAGE_QUESTIONS[step];
@@ -7156,11 +7216,11 @@ c-5.708,0-10.798-2.287-14.546-6.011c-0.87-0.895-1.697-1.857-2.407-2.904c-2.262-3
       updateProgress(step, TRIAGE_QUESTIONS.length);
 
       const SUGGESTIONS = [
-        ['منذ يومين', 'منذ أسبوع', 'منذ ساعات قليلة', 'أكثر من شهر'],      // step 0: duration
-        ['1 - 2', '3 - 5', '6 - 7', '8 - 10'],                              // step 1: severity  
-        ['لا يوجد', 'ضغط الدم', 'السكري', 'ربو', 'أدوية منتظمة'],           // step 2: history
-        ['نعم، وتعافيت', 'نعم، ولا زلت أعاني', 'لا، للمرة الأولى'],         // step 3: prior
-        ['لا توجد حساسية', 'حساسية من البنسلين', 'حساسية من الأسبرين'],      // step 4: allergy
+        ['منذ يومين', 'منذ أسبوع', 'منذ ساعات قليلة', 'أكثر من شهر'],
+        ['1 - 2', '3 - 5', '6 - 7', '8 - 10'],
+        ['لا يوجد', 'ضغط الدم', 'السكري', 'ربو', 'أدوية منتظمة'],
+        ['نعم، وتعافيت', 'نعم، ولا زلت أعاني', 'لا، للمرة الأولى'],
+        ['لا توجد حساسية', 'حساسية من البنسلين', 'حساسية من الأسبرين'],
       ];
 
       showTypingThenAppend(q.q).then(() => {
@@ -7169,36 +7229,33 @@ c-5.708,0-10.798-2.287-14.546-6.011c-0.87-0.895-1.697-1.857-2.407-2.904c-2.262-3
     }
 
     function startTriage(initialSymptom, breathingContext = '') {
-      // If chat is already in progress and hasn't finished, don't restart
       if (STATE.triageSession.chatLog.length > 0 && !STATE.triageSession.result) {
         showTab('chat');
         return;
       }
-      // If called with no symptom and chat is active, just show it
       if (!initialSymptom && STATE.triageSession.chatLog.length > 0) {
         showTab('chat');
         return;
       }
 
-      // Only reset if this is a new session
       STATE.triageSession = {
         symptom: initialSymptom, chatLog: [], step: 0,
-        totalSteps: TRIAGE_QUESTIONS.length, category: 'عام',
+        totalSteps: 6, category: 'الذكاء الاصطناعي',
         redFlagFired: false, result: null,
       };
 
       showTab('chat');
       document.getElementById('chatLog').innerHTML = '';
       document.getElementById('redFlagBanner').classList.remove('visible');
-      updateProgress(0, TRIAGE_QUESTIONS.length);
+      updateProgress(0, 6);
 
       const intro = breathingContext
-        ? `مرحباً! أنا طبيبك. بناءً على نتيجة تقييم التنفس (${breathingContext})، وعَرَضك المُبلَّغ عنه "${initialSymptom}" — سأطرح عليك بعض الأسئلة لفهم حالتك بشكل أفضل.`
-        : `مرحباً! أنا طبيبك. لاحظتُ عَرَضك: "${initialSymptom}". سأطرح عليك ${TRIAGE_QUESTIONS.length} أسئلة سريعة لفهم حالتك بشكل أفضل.`;
+        ? `مرحباً! أنا طبيبك. بناءً على نتيجة تقييم التنفس (${breathingContext})، وعَرَضك المُبلَّغ عنه "${initialSymptom}" — سأطرح عليك بعض الأسئلة الذكية لفهم حالتك بشكل أفضل.`
+        : `مرحباً! أنا طبيبك. لاحظتُ عَرَضك: "${initialSymptom}". سأطرح عليك 6 أسئلة ذكية بالذكاء الاصطناعي لفهم حالتك بشكل أفضل.`;
 
       appendMessage('bot', intro);
       checkRedFlags(initialSymptom);
-      setTimeout(askNextQuestion, 600);
+      setTimeout(askTriageQwen, 600);
     }
 
     function handleUserChatInput(imgDataUrl) {
@@ -7209,9 +7266,9 @@ c-5.708,0-10.798-2.287-14.546-6.011c-0.87-0.895-1.697-1.857-2.407-2.904c-2.262-3
       appendMessage('user', text, imgDataUrl);
       checkRedFlags(text);
       STATE.triageSession.step++;
-      updateProgress(STATE.triageSession.step, TRIAGE_QUESTIONS.length);
-      if (STATE.triageSession.step < TRIAGE_QUESTIONS.length) {
-        setTimeout(askNextQuestion, 400);
+      updateProgress(STATE.triageSession.step, 6);
+      if (STATE.triageSession.step < 6) {
+        setTimeout(askTriageQwen, 400);
       } else {
         setTimeout(finishTriage, 600);
       }
